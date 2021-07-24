@@ -1,12 +1,75 @@
-version: '3.0'
-
+version: "3.0"
 expectations:
-  population_size: 1000
+  population_size: 30000
 
 actions:
-
-  generate_study_population:
+  generate_cohort:
     run: cohortextractor:latest generate_cohort --study-definition study_definition
     outputs:
       highly_sensitive:
         cohort: output/input.csv
+
+  01_cr_analysis_dataset:
+    needs: [generate_cohort]
+    run: stata-mp:latest analysis/01_cr_analysis_dataset.do
+    outputs:
+      moderately_sensitive:
+        log: logs/01_cr_analysis_dataset.log
+      highly_sensitive:
+        check_data: "tempdata/analysis_dataset.dta"
+        check_data2: "tempdata/analysis_dataset_ageband_*.dta"
+        data: "tempdata/cr_create_analysis_dataset_STSET_*_ageband_*.dta"
+        data_eth: "tempdata/analysis_dataset_with_missing_ethnicity.dta"
+
+  02_an_data_checks:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/02_an_data_checks.do 
+    outputs:
+      moderately_sensitive:
+        log: logs/02_an_data_checks.log
+        histogram: "output/01_histogram_*.svg"
+
+  03a_an_descriptive_tables:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/03a_an_descriptive_tables.do 
+    outputs:
+      moderately_sensitive:
+        log: logs/03a_an_descriptive_tables.log
+
+  03b_an_descriptive_table_1:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/03b_an_descriptive_table_1.do 
+    outputs:
+      moderately_sensitive:
+        log: logs/03b_an_descriptive_table_1.log
+        data: "output/03b_an_descriptive_table_1_kids_cat4_ageband*.txt"
+
+  04a_an_descriptive_tables:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/04a_an_descriptive_tables.do 
+    outputs:
+      moderately_sensitive:
+        log: logs/04a_an_descriptive_tables.log
+
+  04b_an_descriptive_table_2:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/04b_an_descriptive_table_2.do 
+    outputs:
+      moderately_sensitive:
+        log: logs/04b_an_descriptive_table_2.log
+        data: "output/04b_an_descriptive_table_2_ageband*.txt"
+
+  run_all:
+    needs:
+      - 02_an_data_checks
+      - 03a_an_descriptive_tables
+      - 03b_an_descriptive_table_1
+      - 04a_an_descriptive_tables
+      - 04b_an_descriptive_table_2
+    # In order to be valid this action needs to define a run commmand and
+    # some output. We don't really care what these are but the below seems to
+    # do the trick.
+    run: cohortextractor:latest --version
+    outputs:
+      moderately_sensitive:
+        whatever: project.yaml

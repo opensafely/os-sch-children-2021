@@ -1,0 +1,68 @@
+age0
+kids_cat4	0	1	369	       114	 3.2e+05	1.00 (   .-   .)	1.00 (   .-   .)	1.00 (   .-   .)
+kids_cat4	1	1	1446	       418	 3.5e+05	1.16 (0.96-1.39)	1.17 (0.95-1.43)	1.17 (0.96-1.44)
+kids_cat4	2	1	252	        73	 3.5e+05	0.95 (0.71-1.26)	0.97 (0.72-1.30)	0.98 (0.73-1.32)
+kids_cat4	3	1	12842	      3739	 3.4e+05	1.03 (0.87-1.21)	1.03 (0.85-1.25)	1.04 (0.86-1.26)
+age1
+kids_cat4	0	1	132	        37	 3.5e+05	1.00 (   .-   .)	1.00 (   .-   .)	1.00 (   .-   .)
+kids_cat4	1	1	422	       124	 3.4e+05	1.03 (0.74-1.45)	1.12 (0.77-1.61)	1.17 (0.81-1.69)
+kids_cat4	2	1	82	        23	 3.6e+05	1.24 (0.79-1.94)	1.36 (0.86-2.15)	1.40 (0.88-2.24)
+kids_cat4	3	1	3635	      1066	 3.4e+05	1.08 (0.80-1.45)	1.17 (0.84-1.64)	1.22 (0.87-1.71)
+age0
+kids_cat4	0	2	369	       114	 3.2e+05	1.00 (   .-   .)	1.00 (   .-   .)	1.00 (   .-   .)
+kids_cat4	1	2	1446	       418	 3.5e+05	1.00 (0.79-1.27)	1.03 (0.76-1.39)	1.07 (0.79-1.44)
+kids_cat4	2	2	252	        73	 3.5e+05	1.22 (0.87-1.70)	1.23 (0.84-1.80)	1.23 (0.84-1.81)
+kids_cat4	3	2	12842	      3739	 3.4e+05	1.00 (0.81-1.24)	1.03 (0.77-1.37)	1.07 (0.81-1.41)
+age1
+kids_cat4	0	2	132	        37	 3.5e+05	1.00 (   .-   .)	1.00 (   .-   .)	1.00 (   .-   .)
+kids_cat4	1	2	422	       124	 3.4e+05	0.78 (0.50-1.22)	0.81 (0.49-1.34)	0.81 (0.49-1.35)
+kids_cat4	2	2	82	        23	 3.6e+05	0.86 (0.50-1.50)	0.86 (0.48-1.56)	0.94 (0.51-1.74)
+kids_cat4	3	2	3635	      1066	 3.4e+05	0.75 (0.50-1.14)	0.78 (0.48-1.27)	0.81 (0.50-1.31)
+age0
+kids_cat4	0	3	369	       114	 3.2e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+kids_cat4	1	3	1446	       418	 3.5e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+kids_cat4	2	3	252	        73	 3.5e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+kids_cat4	3	3	12842	      3739	 3.4e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+age1
+kids_cat4	0	3	132	        37	 3.5e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+kids_cat4	1	3	422	       124	 3.4e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+kids_cat4	2	3	82	        23	 3.6e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+kids_cat4	3	3	3635	      1066	 3.4e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+
+age0
+gp_number_kids	0	1	0	         .	  .	ERR IN MODEL	ERR IN MODEL	ERR IN MODEL
+gp_number_kids	1	1	394	       114	 3.5e+05	1.00 (   .-   .)	1.00 (   .-   .)	1.00 (   .-   .)
+gp_number_kids	2	1	265	        74	 3.6e+05	1.00 (0.78-1.28)	1.00 (0.78-1.29)	0.98 (0.77-1.26)
+gp_number_kids	3	1	261	        78	 3.4e+05	0.95 (0.71-1.26)	0.95 (0.71-1.26)	0.93 (0.69-1.25)
+gp_number_kids	4	1	526	       152	 3.5e+05	1.08 (0.88-1.34)	1.08 (0.87-1.33)	1.09 (0.88-1.35)
+age1
+gp_number_kids	0	1	0	         .	  .	ERR IN MODEL	ERR IN MODEL	ERR IN MODEL
+gp_number_kids	1	1	124	        37	 3.4e+05	1.00 (   .-   .)	1.00 (   .-   .)	1.00 (   .-   .)
+gp_number_kids	2	1	71	        23	 3.1e+05	0.66 (0.38-1.16)	0.67 (0.38-1.20)	0.69 (0.39-1.24)
+gp_number_kids	3	1	67	        20	 3.4e+05	0.84 (0.51-1.37)	0.81 (0.49-1.34)	0.79 (0.47-1.32)
+gp_number_kids	4	1	160	        45	 3.6e+05	1.10 (0.74-1.63)	1.09 (0.72-1.64)	1.13 (0.73-1.75)
+age0
+gp_number_kids	0	2	0	         .	  .	ERR IN MODEL	ERR IN MODEL	ERR IN MODEL
+gp_number_kids	1	2	394	       114	 3.5e+05	1.00 (   .-   .)	1.00 (   .-   .)	1.00 (   .-   .)
+gp_number_kids	2	2	265	        74	 3.6e+05	0.97 (0.70-1.36)	1.03 (0.73-1.44)	1.11 (0.80-1.54)
+gp_number_kids	3	2	261	        78	 3.4e+05	0.99 (0.74-1.32)	1.01 (0.71-1.43)	1.15 (0.79-1.65)
+gp_number_kids	4	2	526	       152	 3.5e+05	0.73 (0.54-0.97)	0.75 (0.56-1.02)	0.73 (0.53-1.00)
+age1
+gp_number_kids	0	2	0	         .	  .	ERR IN MODEL	ERR IN MODEL	ERR IN MODEL
+gp_number_kids	1	2	124	        37	 3.4e+05	1.00 (   .-   .)	1.00 (   .-   .)	1.00 (   .-   .)
+gp_number_kids	2	2	71	        23	 3.1e+05	1.00 (0.57-1.74)	0.92 (0.47-1.83)	0.62 (0.25-1.58)
+gp_number_kids	3	2	67	        20	 3.4e+05	1.17 (0.49-2.75)	1.36 (0.54-3.43)	1.32 (0.36-4.92)
+gp_number_kids	4	2	160	        45	 3.6e+05	1.22 (0.65-2.27)	1.11 (0.53-2.31)	0.97 (0.40-2.32)
+age0
+gp_number_kids	0	3	0	         .	  .	DID NOT FIT	DID NOT FIT	DID NOT FIT
+gp_number_kids	1	3	394	       114	 3.5e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+gp_number_kids	2	3	265	        74	 3.6e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+gp_number_kids	3	3	261	        78	 3.4e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+gp_number_kids	4	3	526	       152	 3.5e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+age1
+gp_number_kids	0	3	0	         .	  .	DID NOT FIT	DID NOT FIT	DID NOT FIT
+gp_number_kids	1	3	124	        37	 3.4e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+gp_number_kids	2	3	71	        23	 3.1e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+gp_number_kids	3	3	67	        20	 3.4e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+gp_number_kids	4	3	160	        45	 3.6e+05	DID NOT FIT	DID NOT FIT	DID NOT FIT
+
