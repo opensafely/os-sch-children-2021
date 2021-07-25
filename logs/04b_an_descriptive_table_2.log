@@ -1,0 +1,1093 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/04b_an_descriptive_table_2.log
+  log type:  text
+ opened on:  24 Jul 2021, 23:03:19
+
+. 
+. 
+. *****************************************************************************
+> **
+. *Generic code to output one row of table
+. cap prog drop generaterow
+
+. program define generaterow
+  1. syntax, variable(varname) condition(string)
+  2. 
+.         *put the varname and condition to left so that alignment can be check
+> ed vs shell
+.         file write tablecontent ("`variable'") _tab ("`condition'") _tab
+  3. 
+.         cou
+  4.         local overalldenom=r(N)
+  5. 
+.         cou if `variable' `condition'
+  6.         local rowdenom = r(N)
+  7.         local colpct = 100*(r(N)/`overalldenom')
+  8.         file write tablecontent (`rowdenom')  (" (") %3.1f (`colpct') (")"
+> ) _tab
+  9.         
+.         foreach outcome in covid_tpp_prob  covidadmission  covid_icu covid_de
+> ath non_covid_death {
+ 10.         cou if `outcome'==1 & `variable' `condition'
+ 11.         local pct = 100*(r(N)/`rowdenom')
+ 12.         file write tablecontent (r(N)) (" (") %4.2f  (`pct') (")") _tab 
+ 13. 
+. }
+ 14.         file write tablecontent _n 
+ 15. end
+
+. 
+. *****************************************************************************
+> **
+. *Generic code to output one section (varible) within table (calls above)
+. cap prog drop tabulatevariable
+
+. prog define tabulatevariable
+  1. syntax, variable(varname) start(real) end(real) [missing] 
+  2. 
+.         foreach varlevel of numlist `start'/`end'{
+  3.                 generaterow, variable(`variable') condition("==`varlevel'"
+> ) 
+  4.         }
+  5.         if "`missing'"!="" generaterow, variable(`variable') condition(">=
+> .") 
+  6. 
+. end
+
+. 
+. *****************************************************************************
+> **
+. 
+. 
+. forvalues x=0/1 {
+  2. 
+. *Set up output file
+. cap file close tablecontent
+  3. file open tablecontent using ./output/04b_an_descriptive_table_2_ageband`x
+> '.txt, write text replace
+  4. 
+. 
+. use $tempdir/analysis_dataset_ageband_`x', clear
+  5. 
+. gen byte cons=1
+  6. tabulatevariable, variable(cons) start(1) end(1) 
+  7. file write tablecontent _n
+  8. 
+. tabulatevariable, variable(agegroup) start(1) end(7) 
+  9. file write tablecontent _n
+ 10. 
+. tabulatevariable, variable(male) start(0) end(1) 
+ 11. file write tablecontent _n
+ 12. 
+. tabulatevariable, variable(bmicat) start(1) end(6) missing 
+ 13. file write tablecontent _n
+ 14. 
+. tabulatevariable, variable(smoke) start(1) end(3) missing 
+ 15. file write tablecontent _n
+ 16. 
+. tabulatevariable, variable(ethnicity) start(1) end(5) missing 
+ 17. file write tablecontent _n
+ 18. 
+. tabulatevariable, variable(imd) start(1) end(5) 
+ 19. file write tablecontent _n
+ 20. 
+. tabulatevariable, variable(tot_adults_hh) start(1) end(3) 
+ 21. file write tablecontent _n
+ 22. 
+. tabulatevariable, variable(bpcat) start(1) end(4) missing 
+ 23. tabulatevariable, variable(htdiag_or_highbp) start(1) end(1) 
+ 24. file write tablecontent _n
+ 25. 
+. **COMORBIDITIES
+. *RESPIRATORY
+. tabulatevariable, variable(chronic_respiratory_disease) start(1) end(1) 
+ 26. *ASTHMA
+. tabulatevariable, variable(asthma) start(1) end(1)  /*ever asthma*/
+ 27. *CARDIAC
+. tabulatevariable, variable(chronic_cardiac_disease) start(1) end(1) 
+ 28. file write tablecontent _n
+ 29. *DIABETES
+. tabulatevariable, variable(diabcat) start(1) end(6) 
+ 30. file write tablecontent _n
+ 31. *CANCER EX HAEM
+. tabulatevariable, variable(cancer_haem_cat) start(2) end(4)  /*<1, 1-4.9, 5+ 
+> years ago*/
+ 32. file write tablecontent _n
+ 33. *CANCER HAEM
+. tabulatevariable, variable(cancer_exhaem_cat) start(2) end(4)  /*<1, 1-4.9, 5
+> + years ago*/
+ 34. file write tablecontent _n
+ 35. *REDUCED KIDNEY FUNCTION
+. tabulatevariable, variable(reduced_kidney_function_cat) start(2) end(3) 
+ 36. *ESRD
+. tabulatevariable, variable(esrd) start(1) end(1) 
+ 37. *LIVER
+. tabulatevariable, variable(chronic_liver_disease) start(1) end(1) 
+ 38. *STROKE/DEMENTIA
+. tabulatevariable, variable(stroke_dementia) start(1) end(1) 
+ 39. *OTHER NEURO
+. tabulatevariable, variable(other_neuro) start(1) end(1) 
+ 40. *ORGAN TRANSPLANT
+. tabulatevariable, variable(other_transplant) start(1) end(1) 
+ 41. *SPLEEN
+. tabulatevariable, variable(asplenia) start(1) end(1) 
+ 42. *RA_SLE_PSORIASIS
+. tabulatevariable, variable(ra_sle_psoriasis) start(1) end(1) 
+ 43. *OTHER IMMUNOSUPPRESSION
+. tabulatevariable, variable(other_immuno) start(1) end(1) 
+ 44. 
+. *OTHER IMMUNOSUPPRESSION
+. tabulatevariable, variable(shield) start(1) end(1) 
+ 45. 
+. file close tablecontent
+ 46. 
+. }
+(note: file ./output/04b_an_descriptive_table_2_ageband0.txt not found)
+  16,007
+  16,007
+  14,909
+  7,153
+  12,420
+  7,472
+  5,026
+  16,007
+  3,965
+  3,655
+  1,786
+  3,087
+  1,867
+  1,217
+  16,007
+  3,520
+  3,284
+  1,590
+  2,737
+  1,642
+  1,114
+  16,007
+  3,287
+  3,061
+  1,471
+  2,532
+  1,515
+  1,057
+  16,007
+  3,568
+  3,354
+  1,580
+  2,784
+  1,669
+  1,116
+  16,007
+  1,667
+  1,555
+  726
+  1,280
+  779
+  522
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  8,101
+  7,553
+  3,645
+  6,301
+  3,823
+  2,536
+  16,007
+  7,906
+  7,356
+  3,508
+  6,119
+  3,649
+  2,490
+  16,007
+  1,442
+  1,330
+  634
+  1,124
+  674
+  450
+  16,007
+  3,566
+  3,339
+  1,619
+  2,795
+  1,722
+  1,043
+  16,007
+  2,851
+  2,675
+  1,259
+  2,185
+  1,310
+  900
+  16,007
+  2,220
+  2,054
+  980
+  1,718
+  1,044
+  707
+  16,007
+  1,372
+  1,282
+  613
+  1,028
+  639
+  428
+  16,007
+  871
+  812
+  376
+  676
+  414
+  293
+  16,007
+  3,685
+  3,417
+  1,672
+  2,894
+  1,669
+  1,205
+  16,007
+  642
+  593
+  293
+  510
+  287
+  197
+  16,007
+  301
+  285
+  155
+  243
+  133
+  86
+  16,007
+  1,954
+  1,818
+  884
+  1,533
+  924
+  608
+  16,007
+  13,110
+  12,213
+  5,821
+  10,134
+  6,128
+  4,135
+  16,007
+  12,869
+  11,984
+  5,768
+  9,968
+  5,989
+  4,046
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  1,556
+  1,449
+  706
+  1,207
+  732
+  485
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  1,582
+  1,476
+  679
+  1,245
+  751
+  495
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  11,158
+  10,395
+  4,981
+  8,643
+  5,238
+  3,492
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  3,243
+  3,023
+  1,457
+  2,535
+  1,503
+  1,030
+  16,007
+  1,606
+  1,491
+  715
+  1,242
+  731
+  504
+  16,007
+  85
+  77
+  41
+  70
+  38
+  27
+  16,007
+  114
+  106
+  43
+  85
+  45
+  39
+  16,007
+  15,808
+  14,726
+  7,069
+  12,265
+  7,389
+  4,960
+  16,007
+  1
+  1
+  0
+  1
+  0
+  1
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  25
+  23
+  11
+  19
+  10
+  9
+  16,007
+  14,385
+  13,413
+  6,463
+  11,165
+  6,732
+  4,490
+  16,007
+  1,596
+  1,472
+  679
+  1,235
+  730
+  526
+  16,007
+  14,720
+  13,723
+  6,620
+  11,418
+  6,882
+  4,601
+  16,007
+  3,187
+  2,958
+  1,395
+  2,424
+  1,496
+  1,010
+  16,007
+  1,287
+  1,191
+  543
+  996
+  596
+  400
+  16,007
+  3,137
+  2,931
+  1,430
+  2,431
+  1,470
+  976
+  16,007
+  12,359
+  11,537
+  5,517
+  9,596
+  5,736
+  3,899
+  16,007
+  407
+  376
+  192
+  312
+  203
+  118
+  16,007
+  81
+  74
+  39
+  66
+  31
+  27
+  16,007
+  2,605
+  2,408
+  1,154
+  2,027
+  1,256
+  797
+  16,007
+  545
+  505
+  243
+  413
+  243
+  179
+  16,007
+  10
+  9
+  8
+  6
+  3
+  6
+  16,007
+  55
+  54
+  25
+  41
+  28
+  16
+  16,007
+  231
+  218
+  99
+  173
+  108
+  74
+  16,007
+  2,805
+  2,620
+  1,326
+  2,186
+  1,321
+  882
+  16,007
+  61
+  56
+  18
+  42
+  32
+  17
+  16,007
+  266
+  240
+  110
+  220
+  128
+  76
+  16,007
+  2,742
+  2,573
+  1,238
+  2,142
+  1,272
+  892
+  16,007
+  65
+  60
+  37
+  49
+  25
+  20
+  16,007
+  0
+  0
+  0
+  0
+  0
+  0
+  16,007
+  5,826
+  5,411
+  2,594
+  4,499
+  2,693
+  1,850
+  16,007
+  3,195
+  2,969
+  1,433
+  2,483
+  1,484
+  970
+  16,007
+  3,175
+  2,959
+  1,385
+  2,467
+  1,489
+  1,001
+  16,007
+  3,190
+  2,960
+  1,425
+  2,474
+  1,447
+  1,035
+  16,007
+  3,176
+  2,946
+  1,408
+  2,465
+  1,470
+  999
+  16,007
+  3,193
+  2,986
+  1,426
+  2,451
+  1,477
+  990
+  16,007
+  3,150
+  2,914
+  1,427
+  2,397
+  1,483
+  999
+  16,007
+  3,192
+  2,961
+  1,427
+  2,518
+  1,450
+  993
+  16,007
+  13,503
+  12,554
+  6,055
+  10,456
+  6,291
+  4,230
+(note: file ./output/04b_an_descriptive_table_2_ageband1.txt not found)
+  4,605
+  4,605
+  4,271
+  2,102
+  3,588
+  2,188
+  1,385
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  1,105
+  1,030
+  504
+  849
+  538
+  319
+  4,605
+  2,193
+  2,045
+  993
+  1,716
+  1,042
+  665
+  4,605
+  1,307
+  1,196
+  605
+  1,023
+  608
+  401
+  4,605
+  2,355
+  2,175
+  1,094
+  1,844
+  1,118
+  721
+  4,605
+  2,250
+  2,096
+  1,008
+  1,744
+  1,070
+  664
+  4,605
+  456
+  413
+  209
+  365
+  208
+  139
+  4,605
+  1,012
+  958
+  456
+  779
+  486
+  296
+  4,605
+  814
+  752
+  370
+  629
+  384
+  252
+  4,605
+  651
+  601
+  298
+  502
+  313
+  197
+  4,605
+  420
+  387
+  187
+  338
+  190
+  123
+  4,605
+  295
+  273
+  141
+  235
+  148
+  77
+  4,605
+  957
+  887
+  441
+  740
+  459
+  301
+  4,605
+  174
+  160
+  89
+  132
+  91
+  50
+  4,605
+  101
+  94
+  53
+  86
+  44
+  38
+  4,605
+  525
+  492
+  236
+  418
+  275
+  145
+  4,605
+  3,805
+  3,525
+  1,724
+  2,952
+  1,778
+  1,152
+  4,605
+  3,621
+  3,361
+  1,645
+  2,789
+  1,719
+  1,084
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  493
+  458
+  225
+  396
+  238
+  152
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  491
+  452
+  232
+  403
+  231
+  149
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  3,237
+  2,996
+  1,448
+  2,517
+  1,565
+  995
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  916
+  851
+  453
+  719
+  412
+  257
+  4,605
+  452
+  424
+  201
+  352
+  211
+  133
+  4,605
+  31
+  30
+  11
+  26
+  18
+  11
+  4,605
+  39
+  37
+  16
+  36
+  16
+  13
+  4,605
+  4,535
+  4,204
+  2,075
+  3,526
+  2,154
+  1,361
+  4,605
+  1
+  1
+  1
+  0
+  1
+  0
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  8
+  8
+  3
+  7
+  5
+  2
+  4,605
+  4,161
+  3,856
+  1,903
+  3,241
+  1,986
+  1,247
+  4,605
+  435
+  406
+  195
+  340
+  196
+  136
+  4,605
+  4,244
+  3,933
+  1,943
+  3,306
+  2,024
+  1,278
+  4,605
+  933
+  846
+  424
+  719
+  444
+  278
+  4,605
+  374
+  348
+  164
+  277
+  175
+  103
+  4,605
+  913
+  862
+  412
+  714
+  430
+  267
+  4,605
+  3,486
+  3,223
+  1,568
+  2,717
+  1,650
+  1,059
+  4,605
+  99
+  93
+  37
+  76
+  56
+  27
+  4,605
+  30
+  27
+  17
+  24
+  15
+  10
+  4,605
+  814
+  763
+  398
+  634
+  378
+  236
+  4,605
+  172
+  161
+  81
+  133
+  86
+  52
+  4,605
+  4
+  4
+  1
+  4
+  3
+  1
+  4,605
+  29
+  26
+  16
+  23
+  16
+  9
+  4,605
+  73
+  68
+  31
+  59
+  33
+  25
+  4,605
+  832
+  764
+  363
+  632
+  400
+  256
+  4,605
+  18
+  15
+  8
+  16
+  11
+  1
+  4,605
+  82
+  76
+  45
+  68
+  36
+  28
+  4,605
+  854
+  804
+  396
+  656
+  406
+  262
+  4,605
+  200
+  182
+  90
+  156
+  94
+  59
+  4,605
+  0
+  0
+  0
+  0
+  0
+  0
+  4,605
+  1,625
+  1,520
+  723
+  1,278
+  797
+  485
+  4,605
+  895
+  823
+  416
+  688
+  455
+  249
+  4,605
+  910
+  844
+  403
+  693
+  433
+  286
+  4,605
+  931
+  870
+  437
+  729
+  453
+  275
+  4,605
+  927
+  856
+  431
+  721
+  401
+  303
+  4,605
+  908
+  848
+  410
+  710
+  445
+  267
+  4,605
+  932
+  876
+  425
+  713
+  443
+  288
+  4,605
+  929
+  866
+  421
+  702
+  451
+  261
+  4,605
+  3,897
+  3,616
+  1,768
+  3,030
+  1,866
+  1,172
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/04b_an_descriptive_table_2.log
+  log type:  text
+ closed on:  24 Jul 2021, 23:03:20
+-------------------------------------------------------------------------------
