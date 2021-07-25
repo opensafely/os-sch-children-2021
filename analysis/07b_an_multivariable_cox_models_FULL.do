@@ -45,6 +45,8 @@ global comordidadjlist  i.htdiag_or_highbp				///
 			i.ra_sle_psoriasis  			///
 			i.other_immuno		
 
+local outcome `1' 
+
 ************************************************************************************
 *First clean up all old saved estimates for this outcome
 *This is to guard against accidentally displaying left-behind results from old runs
@@ -99,9 +101,9 @@ foreach exposure_type in kids_cat4  {
 basecoxmodel, exposure("i.`exposure_type'") age("age1 age2 age3") 
 if _rc==0{
 estimates
-estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_MAINFULLYADJMODEL_ageband_`x'_timeperiod`period'", replace
+estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'", replace
 	*  Proportional Hazards test 
-	* Based on Schoenfeld residuals
+	* Based on Schoenfeld residuals	
 	timer clear 
 	timer on 1
 	if e(N_fail)>0 estat phtest, d
@@ -115,11 +117,11 @@ else di "WARNING AGE SPLINE MODEL DID NOT FIT (OUTCOME `outcome')"
 
 foreach exposure_type in  gp_number_kids {
 *Age spline model (not adj ethnicity)
-cap erase "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_MAINFULLYADJMODEL_ageband_`x'"
+cap erase "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'"
 basecoxmodel, exposure("i.`exposure_type'") age("age1 age2 age3") 
 if _rc==0{
 estimates
-estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_MAINFULLYADJMODEL_ageband_`x'_timeperiod`period'", replace
+estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'", replace
 }
 else di "WARNING AGE SPLINE MODEL DID NOT FIT (OUTCOME `outcome')"
 

@@ -53,12 +53,12 @@ local outcome `1'
 *First clean up all old saved estimates for this outcome
 *This is to guard against accidentally displaying left-behind results from old runs
 ************************************************************************************
-cap erase ./output/an_interaction_cox_models_`outcome'_`exposure_type'_male_MAINFULLYADJMODEL_agespline_bmicat_noeth_ageband_0.ster
-cap erase ./output/an_interaction_cox_models_`outcome'_`exposure_type'_male_MAINFULLYADJMODEL_agespline_bmicat_noeth_ageband_1.ster
+cap erase ./output/an_interaction_cox_models_`outcome'_`exposure_type'_male_FULLYADJMODEL_agespline_bmicat_noeth_ageband_0.ster
+cap erase ./output/an_interaction_cox_models_`outcome'_`exposure_type'_male_FULLYADJMODEL_agespline_bmicat_noeth_ageband_1.ster
 
 
 cap log close
-log using "$logdir/10_an_interaction_cox_models_sex_`outcome'", text replace
+log using "$logdir/10_an_interaction_cox_models_vaccine_`outcome'", text replace
 
 
 *PROG TO DEFINE THE BASIC COX MODEL WITH OPTIONS FOR HANDLING OF AGE, BMI, ETHNICITY:
@@ -95,7 +95,6 @@ replace vaccine=2 if vaccine2==2
 bysort patient: replace vaccine=0 if _N==1
 sort patient vaccine
 bysort patient: replace vaccine=2 if _N==3 & vaccine2==3
-br patient_id first second _t* vaccine* enter dereg died_date_ons
 
 recode `outcome' .=0 
 tab vaccine

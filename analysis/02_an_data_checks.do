@@ -147,7 +147,7 @@ foreach outcome of any covid_primary_care_codes positive_SGSS non_covid_death  c
 summ  `outcome', format d 
 summ patient_id if `outcome'==1 & date_`outcome'<=22500
 local total_`outcome'=`r(N)'
-hist date_`outcome' if date_`outcome'<=22500, saving(`outcome', replace) ///
+hist date_`outcome' if date_`outcome'<=22500, saving(output/`outcome', replace) ///
 xlabel(22281 22340 22401 22462,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq  ///
 yscale(range(0 3000)) ylab(0 (10000) 30000, labsize(vsmall)) ytitle("Number", size(vsmall))  ///
@@ -170,7 +170,7 @@ summ has_12_m
 foreach vacc of any covid_vacc_date covid_vacc_second_dose_date   {
 summ  `vacc', format d 
 summ patient_id if `vacc'!=. 
-hist `vacc' if `vacc'<=22500, saving(`vacc', replace) ///
+hist `vacc' if `vacc'<=22500, saving(output/`vacc', replace) ///
 xlabel(22281 22340 22401 22462,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq  ///
 yscale(range(0 3000)) ylab(0 (1000) 3000, labsize(vsmall)) ytitle("Number", size(vsmall))  ///
