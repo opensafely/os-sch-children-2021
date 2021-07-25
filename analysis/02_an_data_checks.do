@@ -158,10 +158,6 @@ title("N=`total_`outcome''", size(vsmall))
 graph combine output/covid_tpp_prob.gph output/covidadmission.gph output/covid_icu.gph output/covid_death.gph, graphregion(color(white))
 graph export "output/01_histogram_outcomes.svg", as(svg) replace 
 
-* Combine infection histograms
-graph combine covid_primary_care_codes.gph positive_SGSS.gph, graphregion(color(white))
-graph export "output/01_histogram_infection_outcomes.svg", as(svg) replace 
-
 *censor dates
 summ dereg_date, format
 summ has_12_m
