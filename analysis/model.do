@@ -12,13 +12,13 @@ set more off
 ***********************HOUSE-KEEPING*******************************************
 * Create directories required 
 capture mkdir output
-capture mkdir log
+capture mkdir logs
 capture mkdir tempdata
 
 
 * Set globals that will print in programs and direct output
 global outdir  	  "output" 
-global logdir     "log"
+global logdir     "logs"
 global tempdir    "tempdata"
 
 ********************************************************************************
@@ -60,12 +60,12 @@ winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "07b_an_multivariable_cox_
 
 *INTERACTIONS 
 *Sex
-foreach outcome of any  non_covid_death covid_tpp_prob covid_death covid_icu covidadmission   {
+foreach outcome of any covid_tpp_prob covid_death covid_icu covidadmission   {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_sex" `outcome'	
 }
 
 *Vaccine
-foreach outcome of any  non_covid_death covid_tpp_prob covid_death covid_icu covidadmission   {
+foreach outcome of any covid_tpp_prob covid_death covid_icu covidadmission   {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_vaccine" `outcome'
 }
 

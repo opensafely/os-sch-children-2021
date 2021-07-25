@@ -59,6 +59,206 @@ actions:
         log: logs/04b_an_descriptive_table_2.log
         data: "output/04b_an_descriptive_table_2_ageband*.txt"
 
+  06_univariate_analysis:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/06_univariate_analysis.do 
+    outputs:
+      moderately_sensitive:
+        log: logs/06_univariate_analysis.log
+        data: "output/an_univariable_cox_models_*_AGESEX_ageband_*.ster"
+
+  07a_an_multivariable_cox_models_demogADJ:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07a_an_multivariable_cox_models_demogADJ.do 
+    outputs:
+      moderately_sensitive:
+        log: logs/07a_an_multivariable_cox_models.log
+        data: "output/an_multivariate_cox_models_*_DEMOGADJ_ageband_*.ster"  
+
+  07b_an_multivariable_cox_models_FULL_covid_death:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL.do covid_death 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covid_death.log
+        data: "output/an_multivariate_cox_models_covid_death_*_FULLYADJMODEL_ageband_*.ster"
+
+  07b_an_multivariable_cox_models_FULL_covid_tpp_prob:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL.do covid_tpp_prob 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covid_tpp_prob.log
+        data: "output/an_multivariate_cox_models_covid_tpp_prob_*_FULLYADJMODEL_ageband_*.ster"
+
+  07b_an_multivariable_cox_models_FULL_covid_icu:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL.do covid_icu 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covid_icu.log
+        data: "output/an_multivariate_cox_models_covid_icu_*_FULLYADJMODEL_ageband_*.ster"
+
+  07b_an_multivariable_cox_models_FULL_covidadmission:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL.do covidadmission 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covidadmission.log
+        data: "output/an_multivariate_cox_models_covidadmission_*_FULLYADJMODEL_ageband_*.ster"
+
+  08_an_tablecontent_HRtable_covid_tpp_prob:
+    needs:
+      - 01_cr_analysis_dataset
+      - 06_univariate_analysis
+      - 07a_an_multivariable_cox_models_demogADJ
+      - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob
+    run: stata-mp:latest analysis/08_an_tablecontent_HRtable.do covid_tpp_prob
+    outputs:
+      moderately_sensitive:
+        log: logs/08_an_tablecontent_HRtable_covid_tpp_prob.log
+        data: "output/an_tablecontents_HRtable_covid_tpp_prob.txt"
+
+  08_an_tablecontent_HRtable_covid_death:
+    needs:
+      - 01_cr_analysis_dataset
+      - 06_univariate_analysis
+      - 07a_an_multivariable_cox_models_demogADJ
+      - 07b_an_multivariable_cox_models_FULL_covid_death
+    run: stata-mp:latest analysis/08_an_tablecontent_HRtable.do covid_death
+    outputs:
+      moderately_sensitive:
+        log: logs/08_an_tablecontent_HRtable_covid_death.log
+        data: "output/an_tablecontents_HRtable_covid_death.txt"
+
+  08_an_tablecontent_HRtable_covid_icu:
+    needs:
+      - 01_cr_analysis_dataset
+      - 06_univariate_analysis
+      - 07a_an_multivariable_cox_models_demogADJ
+      - 07b_an_multivariable_cox_models_FULL_covid_icu
+    run: stata-mp:latest analysis/08_an_tablecontent_HRtable.do covid_icu
+    outputs:
+      moderately_sensitive:
+        log: logs/08_an_tablecontent_HRtable_covid_icu.log
+        data: "output/an_tablecontents_HRtable_covid_icu.txt"
+
+  08_an_tablecontent_HRtable_covidadmission:
+    needs:
+      - 01_cr_analysis_dataset
+      - 06_univariate_analysis
+      - 07a_an_multivariable_cox_models_demogADJ
+      - 07b_an_multivariable_cox_models_FULL_covidadmission
+    run: stata-mp:latest analysis/08_an_tablecontent_HRtable.do covidadmission
+    outputs:
+      moderately_sensitive:
+        log: logs/08_an_tablecontent_HRtable_covidadmission.log
+        data: "output/an_tablecontents_HRtable_covidadmission.txt"
+
+  10_an_interaction_cox_models_sex_covid_death:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_sex.do covid_death 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_sex_covid_death.log
+        data: "output/an_interaction_cox_models_covid_death_*_male_*.ster"
+
+  10_an_interaction_cox_models_sex_covid_tpp_prob:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_sex.do covid_tpp_prob 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_sex_covid_tpp_prob.log
+        data: "output/an_interaction_cox_models_covid_tpp_prob_*_male_*.ster"
+
+  10_an_interaction_cox_models_sex_covid_icu:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_sex.do covid_icu 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_sex_covid_icu.log
+        data: "output/an_interaction_cox_models_covid_icu_*_male_*.ster"
+
+  10_an_interaction_cox_models_sex_covidadmission:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_sex.do covidadmission 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_sex_covidadmission.log
+        data: "output/an_interaction_cox_models_covidadmission_*_male_*.ster"
+
+  10_an_interaction_cox_models_vaccine_covid_death:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_vaccine.do covid_death 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covid_death.log
+        data: "output/an_interaction_cox_models_covid_death_*_vaccine_*.ster"
+
+  10_an_interaction_cox_models_vaccine_covid_tpp_prob:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_vaccine.do covid_tpp_prob 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covid_tpp_prob.log
+        data: "output/an_interaction_cox_models_covid_tpp_prob_*_vaccine_*.ster"
+
+  10_an_interaction_cox_models_vaccine_covid_icu:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_vaccine.do covid_icu 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covid_icu.log
+        data: "output/an_interaction_cox_models_covid_icu_*_vaccine_*.ster"
+
+  10_an_interaction_cox_models_vaccine_covidadmission:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_vaccine.do covidadmission 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covidadmission.log
+        data: "output/an_interaction_cox_models_covidadmission_*_vaccine_*.ster"
+
+  11_an_interaction_HR_tables_forest_covid_tpp_prob:
+    needs:
+      - 10_an_interaction_cox_models_vaccine_covid_tpp_prob
+      - 10_an_interaction_cox_models_sex_covid_tpp_prob
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest.do covid_tpp_prob
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covid_tpp_prob.log
+        data: "output/11_an_int_tab_contents_HRtable_covid_tpp_prob.txt"
+
+  11_an_interaction_HR_tables_forest_covid_death:
+    needs:
+      - 10_an_interaction_cox_models_vaccine_covid_death
+      - 10_an_interaction_cox_models_sex_covid_death
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest.do covid_death
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covid_death.log
+        data: "output/11_an_int_tab_contents_HRtable_covid_death.txt"
+
+  11_an_interaction_HR_tables_forest_covid_icu:
+    needs:
+      - 10_an_interaction_cox_models_vaccine_covid_icu
+      - 10_an_interaction_cox_models_sex_covid_icu
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest.do covid_icu
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covid_icu.log
+        data: "output/11_an_int_tab_contents_HRtable_covid_icu.txt"
+
+  11_an_interaction_HR_tables_forest_covidadmission:
+    needs:
+      - 10_an_interaction_cox_models_vaccine_covidadmission
+      - 10_an_interaction_cox_models_sex_covidadmission
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest.do covidadmission
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covidadmission.log
+        data: "output/11_an_int_tab_contents_HRtable_covidadmission.txt"
+
   run_all:
     needs:
       - 02_an_data_checks
@@ -66,6 +266,12 @@ actions:
       - 03b_an_descriptive_table_1
       - 04a_an_descriptive_tables
       - 04b_an_descriptive_table_2
+      - 06_univariate_analysis
+      - 07a_an_multivariable_cox_models_demogADJ
+      - 08_an_tablecontent_HRtable_covidadmission
+      - 08_an_tablecontent_HRtable_covid_icu
+      - 08_an_tablecontent_HRtable_covid_death
+      - 08_an_tablecontent_HRtable_covid_tpp_prob
     # In order to be valid this action needs to define a run commmand and
     # some output. We don't really care what these are but the below seems to
     # do the trick.

@@ -1,0 +1,631 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/08_an_tablecontent_HRtable_covidadmission.log
+  log type:  text
+ opened on:  25 Jul 2021, 08:17:34
+
+. 
+. 
+. *****************************************************************************
+> ******************************************
+. *Generic code to ouput the HRs across outcomes for all levels of a particular
+>  variables, in the right shape for table
+. cap prog drop outputHRsforvar
+
+. prog define outputHRsforvar
+  1. syntax, variable(string) min(real) max(real) outcome(string)
+  2. foreach period in 1 2 3 {
+  3. forvalues x=0/1 {
+  4. file write tablecontents ("age") ("`x'") _n
+  5. forvalues i=`min'/`max'{
+  6. local endwith "_tab"
+  7. 
+.         *put the varname and condition to left so that alignment can be check
+> ed vs shell
+.         file write tablecontents ("`variable'") _tab ("`i'") _tab ("`period'"
+> ) _tab 
+  8.         
+.         use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.
+> dta", clear
+  9.         *put total N, PYFU and Rate in table
+.         cou if `variable' == `i' & _d == 1
+ 10.         local event = r(N)
+ 11.     bysort `variable': egen total_follow_up = total(_t)
+ 12.         su total_follow_up if `variable' == `i'
+ 13.         local person_days = r(mean)
+ 14.         local person_years=`person_days'/365.25
+ 15.         local rate = 100000*(`event'/`person_years')
+ 16.         
+.         file write tablecontents (`event') _tab %10.0f (`person_years') _tab 
+> %3.2f (`rate') _tab
+ 17.         drop total_follow_up
+ 18.         
+.         
+.         *models
+.         foreach modeltype of any minadj demogadj fulladj  {
+ 19.         
+.                 local noestimatesflag 0 /*reset*/
+ 20. 
+. *CHANGE THE OUTCOME BELOW TO LAST IF BRINGING IN MORE COLS
+.                 if "`modeltype'"=="fulladj" local endwith "_n"
+ 21. 
+.                 ***********************
+.                 *1) GET THE RIGHT ESTIMATES INTO MEMORY
+.                 
+.                 if "`modeltype'"=="minadj" {
+ 22.                         cap estimates use ./output/an_univariable_cox_mode
+> ls_`variable'_`outcome'_AGESEX_ageband_`x'_timeperiod`period'
+ 23.                         if _rc!=0 local noestimatesflag 1
+ 24.                         }
+ 25.                 if "`modeltype'"=="demogadj" {
+ 26.                         cap estimates use ./output/an_multivariate_cox_mod
+> els_`outcome'_`variable'_DEMOGADJ_ageband_`x'_timeperiod`period'
+ 27.                         if _rc!=0 local noestimatesflag 1
+ 28.                         }
+ 29.                 if "`modeltype'"=="fulladj" {
+ 30.                         cap estimates use ./output/an_multivariate_cox_mod
+> els_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period' 
+ 31.                         if _rc!=0 local noestimatesflag 1
+ 32.                         }
+ 33.                 
+.                 ***********************
+.                 *2) WRITE THE HRs TO THE OUTPUT FILE
+.                 
+.                 if `noestimatesflag'==0{
+ 34.                         cap lincom `i'.`variable', eform
+ 35.                         if _rc==0 file write tablecontents %4.2f (r(estima
+> te)) (" (") %4.2f (r(lb)) ("-") %4.2f (r(ub)) (")") `endwith'
+ 36.                                 else file write tablecontents %4.2f ("ERR 
+> IN MODEL") `endwith'
+ 37.                         }
+ 38.                         else file write tablecontents %4.2f ("DID NOT FIT"
+> ) `endwith' 
+ 39.                         
+.                 *3) Save the estimates for plotting
+.                 if `noestimatesflag'==0{
+ 40.                         if "`modeltype'"=="fulladj" {
+ 41.                                 local hr = r(estimate)
+ 42.                                 local lb = r(lb)
+ 43.                                 local ub = r(ub)
+ 44.                                 cap gen `variable'=.
+ 45.                                 testparm i.`variable'
+ 46.                                 *drop `variable'
+.                                 }
+ 47.                 }       
+ 48.                 } /*min adj, full adj*/
+ 49.                 
+. } /*variable levels*/
+ 50. 
+. } /*agebands*/
+ 51. 
+. } /*Waves*/
+ 52. end
+
+. *****************************************************************************
+> ******************************************
+. /*Generic code to write a full row of "ref category" to the output file
+> cap prog drop refline
+> prog define refline
+> file write tablecontents _tab _tab ("1.00 (ref)") _tab ("1.00 (ref)")  _n
+> end*/
+. *****************************************************************************
+> ******************************************
+. 
+. *MAIN CODE TO PRODUCE TABLE CONTENTS
+. 
+. cap file close tablecontents
+
+. file open tablecontents using ./output/an_tablecontents_HRtable_`outcome'.txt
+> , t w replace 
+(note: file ./output/an_tablecontents_HRtable_covidadmission.txt not found)
+
+. 
+. *Primary exposure
+. outputHRsforvar, variable("kids_cat4") min(0) max(3) outcome(`outcome')
+  166
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        405       34592           0      34592      34592
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.54
+         Prob > chi2 =    0.9093
+  684
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,561      135701           0     135701     135701
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.54
+         Prob > chi2 =    0.9093
+  123
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        273       24002           0      24002      24002
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.54
+         Prob > chi2 =    0.9093
+  6,119
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     13,768     1181856           0    1181856    1181856
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.54
+         Prob > chi2 =    0.9093
+  52
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        143       11582           0      11582      11582
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    4.14
+         Prob > chi2 =    0.2472
+  193
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        455       38247           0      38247      38247
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    4.14
+         Prob > chi2 =    0.2472
+  45
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         85        6806           0       6806       6806
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    4.14
+         Prob > chi2 =    0.2472
+  1,796
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      3,922      333757           0     333757     333757
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    4.14
+         Prob > chi2 =    0.2472
+  166
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        405       34592           0      34592      34592
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.82
+         Prob > chi2 =    0.8449
+  684
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,561      135701           0     135701     135701
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.82
+         Prob > chi2 =    0.8449
+  123
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        273       24002           0      24002      24002
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.82
+         Prob > chi2 =    0.8449
+  6,119
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     13,768     1181856           0    1181856    1181856
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.82
+         Prob > chi2 =    0.8449
+  52
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        143       11582           0      11582      11582
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    4.16
+         Prob > chi2 =    0.2450
+  193
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        455       38247           0      38247      38247
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    4.16
+         Prob > chi2 =    0.2450
+  45
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         85        6806           0       6806       6806
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    4.16
+         Prob > chi2 =    0.2450
+  1,796
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      3,922      333757           0     333757     333757
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    4.16
+         Prob > chi2 =    0.2450
+  166
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        405       34592           0      34592      34592
+  684
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,561      135701           0     135701     135701
+  123
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        273       24002           0      24002      24002
+  6,119
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     13,768     1181856           0    1181856    1181856
+  52
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        143       11582           0      11582      11582
+  193
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        455       38247           0      38247      38247
+  45
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         85        6806           0       6806       6806
+  1,796
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      3,922      333757           0     333757     333757
+
+. file write tablecontents _n
+
+. 
+. *Number kids
+. outputHRsforvar, variable("gp_number_kids") min(0) max(4) outcome(`outcome')
+  0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          0
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    1.28
+         Prob > chi2 =    0.7327
+  189
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        424       36673           0      36673      36673
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    1.28
+         Prob > chi2 =    0.7327
+  124
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        284       24837           0      24837      24837
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    1.28
+         Prob > chi2 =    0.7327
+  125
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        279       24948           0      24948      24948
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    1.28
+         Prob > chi2 =    0.7327
+  246
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        574       49243           0      49243      49243
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    1.28
+         Prob > chi2 =    0.7327
+  0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          0
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    3.63
+         Prob > chi2 =    0.3040
+  58
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        136       10770           0      10770      10770
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    3.63
+         Prob > chi2 =    0.3040
+  31
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         76        7348           0       7348       7348
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    3.63
+         Prob > chi2 =    0.3040
+  37
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         74        5954           0       5954       5954
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    3.63
+         Prob > chi2 =    0.3040
+  67
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        169       14175           0      14175      14175
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    3.63
+         Prob > chi2 =    0.3040
+  0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          0
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    2.20
+         Prob > chi2 =    0.5318
+  189
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        424       36673           0      36673      36673
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    2.20
+         Prob > chi2 =    0.5318
+  124
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        284       24837           0      24837      24837
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    2.20
+         Prob > chi2 =    0.5318
+  125
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        279       24948           0      24948      24948
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    2.20
+         Prob > chi2 =    0.5318
+  246
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        574       49243           0      49243      49243
+
+ ( 1)  2.gp_number_kids = 0
+ ( 2)  3.gp_number_kids = 0
+ ( 3)  4.gp_number_kids = 0
+
+           chi2(  3) =    2.20
+         Prob > chi2 =    0.5318
+  0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          0
+  58
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        136       10770           0      10770      10770
+  31
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         76        7348           0       7348       7348
+  37
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         74        5954           0       5954       5954
+  67
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        169       14175           0      14175      14175
+  0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          0
+  189
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        424       36673           0      36673      36673
+  124
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        284       24837           0      24837      24837
+  125
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        279       24948           0      24948      24948
+  246
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        574       49243           0      49243      49243
+  0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          0
+  58
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        136       10770           0      10770      10770
+  31
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         76        7348           0       7348       7348
+  37
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         74        5954           0       5954       5954
+  67
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        169       14175           0      14175      14175
+
+. file write tablecontents _n 
+
+. 
+. file close tablecontents
+
+. 
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/08_an_tablecontent_HRtable_covidadmission.log
+  log type:  text
+ closed on:  25 Jul 2021, 08:17:36
+-------------------------------------------------------------------------------

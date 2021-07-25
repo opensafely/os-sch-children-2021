@@ -71,7 +71,7 @@ local endwith "_tab"
 			if _rc!=0 local noestimatesflag 1
 			}
 		if "`modeltype'"=="fulladj" {
-			cap estimates use ./output/an_multivariate_cox_models_`outcome'_`variable'_MAINFULLYADJMODEL_ageband_`x'_timeperiod`period' 
+			cap estimates use ./output/an_multivariate_cox_models_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period' 
 			if _rc!=0 local noestimatesflag 1
 			}
 		
