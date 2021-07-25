@@ -143,7 +143,7 @@ di d(01july2021)
 
 
 
-foreach outcome of any covid_primary_care_codes positive_SGSS non_covid_death  covid_tpp_prob covidadmission covid_icu covid_death    {
+foreach outcome of any covid_primary_care_codes positive_SGSS  covid_tpp_prob covidadmission covid_icu covid_death    {
 summ  `outcome', format d 
 summ patient_id if `outcome'==1 & date_`outcome'<=22500
 local total_`outcome'=`r(N)'
@@ -155,7 +155,7 @@ title("N=`total_`outcome''", size(vsmall))
 }
 
 * Combine histograms
-graph combine covid_tpp_prob.gph covidadmission.gph covid_icu.gph covid_death.gph non_covid_death.gph  , graphregion(color(white))
+graph combine output/covid_tpp_prob.gph output/covidadmission.gph output/covid_icu.gph output/covid_death.gph, graphregion(color(white))
 graph export "output/01_histogram_outcomes.svg", as(svg) replace 
 
 * Combine infection histograms
@@ -177,7 +177,7 @@ yscale(range(0 3000)) ylab(0 (1000) 3000, labsize(vsmall)) ytitle("Number", size
 title("N=`total_`outcome''", size(vsmall)) 
 }
 *Combine histograms
-graph combine covid_vacc_date.gph covid_vacc_second_dose_date.gph , graphregion(color(white))
+graph combine output/covid_vacc_date.gph output/covid_vacc_second_dose_date.gph , graphregion(color(white))
 graph export "output/01_histogram_vaccinations.svg", as(svg) replace 
 
 
