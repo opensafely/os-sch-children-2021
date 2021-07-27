@@ -1,18 +1,12 @@
 # IMPORT STATEMENTS
 # This imports the cohort extractor package. This can be downloaded via pip
-from cohortextractor import (
-    StudyDefinition,
-    patients,
-    codelist_from_csv,
-    codelist,
-    combine_codelists,
-    filter_codes_by_category,
-)
+from cohortextractor import (StudyDefinition, codelist, codelist_from_csv,
+                             combine_codelists, filter_codes_by_category,
+                             patients)
 
 # IMPORT CODELIST DEFINITIONS FROM CODELIST.PY (WHICH PULLS THEM FROM
 # CODELIST FOLDER
 from codelists import *
-
 
 # STUDY DEFINITION
 # Defines both the study population and points to the important covariates and outcomes
