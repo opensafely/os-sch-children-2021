@@ -22,103 +22,98 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.2,
     },
-
-   # STUDY POPULATION
+    # STUDY POPULATION
     population=patients.registered_with_one_practice_between(
         "2020-09-20", "2020-12-20"
     ),
-
     dereg_date=patients.date_deregistered_from_all_supported_practices(
-        on_or_after="2020-12-20", date_format="YYYY-MM",
+        on_or_after="2020-12-20",
+        date_format="YYYY-MM",
     ),
-
     # FOLLOW UP
     has_12_m_follow_up=patients.registered_with_one_practice_between(
-        "2019-12-19", "2020-12-20", ### 12 months prior to 1st Feb 2020
+        "2019-12-19",
+        "2020-12-20",  ### 12 months prior to 1st Feb 2020
         return_expectations={
-            "incidence" : 0.95,
-        }
+            "incidence": 0.95,
+        },
     ),
-
     # OUTCOMES
     died_ons_covid_flag_any=patients.with_these_codes_on_death_certificate(
         covid_codelist,
         on_or_after="2020-12-20",
         match_only_underlying_cause=False,
-        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence" : 0.6},
+        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence": 0.6},
     ),
     died_ons_covid_flag_underlying=patients.with_these_codes_on_death_certificate(
         covid_codelist,
         on_or_after="2020-12-20",
         match_only_underlying_cause=True,
-        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence" : 0.6},
+        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence": 0.6},
     ),
     died_date_ons=patients.died_from_any_cause(
         on_or_after="2020-12-20",
         returning="date_of_death",
         include_month=True,
         include_day=True,
-        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence" : 0.8},
+        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence": 0.8},
     ),
-    
     covid_icu_date=patients.admitted_to_icu(
         on_or_after="2020-12-20",
         include_day=True,
         returning="date_admitted",
         find_first_match_in_period=True,
-        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence" : 0.8},
+        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence": 0.8},
     ),
-
-   covid_tpp_probable=patients.with_these_clinical_events(
-        combine_codelists(covid_identification_in_primary_care_case_codes_clinical,
-                          covid_identification_in_primary_care_case_codes_test,
-                          covid_identification_in_primary_care_case_codes_seq),
+    covid_tpp_probable=patients.with_these_clinical_events(
+        combine_codelists(
+            covid_identification_in_primary_care_case_codes_clinical,
+            covid_identification_in_primary_care_case_codes_test,
+            covid_identification_in_primary_care_case_codes_seq,
+        ),
         return_first_date_in_period=True,
         include_day=True,
-        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence" : 0.95},
-    ), 
-
-   covid_tpp_codes_clinical=patients.with_these_clinical_events(
+        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence": 0.95},
+    ),
+    covid_tpp_codes_clinical=patients.with_these_clinical_events(
         combine_codelists(covid_identification_in_primary_care_case_codes_clinical),
         return_first_date_in_period=True,
         include_day=True,
-        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence" : 0.95},
-    ), 
-
-   covid_tpp_codes_test=patients.with_these_clinical_events(
+        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence": 0.95},
+    ),
+    covid_tpp_codes_test=patients.with_these_clinical_events(
         combine_codelists(covid_identification_in_primary_care_case_codes_test),
         return_first_date_in_period=True,
         include_day=True,
-        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence" : 0.95},
-    ), 
-
-   covid_tpp_codes_seq=patients.with_these_clinical_events(
+        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence": 0.95},
+    ),
+    covid_tpp_codes_seq=patients.with_these_clinical_events(
         combine_codelists(covid_identification_in_primary_care_case_codes_seq),
         return_first_date_in_period=True,
         include_day=True,
-        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence" : 0.95},
-    ), 
-   
+        return_expectations={"date": {"earliest": "2020-12-20"}, "incidence": 0.95},
+    ),
     covid_admission_date=patients.admitted_to_hospital(
-        returning= "date_admitted" ,  # defaults to "binary_flag"
+        returning="date_admitted",  # defaults to "binary_flag"
         with_these_diagnoses=covid_codelist,  # optional
         on_or_after="2020-12-20",
-        find_first_match_in_period=True,  
-        date_format="YYYY-MM-DD",  
-        return_expectations={"date": {"earliest": "2020-11-20"}, "incidence" : 0.95},
-   ),
-	covid_admission_primary_diagnosis=patients.admitted_to_hospital(
+        find_first_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        return_expectations={"date": {"earliest": "2020-11-20"}, "incidence": 0.95},
+    ),
+    covid_admission_primary_diagnosis=patients.admitted_to_hospital(
         returning="primary_diagnosis",
         with_these_diagnoses=covid_codelist,  # optional
         on_or_after="2020-12-20",
-        find_first_match_in_period=True,  
-        date_format="YYYY-MM-DD", 
-        return_expectations={"date": {"earliest": "2020-11-20"},"incidence" : 0.95,
-            "category": {"ratios": {"U071":0.5, "U072":0.5}},
+        find_first_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        return_expectations={
+            "date": {"earliest": "2020-11-20"},
+            "incidence": 0.95,
+            "category": {"ratios": {"U071": 0.5, "U072": 0.5}},
         },
     ),
-
-	positive_covid_test_ever=patients.with_test_result_in_sgss(
+    positive_covid_test_ever=patients.with_test_result_in_sgss(
         pathogen="SARS-CoV-2",
         test_result="positive",
         on_or_after="2020-12-20",
@@ -130,36 +125,34 @@ study = StudyDefinition(
             "rate": "exponential_increase",
         },
     ),
-
     sgtf=patients.with_test_result_in_sgss(
-       pathogen="SARS-CoV-2",
-       test_result="positive",
-       find_first_match_in_period=True,
-       between=["2020-07-16", "2021-01-11"],
-       returning="s_gene_target_failure",
-       return_expectations={
+        pathogen="SARS-CoV-2",
+        test_result="positive",
+        find_first_match_in_period=True,
+        between=["2020-07-16", "2021-01-11"],
+        returning="s_gene_target_failure",
+        return_expectations={
             "rate": "universal",
             "category": {"ratios": {"0": 0.4, "1": 0.4, "9": 0.1, "": 0.1}},
-       }
-    ), 
-
+        },
+    ),
     lft_pcr=patients.with_test_result_in_sgss(
-       pathogen="SARS-CoV-2",
-       test_result="positive",
-       find_first_match_in_period=True,
-       between=["2020-07-16", "2021-01-11"],
-       returning="case_category",
-       return_expectations={
+        pathogen="SARS-CoV-2",
+        test_result="positive",
+        find_first_match_in_period=True,
+        between=["2020-07-16", "2021-01-11"],
+        returning="case_category",
+        return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"LFT_Only": 0.4, "PCR_Only": 0.4, "LFT_WithPCR": 0.2}},
-       },
-    ), 
-
-
-###############################################################################
-# COVID VACCINATION
-###############################################################################
-# any COVID vaccination (first dose)
+            "category": {
+                "ratios": {"LFT_Only": 0.4, "PCR_Only": 0.4, "LFT_WithPCR": 0.2}
+            },
+        },
+    ),
+    ###############################################################################
+    # COVID VACCINATION
+    ###############################################################################
+    # any COVID vaccination (first dose)
     covid_vacc_date=patients.with_tpp_vaccination_record(
         target_disease_matches="SARS-2 CORONAVIRUS",
         on_or_after="2020-12-01",  # check all december to date
@@ -171,7 +164,7 @@ study = StudyDefinition(
                 "earliest": "2020-12-08",  # first vaccine administered on the 8/12
                 "latest": "2021-07-16",
             },
-                "incidence":0.5
+            "incidence": 0.5,
         },
     ),
     # SECOND DOSE COVID VACCINATION
@@ -186,10 +179,9 @@ study = StudyDefinition(
                 "earliest": "2020-12-29",  # first reported second dose administered on the 29/12
                 "latest": "2021-07-16",
             },
-                "incidence": 0.3
+            "incidence": 0.3,
         },
     ),
-
     ## DEMOGRAPHIC COVARIATES
     # AGE
     age=patients.age_as_of(
@@ -199,7 +191,6 @@ study = StudyDefinition(
             "int": {"distribution": "population_ages"},
         },
     ),
-
     # SEX
     sex=patients.sex(
         return_expectations={
@@ -207,7 +198,6 @@ study = StudyDefinition(
             "category": {"ratios": {"M": 0.49, "F": 0.51}},
         }
     ),
-
     # DEPRIVIATION
     imd=patients.address_as_of(
         "2020-12-20",
@@ -218,7 +208,6 @@ study = StudyDefinition(
             "category": {"ratios": {"100": 0.1, "200": 0.2, "300": 0.7}},
         },
     ),
-
     # GEOGRAPHIC REGION CALLED STP
     stp=patients.registered_practice_as_of(
         "2020-12-20",
@@ -241,7 +230,6 @@ study = StudyDefinition(
             },
         },
     ),
-
     # ETHNICITY IN 6 CATEGORIES
     ethnicity=patients.with_these_clinical_events(
         ethnicity_codes,
@@ -253,9 +241,6 @@ study = StudyDefinition(
             "incidence": 0.9,
         },
     ),
-
-
-
     # HOUSEHOLD INFORMATION
     household_id=patients.household_as_of(
         "2020-02-01",
@@ -265,7 +250,6 @@ study = StudyDefinition(
             "incidence": 1,
         },
     ),
-
     household_size=patients.household_as_of(
         "2020-02-01",
         returning="household_size",
@@ -274,8 +258,7 @@ study = StudyDefinition(
             "incidence": 1,
         },
     ),
-
-        care_home_type=patients.care_home_status_as_of(
+    care_home_type=patients.care_home_status_as_of(
         "2020-12-20",
         categorised_as={
             "PC": """
@@ -293,10 +276,16 @@ study = StudyDefinition(
         },
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"PC": 0.01, "PN": 0.01, "PS": 0.01, "U": 0.97,},},
+            "category": {
+                "ratios": {
+                    "PC": 0.01,
+                    "PN": 0.01,
+                    "PS": 0.01,
+                    "U": 0.97,
+                },
+            },
         },
     ),
-
     # CONTINUOUS MEASURED COVARIATES
     bmi=patients.most_recent_bmi(
         on_or_after="2010-02-01",
@@ -309,7 +298,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
     # Blood pressure
     bp_sys=patients.mean_recorded_value(
         systolic_blood_pressure_codes,
@@ -323,7 +311,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
     bp_dias=patients.mean_recorded_value(
         diastolic_blood_pressure_codes,
         on_most_recent_day_of_measurement=True,
@@ -336,7 +323,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
     # # Creatinine
     creatinine=patients.with_these_clinical_events(
         creatinine_codes,
@@ -351,7 +337,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
     # COVARIATES
     smoking_status=patients.categorised_as(
         {
@@ -383,11 +368,11 @@ study = StudyDefinition(
         on_or_before="2020-12-20",
         return_last_date_in_period=True,
         include_month=True,
-        return_expectations={"date": {"latest": "2020-12-19"},
-        "incidence": 0.95,
+        return_expectations={
+            "date": {"latest": "2020-12-19"},
+            "incidence": 0.95,
         },
     ),
-
     chronic_respiratory_disease=patients.with_these_clinical_events(
         chronic_respiratory_disease_codes,
         return_first_date_in_period=True,
@@ -400,35 +385,28 @@ study = StudyDefinition(
         include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-
-
-#DIABETES TYPE
-	type1_diabetes=patients.with_these_clinical_events(
+    # DIABETES TYPE
+    type1_diabetes=patients.with_these_clinical_events(
         diabetes_t1_codes,
         on_or_before="2020-12-20",
         return_first_date_in_period=True,
         include_month=True,
     ),
-
     type2_diabetes=patients.with_these_clinical_events(
         diabetes_t2_codes,
         on_or_before="2020-12-20",
         return_first_date_in_period=True,
         include_month=True,
     ),
-
     unknown_diabetes=patients.with_these_clinical_events(
         diabetes_unknown_codes,
         on_or_before="2020-12-20",
         return_first_date_in_period=True,
         include_month=True,
     ),
-
     diabetes_type=patients.categorised_as(
-
         {
-            "T1DM":
-                """
+            "T1DM": """
                         (type1_diabetes AND NOT
                         type2_diabetes) 
                     OR
@@ -439,8 +417,7 @@ study = StudyDefinition(
                         (insulin_lastyear_meds > 0 AND NOT
                         oad_lastyear_meds > 0))
                 """,
-            "T2DM":
-                """
+            "T2DM": """
                         (type2_diabetes AND NOT
                         type1_diabetes)
                     OR
@@ -450,116 +427,99 @@ study = StudyDefinition(
                         AND 
                         (oad_lastyear_meds > 0))
                 """,
-            "UNKNOWN_DM":
-                """
+            "UNKNOWN_DM": """
                         ((unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes) AND NOT
                         oad_lastyear_meds AND NOT
                         insulin_lastyear_meds) 
                 """,
             "NO_DM": "DEFAULT",
         },
-
         return_expectations={
-            "category": {"ratios": {"T1DM": 0.03, "T2DM": 0.2, "UNKNOWN_DM": 0.02, "NO_DM": 0.75}},
-            "rate" : "universal"
+            "category": {
+                "ratios": {"T1DM": 0.03, "T2DM": 0.2, "UNKNOWN_DM": 0.02, "NO_DM": 0.75}
+            },
+            "rate": "universal",
         },
-
         oad_lastyear_meds=patients.with_these_medications(
-            oad_med_codes, 
+            oad_med_codes,
             between=["2019-12-20", "2020-12-20"],
             returning="number_of_matches_in_period",
         ),
-
         insulin_lastyear_meds=patients.with_these_medications(
             insulin_med_codes,
             between=["2019-12-20", "2020-12-20"],
             returning="number_of_matches_in_period",
         ),
     ),
-
-
-#EXETER ALGORITHM USING OPENSAFELY CODELISTS
-
+    # EXETER ALGORITHM USING OPENSAFELY CODELISTS
     diabetes_exeter_os=patients.categorised_as(
         {
             "T1DM_EX_OS": """
         insulin_last6mo >= 2 AND t1dm_count >= t2dm_count * 2
         """,
-        "T2DM_EX_OS": """
+            "T2DM_EX_OS": """
         (insulin_last6mo < 2 AND t2dm_count > 0)
         OR
         (insulin_last6mo >= 2 AND t1dm_count < t2dm_count * 2 AND t2dm_count > 0)
         """,
-        "NO_DM": "DEFAULT",
+            "NO_DM": "DEFAULT",
         },
-
         return_expectations={
-            "category": {"ratios": {"T1DM_EX_OS": 0.03, "T2DM_EX_OS": 0.2, "NO_DM": 0.77}},
-            "rate" : "universal"
+            "category": {
+                "ratios": {"T1DM_EX_OS": 0.03, "T2DM_EX_OS": 0.2, "NO_DM": 0.77}
+            },
+            "rate": "universal",
         },
-
         t1dm_count=patients.with_these_clinical_events(
             diabetes_t1_codes,
             on_or_before="2020-12-20",
             returning="number_of_matches_in_period",
         ),
-
         t2dm_count=patients.with_these_clinical_events(
             diabetes_t2_codes,
             on_or_before="2020-12-20",
             returning="number_of_matches_in_period",
         ),
-
         insulin_last6mo=patients.with_these_medications(
             insulin_med_codes,
             between=["2020-06-20", "2020-12-20"],
             returning="number_of_matches_in_period",
         ),
     ),
-
-
-
-#EXETER ALGORITHM USING EXETER CODELISTS
-
+    # EXETER ALGORITHM USING EXETER CODELISTS
     diabetes_exeter=patients.categorised_as(
         {
             "T1DM_EX": """
         insulin_last6mo >= 2 AND t1dm_count_ex >= t2dm_count_ex * 2
         """,
-        "T2DM_EX": """
+            "T2DM_EX": """
         (insulin_last6mo < 2 AND t2dm_count_ex > 0)
         OR
         (insulin_last6mo >= 2 AND t1dm_count_ex < t2dm_count_ex * 2 AND t2dm_count_ex > 0)
         """,
-        "NO_DM": "DEFAULT",
+            "NO_DM": "DEFAULT",
         },
-
         return_expectations={
             "category": {"ratios": {"T1DM_EX": 0.1, "T2DM_EX": 0.2, "NO_DM": 0.7}},
-            "rate" : "universal"
+            "rate": "universal",
         },
-
         t1dm_count_ex=patients.with_these_clinical_events(
             filter_codes_by_category(diabetes_t1t2_codes_exeter, include=["1"]),
             on_or_before="2020-12-20",
             returning="number_of_matches_in_period",
         ),
-
         t2dm_count_ex=patients.with_these_clinical_events(
             filter_codes_by_category(diabetes_t1t2_codes_exeter, include=["2"]),
             on_or_before="2020-12-20",
             returning="number_of_matches_in_period",
         ),
-
-           
         insulin_last6mo_ex=patients.with_these_medications(
             insulin_med_codes,
             between=["2020-06-20", "2020-12-20"],
             returning="number_of_matches_in_period",
         ),
     ),
-
-	## HBA1C
+    ## HBA1C
     hba1c_mmol_per_mol=patients.with_these_clinical_events(
         hba1c_new_codes,
         find_last_match_in_period=True,
@@ -573,7 +533,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
     hba1c_percentage=patients.with_these_clinical_events(
         hba1c_old_codes,
         find_last_match_in_period=True,
@@ -587,43 +546,36 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
-
     # CANCER - 3 TYPES
     cancer_haem=patients.with_these_clinical_events(
-		haem_cancer_codes,
-        return_first_date_in_period=True, include_month=True,
+        haem_cancer_codes,
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-
     cancer_nonhaem=patients.with_these_clinical_events(
-        combine_codelists(lung_cancer_codes,
-                          other_cancer_codes),
-        return_first_date_in_period=True, include_month=True,
+        combine_codelists(lung_cancer_codes, other_cancer_codes),
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-
     #### PERMANENT
     permanent_immunodeficiency=patients.with_these_clinical_events(
-        combine_codelists(hiv_codes,
-                          permanent_immune_codes,
-                          sickle_cell_codes)
-        ,
+        combine_codelists(hiv_codes, permanent_immune_codes, sickle_cell_codes),
         on_or_before="2020-12-19",
         return_last_date_in_period=True,
         include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-
     asplenia=patients.with_these_clinical_events(
-        spleen_codes, return_first_date_in_period=True, include_month=True,
+        spleen_codes,
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-
     ### TEMPROARY IMMUNE
     temporary_immunodeficiency=patients.with_these_clinical_events(
-        combine_codelists(temp_immune_codes,
-                        aplastic_codes),
+        combine_codelists(temp_immune_codes, aplastic_codes),
         between=["2020-12-19", "2019-12-20"],  ## THIS IS RESTRICTED TO LAST YEAR
         return_last_date_in_period=True,
         include_month=True,
@@ -631,59 +583,63 @@ study = StudyDefinition(
             "date": {"earliest": "2019-12-20", "latest": "2020-12-19"}
         },
     ),
-
     chronic_liver_disease=patients.with_these_clinical_events(
         chronic_liver_disease_codes,
         return_first_date_in_period=True,
         include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-
     stroke_dementia=patients.with_these_clinical_events(
-        combine_codelists(stroke,
-                          dementia),
-        return_first_date_in_period=True, include_month=True,
+        combine_codelists(stroke, dementia),
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-
     other_neuro=patients.with_these_clinical_events(
-        other_neuro, return_first_date_in_period=True, include_month=True,
+        other_neuro,
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-    
     # END STAGE RENAL DISEASE - DIALYSIS, TRANSPLANT OR END STAGE RENAL DISEASE
     esrf=patients.with_these_clinical_events(
-        esrf_codes, return_first_date_in_period=True, include_month=True,
+        esrf_codes,
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
-
-    #Dialysis
-     dialysis=patients.with_these_clinical_events(
-        dialysis_codes, return_first_date_in_period=True, include_month=True,
+    # Dialysis
+    dialysis=patients.with_these_clinical_events(
+        dialysis_codes,
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
-    ),   
-
-    #Kidney transplant
-     kidney_transplant=patients.with_these_clinical_events(
-        kidney_transplant_codes, return_first_date_in_period=True, include_month=True,
+    ),
+    # Kidney transplant
+    kidney_transplant=patients.with_these_clinical_events(
+        kidney_transplant_codes,
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
-    ),   
-
-    #Other organ transplant
-     other_transplant=patients.with_these_clinical_events(
-        other_transplant_codes, return_first_date_in_period=True, include_month=True,
+    ),
+    # Other organ transplant
+    other_transplant=patients.with_these_clinical_events(
+        other_transplant_codes,
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
-    ),  
-
+    ),
     # hypertension
     hypertension=patients.with_these_clinical_events(
-        hypertension_codes, return_first_date_in_period=True, include_month=True,
+        hypertension_codes,
+        return_first_date_in_period=True,
+        include_month=True,
     ),
-
     ra_sle_psoriasis=patients.with_these_clinical_events(
-        ra_sle_psoriasis_codes, return_first_date_in_period=True, include_month=True,
+        ra_sle_psoriasis_codes,
+        return_first_date_in_period=True,
+        include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
-
     ),
     # asthma
     asthma=patients.categorised_as(
@@ -712,11 +668,10 @@ study = StudyDefinition(
                 
             """,
         },
-        return_expectations={
-            "category": {"ratios": {"0": 0.6, "1": 0.1, "2": 0.3}}
-        },        
+        return_expectations={"category": {"ratios": {"0": 0.6, "1": 0.1, "2": 0.3}}},
         recent_asthma_code=patients.with_these_clinical_events(
-            asthma_codes, between=["2017-12-20", "2020-12-20"],
+            asthma_codes,
+            between=["2017-12-20", "2020-12-20"],
         ),
         asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
         copd_code_ever=patients.with_these_clinical_events(
