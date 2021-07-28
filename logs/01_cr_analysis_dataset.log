@@ -2,13 +2,13 @@
       name:  <unnamed>
        log:  /workspace/logs/01_cr_analysis_dataset.log
   log type:  text
- opened on:  24 Jul 2021, 22:59:16
+ opened on:  27 Jul 2021, 11:18:16
 
 . 
 . 
 . *Import dataset into STATA
 . import delimited "output/input", clear
-(64 vars, 30,000 obs)
+(62 vars, 30,000 obs)
 
 . /* CONVERT STRINGS TO DATE===================================================
 > =*/
@@ -19,13 +19,13 @@
 . 
 . *cr date for diabetes based on adjudicated type
 . gen diabetes=type1_diabetes if diabetes_type=="T1DM"
-(29,834 missing values generated)
+(29,824 missing values generated)
 
 . replace diabetes=type2_diabetes if diabetes_type=="T2DM"
-(1,204 real changes made)
+(1,146 real changes made)
 
 . replace diabetes=unknown_diabetes if diabetes_type=="UNKNOWN_DM"
-(125 real changes made)
+(114 real changes made)
 
 . 
 . drop type1_diabetes type2_diabetes unknown_diabetes
@@ -91,8 +91,8 @@ variable chronic_cardiac_disease was str7 now str10
 (24,000 missing values generated)
 variable diabetes was str7 now str10
 (30,000 real changes made)
-(28,505 real changes made)
-(28,505 missing values generated)
+(28,564 real changes made)
+(28,564 missing values generated)
 variable cancer_haem was str7 now str10
 (30,000 real changes made)
 (24,000 real changes made)
@@ -167,8 +167,8 @@ variable smoking_status_date was str7 now str10
 (1,500 missing values generated)
 variable dereg_date was str7 now str10
 (30,000 real changes made)
-(29,936 real changes made)
-(29,936 missing values generated)
+(29,919 real changes made)
+(29,919 missing values generated)
 
 . 
 . * Recode to dates from the strings 
@@ -186,11 +186,11 @@ variable dereg_date was str7 now str10
 . }
 (5,999 missing values generated)
 (24,000 missing values generated)
-(1,500 missing values generated)
-(1,500 missing values generated)
-(1,500 missing values generated)
+(15,000 missing values generated)
+(15,000 missing values generated)
+(15,000 missing values generated)
 (5,999 missing values generated)
-(4,840 missing values generated)
+(16,725 missing values generated)
 (1,500 missing values generated)
 (15,000 missing values generated)
 (21,000 missing values generated)
@@ -199,7 +199,7 @@ variable dereg_date was str7 now str10
 . gen covid_admission_primary_date = covid_admission_date ///
 > if (covid_admission_primary_diagnosi == "U071"| covid_admission_primary_diagn
 > osi == "U072")
-(6,095 missing values generated)
+(23,324 missing values generated)
 
 . 
 . gen  covid_primary_care_codes_only=covid_tpp_probable
@@ -209,7 +209,7 @@ variable dereg_date was str7 now str10
 
 . replace covid_tpp_probable=positive_covid_test_ever if covid_tpp_probable==. 
 > & covid_tpp_probable>positive_covid_test
-(277 real changes made)
+(317 real changes made)
 
 . 
 . 
@@ -220,16 +220,16 @@ variable dereg_date was str7 now str10
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15dec2020      15dec2020
- 5%    15jan2021      15dec2020
-10%    15jan2021      15dec2020       Obs                  64
-25%    15feb2021      15jan2021       Sum of Wgt.          64
+ 5%    15dec2020      15dec2020
+10%    15jan2021      15dec2020       Obs                  81
+25%    15feb2021      15dec2020       Sum of Wgt.          81
 
-50%    15apr2021                      Mean          03apr2021
-                        Largest       Std. Dev.      62.73755
-75%    15may2021      15jul2021
-90%    15jun2021      15jul2021       Variance           3936
-95%    15jul2021      15jul2021       Skewness      -.1249075
-99%    15jul2021      15jul2021       Kurtosis       1.736456
+50%    15apr2021                      Mean          14apr2021
+                        Largest       Std. Dev.      70.83449
+75%    15jun2021      15jul2021
+90%    15jul2021      15jul2021       Variance       5017.525
+95%    15jul2021      15jul2021       Skewness      -.0977859
+99%    15jul2021      15jul2021       Kurtosis       1.659767
 
                        ethnicity_date
 -------------------------------------------------------------
@@ -239,57 +239,57 @@ variable dereg_date was str7 now str10
 10%         1975           1970       Obs              27,001
 25%         1982           1970       Sum of Wgt.      27,001
 
-50%         1995                      Mean            1995.31
-                        Largest       Std. Dev.      14.87835
+50%         1995                      Mean           1995.077
+                        Largest       Std. Dev.      14.84237
 75%         2008           2021
-90%         2016           2021       Variance       221.3654
-95%         2018           2021       Skewness      -.0012537
-99%         2021           2021       Kurtosis       1.804675
+90%         2016           2021       Variance       220.2961
+95%         2018           2021       Skewness       .0197229
+99%         2021           2021       Kurtosis       1.801788
 
                    bmi_date_measured_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15feb2015      15feb2015
- 5%    15may2015      15feb2015
-10%    15sep2015      15feb2015       Obs              28,500
+ 5%    15jun2015      15feb2015
+10%    15oct2015      15feb2015       Obs              28,500
 25%    15sep2016      15feb2015       Sum of Wgt.      28,500
 
-50%    15may2018                      Mean          02may2018
-                        Largest       Std. Dev.      682.0669
+50%    15may2018                      Mean          03may2018
+                        Largest       Std. Dev.      681.6759
 75%    15dec2019      15jul2021
-90%    15nov2020      15jul2021       Variance       465215.2
-95%    15mar2021      15jul2021       Skewness      -.0150445
-99%    15jun2021      15jul2021       Kurtosis       1.804869
+90%    15dec2020      15jul2021       Variance       464682.1
+95%    15apr2021      15jul2021       Skewness       -.004579
+99%    15jul2021      15jul2021       Kurtosis       1.806588
 
                   bp_sys_date_measured_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15jul1970      15jan1970
  5%    15jul1972      15jan1970
-10%    15feb1975      15jan1970       Obs              28,500
-25%    15oct1982      15jan1970       Sum of Wgt.      28,500
+10%    15mar1975      15jan1970       Obs              28,500
+25%    15jan1983      15jan1970       Sum of Wgt.      28,500
 
-50%    15aug1995                      Mean          09jul1995
-                        Largest       Std. Dev.       5364.12
-75%    15mar2008      15dec2020
+50%    15jun1995                      Mean          05aug1995
+                        Largest       Std. Dev.      5368.025
+75%    15may2008      15dec2020
 90%    15nov2015      15dec2020       Variance       2.88e+07
-95%    15may2018      15dec2020       Skewness      -.0045915
-99%    15jun2020      15dec2020       Kurtosis       1.803369
+95%    15jun2018      15dec2020       Skewness      -.0066246
+99%    15jul2020      15dec2020       Kurtosis       1.801862
 
                  bp_dias_date_measured_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15jun1970      15jan1970
- 5%    15aug1972      15jan1970
-10%    15feb1975      15jan1970       Obs              28,500
-25%    15sep1982      15jan1970       Sum of Wgt.      28,500
+ 5%    15may1972      15jan1970
+10%    15nov1974      15jan1970       Obs              28,500
+25%    15jul1982      15jan1970       Sum of Wgt.      28,500
 
-50%    15jul1995                      Mean          20jun1995
-                        Largest       Std. Dev.      5366.982
-75%    15mar2008      15dec2020
-90%    15oct2015      15dec2020       Variance       2.88e+07
-95%    15may2018      15dec2020       Skewness      -.0007632
-99%    15jun2020      15dec2020       Kurtosis       1.799126
+50%    15may1995                      Mean          11may1995
+                        Largest       Std. Dev.      5389.997
+75%    15feb2008      15dec2020
+90%    30nov2015      15dec2020       Variance       2.91e+07
+95%    15may2018      15dec2020       Skewness       .0067397
+99%    15jun2020      15dec2020       Kurtosis       1.803721
 
                     creatinine_date_date
 -------------------------------------------------------------
@@ -299,57 +299,57 @@ variable dereg_date was str7 now str10
 10%    15may2019      15mar2019       Obs              28,500
 25%    15aug2019      15mar2019       Sum of Wgt.      28,500
 
-50%    15jan2020                      Mean          25jan2020
-                        Largest       Std. Dev.      190.5697
+50%    15jan2020                      Mean          24jan2020
+                        Largest       Std. Dev.      191.2302
 75%    15jul2020      15dec2020
-90%    15oct2020      15dec2020       Variance       36316.81
-95%    15nov2020      15dec2020       Skewness      -.0045675
-99%    15dec2020      15dec2020       Kurtosis       1.795626
+90%    15oct2020      15dec2020       Variance       36568.98
+95%    15nov2020      15dec2020       Skewness       .0018427
+99%    15dec2020      15dec2020       Kurtosis       1.794987
 
                   smoking_status_date_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15jul1970      15jan1970
- 5%    15jul1972      15jan1970
-10%    15jan1975      15jan1970       Obs              28,500
-25%    15dec1982      15jan1970       Sum of Wgt.      28,500
+ 5%    15jun1972      15jan1970
+10%    15mar1975      15jan1970       Obs              28,500
+25%    15nov1982      15jan1970       Sum of Wgt.      28,500
 
-50%    15sep1995                      Mean          20aug1995
-                        Largest       Std. Dev.      5379.558
-75%    15may2008      15dec2020
-90%    15nov2015      15dec2020       Variance       2.89e+07
-95%    15jun2018      15dec2020       Skewness      -.0183924
-99%    15jun2020      15dec2020       Kurtosis       1.798206
+50%    15jun1995                      Mean          07jun1995
+                        Largest       Std. Dev.      5342.606
+75%    15jan2008      15dec2020
+90%    15aug2015      15dec2020       Variance       2.85e+07
+95%    15apr2018      15dec2020       Skewness      -.0013785
+99%    30may2020      15dec2020       Kurtosis       1.814617
 
               chronic_respiratory_disease_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15may1970      15jan1970
- 5%    15may1972      15jan1970
-10%    15dec1974      15jan1970       Obs               6,000
-25%    30jul1982      15jan1970       Sum of Wgt.       6,000
+ 1%    15sep1970      15jan1970
+ 5%    15aug1972      15jan1970
+10%    15mar1975      15jan1970       Obs               6,000
+25%    30may1983      15jan1970       Sum of Wgt.       6,000
 
-50%    30oct1995                      Mean          06aug1995
-                        Largest       Std. Dev.      5438.461
-75%    15oct2008      15dec2020
-90%    30nov2015      15dec2020       Variance       2.96e+07
-95%    15jun2018      15dec2020       Skewness      -.0200473
-99%    15jun2020      15dec2020       Kurtosis       1.765953
+50%    15nov1995                      Mean          02nov1995
+                        Largest       Std. Dev.       5344.31
+75%    15may2008      15dec2020
+90%    15feb2016      15dec2020       Variance       2.86e+07
+95%    15jun2018      15dec2020       Skewness      -.0206701
+99%    15jul2020      15dec2020       Kurtosis       1.817217
 
                 chronic_cardiac_disease_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    30jul1970      15jan1970
+ 1%    15jun1970      15jan1970
  5%    15jul1972      15jan1970
-10%    30dec1974      15jan1970       Obs               6,000
-25%    15jun1982      15jan1970       Sum of Wgt.       6,000
+10%    15feb1975      15jan1970       Obs               6,000
+25%    15dec1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15may1995                      Mean          30jun1995
-                        Largest       Std. Dev.      5433.006
-75%    15aug2008      15dec2020
-90%    15jan2016      15dec2020       Variance       2.95e+07
-95%    15aug2018      15dec2020       Skewness       .0076592
-99%    15jul2020      15dec2020       Kurtosis       1.773191
+50%    30aug1995                      Mean          13jul1995
+                        Largest       Std. Dev.      5367.645
+75%    15mar2008      15dec2020
+90%    15dec2015      15dec2020       Variance       2.88e+07
+95%    15jun2018      15dec2020       Skewness      -.0036537
+99%    15jul2020      15dec2020       Kurtosis       1.807829
 
                    hba1c_mmol_per_mol_date
 -------------------------------------------------------------
@@ -362,62 +362,62 @@ no observations
                       cancer_haem_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15jul1970      15jan1970
- 5%    15jun1972      15jan1970
-10%    15dec1974      15jan1970       Obs               6,000
-25%    15jul1982      15jan1970       Sum of Wgt.       6,000
+ 1%    15jun1970      15jan1970
+ 5%    15apr1972      15jan1970
+10%    15nov1974      15jan1970       Obs               6,000
+25%    15mar1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15mar1995                      Mean          10apr1995
-                        Largest       Std. Dev.      5358.894
-75%    15oct2007      15dec2020
-90%    15sep2015      15dec2020       Variance       2.87e+07
-95%    15may2018      15dec2020       Skewness       .0101418
-99%    15jun2020      15dec2020       Kurtosis       1.813375
+50%    15apr1995                      Mean          20mar1995
+                        Largest       Std. Dev.      5424.797
+75%    15jan2008      15nov2020
+90%    30dec2015      15dec2020       Variance       2.94e+07
+95%    15may2018      15dec2020       Skewness       .0256584
+99%    15may2020      15dec2020       Kurtosis       1.784321
 
                      cancer_nonhaem_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15jun1970      15jan1970
- 5%    15jun1972      15jan1970
-10%    15jan1975      15jan1970       Obs               6,000
+ 1%    15jul1970      15jan1970
+ 5%    15aug1972      15jan1970
+10%    15feb1975      15jan1970       Obs               6,000
 25%    15nov1982      15jan1970       Sum of Wgt.       6,000
 
-50%    30nov1995                      Mean          31jul1995
-                        Largest       Std. Dev.      5358.655
-75%    15feb2008      15dec2020
-90%    15nov2015      15dec2020       Variance       2.87e+07
-95%    15feb2018      15dec2020       Skewness      -.0250476
-99%    15may2020      15dec2020       Kurtosis       1.808928
+50%    30aug1995                      Mean          28sep1995
+                        Largest       Std. Dev.      5440.514
+75%    15nov2008      15dec2020
+90%    15jun2016      15dec2020       Variance       2.96e+07
+95%    15sep2018      15dec2020       Skewness      -.0100853
+99%    15jul2020      15dec2020       Kurtosis        1.77498
 
                permanent_immunodeficiency_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15jul1970      15jan1970
- 5%    30aug1972      15jan1970
-10%    15may1975      15jan1970       Obs               6,000
-25%    15mar1983      15jan1970       Sum of Wgt.       6,000
+ 5%    15aug1972      15jan1970
+10%    15feb1975      15jan1970       Obs               6,000
+25%    15sep1982      15jan1970       Sum of Wgt.       6,000
 
-50%    30jun1995                      Mean          10jul1995
-                        Largest       Std. Dev.      5318.996
-75%    15mar2008      15dec2020
-90%    15oct2015      15dec2020       Variance       2.83e+07
-95%    15jun2018      15dec2020       Skewness        .004525
-99%    15jun2020      15dec2020       Kurtosis       1.825719
+50%    15jul1995                      Mean          03jun1995
+                        Largest       Std. Dev.      5340.868
+75%    15feb2008      15dec2020
+90%    15sep2015      15dec2020       Variance       2.85e+07
+95%    15may2018      15dec2020       Skewness       .0017061
+99%    15jun2020      15dec2020       Kurtosis       1.811926
 
                         asplenia_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15aug1970      15jan1970
- 5%    15may1972      15jan1970
-10%    15nov1974      15jan1970       Obs               6,000
-25%    15apr1982      15jan1970       Sum of Wgt.       6,000
+ 1%    15jul1970      15jan1970
+ 5%    15aug1972      15jan1970
+10%    30apr1975      15jan1970       Obs               6,000
+25%    15dec1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15nov1994                      Mean          25feb1995
-                        Largest       Std. Dev.      5383.268
-75%    15dec2007      15nov2020
-90%    15jul2015      15dec2020       Variance       2.90e+07
-95%    15mar2018      15dec2020       Skewness       .0249571
-99%    15may2020      15dec2020       Kurtosis         1.7914
+50%    15apr1995                      Mean          02jun1995
+                        Largest       Std. Dev.      5326.998
+75%    15jan2008      15dec2020
+90%    15dec2015      15dec2020       Variance       2.84e+07
+95%    30jun2018      15dec2020       Skewness       .0273358
+99%    15jul2020      15dec2020       Kurtosis       1.836187
 
                temporary_immunodeficiency_date
 -------------------------------------------------------------
@@ -426,137 +426,137 @@ no observations
                  chronic_liver_disease_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15jul1970      15jan1970
+ 1%    15jun1970      15jan1970
  5%    15jul1972      15jan1970
-10%    15mar1975      15jan1970       Obs               6,000
-25%    15oct1982      15jan1970       Sum of Wgt.       6,000
+10%    15apr1975      15jan1970       Obs               6,000
+25%    15may1983      15jan1970       Sum of Wgt.       6,000
 
-50%    15may1995                      Mean          28may1995
-                        Largest       Std. Dev.      5314.749
-75%    15jan2008      15dec2020
-90%    30jun2015      15dec2020       Variance       2.82e+07
-95%    15may2018      15dec2020       Skewness       .0047486
-99%    15jul2020      15dec2020       Kurtosis       1.830741
+50%    15feb1996                      Mean          13oct1995
+                        Largest       Std. Dev.      5323.716
+75%    15apr2008      15dec2020
+90%    15sep2015      15dec2020       Variance       2.83e+07
+95%    15may2018      15dec2020       Skewness      -.0400084
+99%    15may2020      15dec2020       Kurtosis       1.829421
 
                     stroke_dementia_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15jun1970      15jan1970
- 5%    15jul1972      15jan1970
-10%    15jul1975      15jan1970       Obs               6,000
-25%    15dec1982      15jan1970       Sum of Wgt.       6,000
+ 1%    15jul1970      15jan1970
+ 5%    15jun1972      15jan1970
+10%    15jan1975      15jan1970       Obs               6,000
+25%    15oct1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15feb1995                      Mean          17jun1995
-                        Largest       Std. Dev.      5357.439
-75%    15feb2008      15dec2020
-90%    15dec2015      15dec2020       Variance       2.87e+07
-95%    15jul2018      15dec2020       Skewness       .0243893
-99%    15jul2020      15dec2020       Kurtosis       1.815562
+50%    15jul1995                      Mean          31jul1995
+                        Largest       Std. Dev.      5414.044
+75%    15oct2008      15dec2020
+90%    15jan2016      15dec2020       Variance       2.93e+07
+95%    15jun2018      15dec2020       Skewness      -.0039346
+99%    15jul2020      15dec2020       Kurtosis       1.776193
 
                       other_neuro_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15jun1970      15jan1970
- 5%    15mar1972      15jan1970
-10%    15nov1974      15jan1970       Obs               6,000
-25%    15may1982      15jan1970       Sum of Wgt.       6,000
+ 1%    15jul1970      15jan1970
+ 5%    15jul1972      15jan1970
+10%    15dec1974      15jan1970       Obs               6,000
+25%    15oct1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15dec1994                      Mean          02mar1995
-                        Largest       Std. Dev.      5404.271
-75%    15nov2007      15dec2020
+50%    15jan1996                      Mean          27aug1995
+                        Largest       Std. Dev.      5402.372
+75%    15sep2008      15dec2020
 90%    15dec2015      15dec2020       Variance       2.92e+07
-95%    15jun2018      15dec2020       Skewness       .0291376
-99%    15jun2020      15dec2020       Kurtosis       1.799941
+95%    15jul2018      15dec2020       Skewness      -.0220363
+99%    15may2020      15dec2020       Kurtosis       1.785569
 
                           esrf_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15jun1970      15jan1970
- 5%    15jun1972      15jan1970
-10%    15mar1975      15jan1970       Obs               6,000
+ 5%    15aug1972      15jan1970
+10%    15feb1975      15jan1970       Obs               6,000
 25%    15nov1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15feb1996                      Mean          23oct1995
-                        Largest       Std. Dev.      5392.498
-75%    15jun2008      15dec2020
-90%    15jan2016      15dec2020       Variance       2.91e+07
-95%    15jul2018      15dec2020       Skewness      -.0346966
-99%    15jul2020      15dec2020       Kurtosis       1.792369
+50%    15may1995                      Mean          01jul1995
+                        Largest       Std. Dev.       5371.47
+75%    15mar2008      15dec2020
+90%    15dec2015      15dec2020       Variance       2.89e+07
+95%    15jun2018      15dec2020       Skewness       .0093215
+99%    15aug2020      15dec2020       Kurtosis       1.800458
 
                         dialysis_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15jul1970      15jan1970
- 5%    30aug1972      15jan1970
-10%    15jun1975      15jan1970       Obs               6,000
-25%    30jan1983      15jan1970       Sum of Wgt.       6,000
+ 1%    30jun1970      15jan1970
+ 5%    15jul1972      15jan1970
+10%    15dec1974      15jan1970       Obs               6,000
+25%    30aug1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15mar1995                      Mean          02jun1995
-                        Largest       Std. Dev.      5317.428
-75%    15jan2008      15dec2020
-90%    15oct2015      15dec2020       Variance       2.83e+07
-95%    15may2018      15dec2020       Skewness       .0227415
-99%    15jun2020      15dec2020       Kurtosis       1.822319
+50%    15may1995                      Mean          20jun1995
+                        Largest       Std. Dev.      5381.652
+75%    30mar2008      15dec2020
+90%    15sep2015      15dec2020       Variance       2.90e+07
+95%    15may2018      15dec2020       Skewness       .0012288
+99%    15jul2020      15dec2020       Kurtosis         1.7986
 
                    kidney_transplant_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15jul1970      15jan1970
- 5%    15apr1972      15jan1970
-10%    15nov1974      15jan1970       Obs               6,000
-25%    15apr1982      15jan1970       Sum of Wgt.       6,000
+ 5%    15aug1972      15jan1970
+10%    15jan1975      15jan1970       Obs               6,000
+25%    15jun1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15jul1995                      Mean          09may1995
-                        Largest       Std. Dev.      5446.358
-75%    30may2008      15dec2020
-90%    15oct2015      15dec2020       Variance       2.97e+07
-95%    15jun2018      15dec2020       Skewness      -.0029881
-99%    15jun2020      15dec2020       Kurtosis       1.767552
+50%    30apr1995                      Mean          18may1995
+                        Largest       Std. Dev.      5404.567
+75%    15jul2008      15dec2020
+90%    15nov2015      15dec2020       Variance       2.92e+07
+95%    15jun2018      15dec2020       Skewness       .0116625
+99%    15may2020      15dec2020       Kurtosis       1.776713
 
                     other_transplant_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15jul1970      15jan1970
- 5%    15sep1972      15jan1970
-10%    15feb1975      15jan1970       Obs               6,000
-25%    15sep1982      15jan1970       Sum of Wgt.       6,000
+ 5%    15jun1972      15jan1970
+10%    15nov1974      15jan1970       Obs               6,000
+25%    15jul1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15aug1995                      Mean          26jul1995
-                        Largest       Std. Dev.      5359.705
-75%    15aug2008      15dec2020
-90%    15jul2015      15dec2020       Variance       2.87e+07
-95%    15mar2018      15dec2020       Skewness      -.0094821
-99%    15jun2020      15dec2020       Kurtosis       1.791165
+50%    15jun1995                      Mean          17jul1995
+                        Largest       Std. Dev.      5426.728
+75%    15aug2008      15nov2020
+90%    30jan2016      15nov2020       Variance       2.94e+07
+95%    30may2018      15dec2020       Skewness      -.0108833
+99%    15may2020      15dec2020       Kurtosis       1.781646
 
                       hypertension_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15jun1970      15jan1970
+ 1%    30jun1970      15jan1970
  5%    15sep1972      15jan1970
-10%    15jul1975      15jan1970       Obs               6,000
-25%    15mar1983      15jan1970       Sum of Wgt.       6,000
+10%    15may1975      15jan1970       Obs               6,000
+25%    01mar1983      15jan1970       Sum of Wgt.       6,000
 
-50%    15nov1995                      Mean          06nov1995
-                        Largest       Std. Dev.      5368.266
-75%    15apr2008      15jul2021
-90%    29feb2016      15jul2021       Variance       2.88e+07
-95%    15feb2019      15jul2021       Skewness      -.0021819
-99%    01mar2021      15jul2021       Kurtosis       1.834255
+50%    15mar1996                      Mean          28jan1996
+                        Largest       Std. Dev.      5466.734
+75%    15mar2009      15jul2021
+90%    15jul2016      15jul2021       Variance       2.99e+07
+95%    15mar2019      15jul2021       Skewness      -.0162416
+99%    15jan2021      15jul2021       Kurtosis       1.776673
 
                     ra_sle_psoriasis_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    15jul1970      15jan1970
- 5%    15aug1972      15jan1970
-10%    30apr1975      15jan1970       Obs               6,000
-25%    30oct1982      15jan1970       Sum of Wgt.       6,000
+ 5%    30sep1972      15jan1970
+10%    15apr1975      15jan1970       Obs               6,000
+25%    15oct1982      15jan1970       Sum of Wgt.       6,000
 
-50%    15sep1995                      Mean          08jun1995
-                        Largest       Std. Dev.      5308.592
-75%    15nov2007      15dec2020
+50%    15jan1995                      Mean          17mar1995
+                        Largest       Std. Dev.      5311.398
+75%    15aug2007      15dec2020
 90%    15jul2015      15dec2020       Variance       2.82e+07
-95%    15jun2018      15dec2020       Skewness      -.0039143
-99%    15may2020      15dec2020       Kurtosis       1.830572
+95%    15may2018      15dec2020       Skewness        .031582
+99%    15jun2020      15dec2020       Kurtosis       1.821795
 
                      has_12_m_follow_up
 -------------------------------------------------------------
@@ -612,15 +612,15 @@ no observations
       Percentiles      Smallest
  1%            0              0
  5%            0              0
-10%            0              0       Obs              27,120
-25%            0              0       Sum of Wgt.      27,120
+10%            0              0       Obs              27,057
+25%            0              0       Sum of Wgt.      27,057
 
-50%            1                      Mean           1.480383
-                        Largest       Std. Dev.      2.748888
+50%            1                      Mean           1.441993
+                        Largest       Std. Dev.      2.711345
 75%            1              9
-90%            9              9       Variance       7.556383
-95%            9              9       Skewness       2.279716
-99%            9              9       Kurtosis       6.467349
+90%            9              9       Variance        7.35139
+95%            9              9       Skewness       2.334423
+99%            9              9       Kurtosis       6.735637
 
                            lft_pcr
 -------------------------------------------------------------
@@ -634,12 +634,12 @@ no observations
 10%            8              0       Obs              30,000
 25%           21              0       Sum of Wgt.      30,000
 
-50%           39                      Mean           40.23403
-                        Largest       Std. Dev.      23.72384
+50%           40                      Mean            40.3136
+                        Largest       Std. Dev.      23.74098
 75%           59            106
-90%           73            106       Variance       562.8207
-95%           79            108       Skewness       .1362677
-99%           89            108       Kurtosis       2.055948
+90%           73            109       Variance       563.6342
+95%           79            109       Skewness       .1385349
+99%           89            109       Kurtosis       2.055757
 
                              sex
 -------------------------------------------------------------
@@ -650,15 +650,15 @@ no observations
       Percentiles      Smallest
  1%          100            100
  5%          100            100
-10%          200            100       Obs              30,000
+10%          100            100       Obs              30,000
 25%          200            100       Sum of Wgt.      30,000
 
-50%          300                      Mean           260.1633
-                        Largest       Std. Dev.      66.21319
+50%          300                      Mean           259.0367
+                        Largest       Std. Dev.      67.09562
 75%          300            300
-90%          300            300       Variance       4384.186
-95%          300            300       Skewness      -1.403527
-99%          300            300       Kurtosis       3.630017
+90%          300            300       Variance       4501.822
+95%          300            300       Skewness      -1.366343
+99%          300            300       Kurtosis       3.505456
 
                              stp
 -------------------------------------------------------------
@@ -672,27 +672,27 @@ no observations
 10%            1              1       Obs              27,001
 25%            1              1       Sum of Wgt.      27,001
 
-50%            1                      Mean           1.604718
-                        Largest       Std. Dev.      1.286945
+50%            1                      Mean           1.591682
+                        Largest       Std. Dev.      1.272665
 75%            1              5
-90%            5              5       Variance       1.656228
-95%            5              5       Skewness       1.908494
-99%            5              5       Kurtosis       5.096312
+90%            3              5       Variance       1.619677
+95%            5              5       Skewness       1.941953
+99%            5              5       Kurtosis       5.242915
 
                         household_id
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%        535.5            173
- 5%          672            228
-10%          745            272       Obs              30,000
-25%          866            283       Sum of Wgt.      30,000
+ 1%          533            131
+ 5%          671            202
+10%          742            219       Obs              30,000
+25%          864            223       Sum of Wgt.      30,000
 
-50%         1001                      Mean             1000.1
-                        Largest       Std. Dev.      199.2565
-75%         1134           1760
-90%         1254           1765       Variance       39703.14
-95%         1328           1770       Skewness      -.0035475
-99%         1463           1799       Kurtosis       3.021389
+50%          998                      Mean           998.9465
+                        Largest       Std. Dev.      200.5397
+75%         1134           1732
+90%         1257           1748       Variance       40216.16
+95%         1331           1750       Skewness       .0075469
+99%         1467           1756       Kurtosis       2.990699
 
                        household_size
 -------------------------------------------------------------
@@ -702,12 +702,12 @@ no observations
 10%            1              0       Obs              30,000
 25%            2              0       Sum of Wgt.      30,000
 
-50%            3                      Mean             2.5041
-                        Largest       Std. Dev.      1.036092
+50%            3                      Mean             2.5054
+                        Largest       Std. Dev.       1.03795
 75%            3              6
-90%            4              6       Variance       1.073486
-95%            4              7       Skewness       .0492922
-99%            5              7       Kurtosis       2.925085
+90%            4              6       Variance        1.07734
+95%            4              6       Skewness       .0270956
+99%            5              7       Kurtosis       2.923692
 
                        care_home_type
 -------------------------------------------------------------
@@ -716,62 +716,62 @@ no observations
                              bmi
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%            0      -12.83318
- 5%            0      -12.79611
-10%     8.756586      -10.92803       Obs              30,000
-25%     16.92199      -10.00535       Sum of Wgt.      30,000
+ 1%            0      -18.47538
+ 5%            0      -17.86537
+10%     8.779947      -12.67431       Obs              30,000
+25%     16.95817      -12.41087       Sum of Wgt.      30,000
 
-50%     24.35539                      Mean           23.74785
-                        Largest       Std. Dev.      11.18245
-75%     31.38462        62.7212
-90%     37.60211        64.1348       Variance       125.0472
-95%     41.12141       65.09521       Skewness      -.2223228
-99%     47.84501       65.70524       Kurtosis        2.89372
+50%     24.36458                      Mean           23.72453
+                        Largest       Std. Dev.      11.15892
+75%     31.26305       62.40468
+90%     37.41232       62.82501       Variance       124.5214
+95%     41.08676        63.5267       Skewness      -.2301763
+99%     48.05092       66.41167       Kurtosis       2.940252
 
                            bp_sys
 -------------------------------------------------------------
       Percentiles      Smallest
  1%            0              0
- 5%      19.5497              0
-10%     63.70002              0       Obs              30,000
-25%     71.93085              0       Sum of Wgt.      30,000
+ 5%     37.19767              0
+10%      103.701              0       Obs              30,000
+25%     111.8568              0       Sum of Wgt.      30,000
 
-50%     79.33212                      Mean           75.95947
-                        Largest       Std. Dev.      19.96908
-75%     86.34285       117.5579
-90%     92.37293       117.6129       Variance        398.764
-95%     96.03522       117.7323       Skewness      -2.602385
-99%     103.0871       120.0919       Kurtosis       10.70634
+50%     119.2591                      Mean           113.9661
+                        Largest       Std. Dev.      27.92571
+75%     126.3119        158.347
+90%     132.6112       160.5135       Variance       779.8452
+95%     136.3295        160.924       Skewness      -3.309279
+99%     143.1005       165.4064       Kurtosis       13.95506
 
                            bp_dias
 -------------------------------------------------------------
       Percentiles      Smallest
  1%            0              0
- 5%     37.58493              0
-10%     103.7881              0       Obs              30,000
-25%     111.9345              0       Sum of Wgt.      30,000
+ 5%     18.74536              0
+10%     63.65996              0       Obs              30,000
+25%     71.92721              0       Sum of Wgt.      30,000
 
-50%     119.2765                      Mean           113.9481
-                        Largest       Std. Dev.      27.90095
-75%     126.2566       157.3796
-90%      132.434        157.478       Variance       778.4627
-95%     136.1441       158.4185       Skewness      -3.317986
-99%     142.9247       160.4462       Kurtosis       13.99394
+50%     79.31947                      Mean           75.96064
+                        Largest       Std. Dev.      19.97512
+75%     86.32917       115.8208
+90%     92.49216       118.1947       Variance       399.0054
+95%     96.04339       118.9856       Skewness      -2.601422
+99%     103.0303       121.6507       Kurtosis       10.69392
 
                          creatinine
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%            0      -7.680167
+ 1%            0      -1.173948
  5%            0              0
-10%     36.05009              0       Obs              30,000
-25%      48.0567              0       Sum of Wgt.      30,000
+10%     35.75795              0       Obs              30,000
+25%     47.99059              0       Sum of Wgt.      30,000
 
-50%     58.93007                      Mean           56.95974
-                        Largest       Std. Dev.      19.48953
-75%     69.33445       114.7521
-90%     78.66348       115.4277       Variance       379.8417
-95%     83.96895       115.7588       Skewness       -.986839
-99%      94.2778       117.8274       Kurtosis       4.686002
+50%     58.89628                      Mean           57.03136
+                        Largest       Std. Dev.      19.63921
+75%     69.49459       115.1573
+90%     78.98972        115.642       Variance       385.6985
+95%     84.45036       118.3773       Skewness      -.9518232
+99%     95.27314       125.0101       Kurtosis       4.616352
 
                        smoking_status
 -------------------------------------------------------------
@@ -781,43 +781,35 @@ no observations
 -------------------------------------------------------------
 no observations
 
-                     diabetes_exeter_os
--------------------------------------------------------------
-no observations
-
-                       diabetes_exeter
--------------------------------------------------------------
-no observations
-
                      hba1c_mmol_per_mol
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    -6.332205      -38.00087
- 5%            0       -34.8556
-10%     7.276864      -34.11902       Obs              30,000
-25%     23.82977      -33.08625       Sum of Wgt.      30,000
+ 1%    -5.652099      -39.83994
+ 5%            0      -34.79729
+10%     7.723421      -34.55836       Obs              30,000
+25%     23.72075      -32.44259       Sum of Wgt.      30,000
 
-50%     38.49371                      Mean           37.79493
-                        Largest       Std. Dev.      21.29499
-75%     52.44518       111.6367
-90%     64.80823       113.1185       Variance       453.4768
-95%     71.97378       114.2231       Skewness      -.0472236
-99%       86.193       115.3485       Kurtosis       2.731081
+50%     38.90331                      Mean             38.151
+                        Largest       Std. Dev.       21.4604
+75%     52.95367       108.4717
+90%     65.38563       109.0502       Variance       460.5487
+95%     72.77292       112.0714       Skewness      -.0490592
+99%     86.67536       112.1661       Kurtosis       2.706307
 
                       hba1c_percentage
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%            0      -3.422565
- 5%            0      -2.492069
-10%     1.739829      -2.292719       Obs              30,000
-25%      3.37901      -2.078256       Sum of Wgt.      30,000
+ 1%            0       -2.93939
+ 5%            0      -2.306491
+10%     1.760994      -2.143156       Obs              30,000
+25%     3.363613      -2.125797       Sum of Wgt.      30,000
 
-50%     4.845817                      Mean           4.740814
-                        Largest       Std. Dev.      2.238474
-75%     6.271279         12.772
-90%     7.496181       12.90518       Variance       5.010767
-95%     8.261937       13.14578       Skewness      -.2124831
-99%     9.645946       13.37002       Kurtosis       2.913177
+50%     4.857239                      Mean            4.73204
+                        Largest       Std. Dev.      2.226764
+75%     6.246756       12.33014
+90%     7.488803       12.52306       Variance        4.95848
+95%     8.204093       12.64771       Skewness      -.2192276
+99%     9.535055       12.77763       Kurtosis       2.894051
 
                            asthma
 -------------------------------------------------------------
@@ -827,44 +819,119 @@ no observations
 10%            0              0       Obs               6,000
 25%            0              0       Sum of Wgt.       6,000
 
-50%            0                      Mean              .6895
-                        Largest       Std. Dev.      .9016052
+50%            0                      Mean           .7128333
+                        Largest       Std. Dev.      .9039754
 75%            2              2
-90%            2              2       Variance       .8128919
-95%            2              2       Skewness       .6503373
-99%            2              2       Kurtosis       1.546474
+90%            2              2       Variance       .8171715
+95%            2              2       Skewness       .5963161
+99%            2              2       Kurtosis       1.489487
 
                          patient_id
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%       2953.5             29
- 5%      14800.5             36
-10%        29147             66       Obs              30,000
-25%      73612.5             71       Sum of Wgt.      30,000
+ 1%       2912.5              2
+ 5%        14848              9
+10%        29927             22       Obs              30,000
+25%        75304             23       Sum of Wgt.      30,000
 
-50%       149341                      Mean           149534.2
-                        Largest       Std. Dev.       86940.2
-75%       225101         299898
-90%     269694.5         299899       Variance       7.56e+09
-95%       284523         299912       Skewness       .0022662
-99%     296834.5         299949       Kurtosis       1.784893
+50%       150497                      Mean           150341.2
+                        Largest       Std. Dev.       86676.7
+75%       225624         299938
+90%       270113         299954       Variance       7.51e+09
+95%     285194.5         299965       Skewness      -.0078825
+99%     297085.5         299966       Kurtosis       1.798901
 
                         diabetes_date
 -------------------------------------------------------------
       Percentiles      Smallest
- 1%    15aug1970      15jan1970
- 5%    15nov1972      15jan1970
-10%    15jul1975      15jan1970       Obs               1,495
-25%    15apr1983      15jan1970       Sum of Wgt.       1,495
+ 1%    15may1970      15jan1970
+ 5%    15mar1972      15jan1970
+10%    15mar1975      15jan1970       Obs               1,436
+25%    15jan1983      15jan1970       Sum of Wgt.       1,436
 
-50%    15dec1995                      Mean          09oct1995
-                        Largest       Std. Dev.       5315.36
-75%    15jan2008      15nov2020
-90%    15nov2015      15nov2020       Variance       2.83e+07
-95%    15sep2018      15dec2020       Skewness      -.0075624
-99%    15jun2020      15dec2020       Kurtosis       1.833808
+50%    15nov1995                      Mean          09jul1995
+                        Largest       Std. Dev.      5347.398
+75%    30mar2008      15nov2020
+90%    15oct2015      15nov2020       Variance       2.86e+07
+95%    15may2018      15nov2020       Skewness      -.0086509
+99%    15jul2020      15dec2020       Kurtosis        1.83007
 
                        covid_icu_date
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    23dec2020      21dec2020
+ 5%    01jan2021      21dec2020
+10%    12jan2021      21dec2020       Obs              24,001
+25%    14feb2021      21dec2020       Sum of Wgt.      24,001
+
+50%    10apr2021                      Mean          09apr2021
+                        Largest       Std. Dev.      62.91164
+75%    03jun2021      27jul2021
+90%    05jul2021      27jul2021       Variance       3957.875
+95%    17jul2021      27jul2021       Skewness      -.0053712
+99%    25jul2021      27jul2021       Kurtosis       1.810554
+
+                  positive_covid_test_ever
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    10apr2021      30jan2021
+ 5%    22may2021      03feb2021
+10%    07jun2021      13feb2021       Obs               6,000
+25%    27jun2021      16feb2021       Sum of Wgt.       6,000
+
+50%    12jul2021                      Mean          05jul2021
+                        Largest       Std. Dev.      22.35381
+75%    21jul2021      27jul2021
+90%    25jul2021      27jul2021       Variance        499.693
+95%    26jul2021      27jul2021       Skewness      -2.023422
+99%    27jul2021      27jul2021       Kurtosis       8.737659
+
+                  covid_tpp_codes_clinical
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    23dec2020      21dec2020
+ 5%    31dec2020      21dec2020
+10%    11jan2021      21dec2020       Obs              15,000
+25%    13feb2021      21dec2020       Sum of Wgt.      15,000
+
+50%    10apr2021                      Mean          09apr2021
+                        Largest       Std. Dev.       63.5175
+75%    03jun2021      27jul2021
+90%    06jul2021      27jul2021       Variance       4034.473
+95%    17jul2021      27jul2021       Skewness       -.015765
+99%    25jul2021      27jul2021       Kurtosis       1.784545
+
+                    covid_tpp_codes_test
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    23dec2020      21dec2020
+ 5%    01jan2021      21dec2020
+10%    12jan2021      21dec2020       Obs              15,000
+25%    14feb2021      21dec2020       Sum of Wgt.      15,000
+
+50%    10apr2021                      Mean          09apr2021
+                        Largest       Std. Dev.      62.92539
+75%    02jun2021      27jul2021
+90%    04jul2021      27jul2021       Variance       3959.604
+95%    16jul2021      27jul2021       Skewness      -.0145757
+99%    25jul2021      27jul2021       Kurtosis       1.799216
+
+                     covid_tpp_codes_seq
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    23dec2020      21dec2020
+ 5%    31dec2020      21dec2020
+10%    11jan2021      21dec2020       Obs              15,000
+25%    13feb2021      21dec2020       Sum of Wgt.      15,000
+
+50%    09apr2021                      Mean          09apr2021
+                        Largest       Std. Dev.      63.27743
+75%    03jun2021      27jul2021
+90%    05jul2021      27jul2021       Variance       4004.033
+95%    16jul2021      27jul2021       Skewness      -.0097643
+99%    25jul2021      27jul2021       Kurtosis       1.801367
+
+                        died_date_ons
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    23dec2020      21dec2020
@@ -872,117 +939,42 @@ no observations
 10%    11jan2021      21dec2020       Obs              24,001
 25%    13feb2021      21dec2020       Sum of Wgt.      24,001
 
-50%    07apr2021                      Mean          06apr2021
-                        Largest       Std. Dev.      61.70951
-75%    30may2021      22jul2021
-90%    01jul2021      22jul2021       Variance       3808.063
-95%    12jul2021      22jul2021       Skewness      -.0098434
-99%    20jul2021      22jul2021       Kurtosis       1.808057
-
-                  positive_covid_test_ever
--------------------------------------------------------------
-      Percentiles      Smallest
- 1%    13apr2021      25dec2020
- 5%    20may2021      01jan2021
-10%    03jun2021      09jan2021       Obs               6,000
-25%    22jun2021      19jan2021       Sum of Wgt.       6,000
-
-50%    08jul2021                      Mean          01jul2021
-                        Largest       Std. Dev.       21.7576
-75%    17jul2021      22jul2021
-90%    21jul2021      22jul2021       Variance        473.393
-95%    22jul2021      22jul2021       Skewness      -2.137232
-99%    22jul2021      22jul2021       Kurtosis       10.51362
-
-                  covid_tpp_codes_clinical
--------------------------------------------------------------
-      Percentiles      Smallest
- 1%    22dec2020      21dec2020
- 5%    31dec2020      21dec2020
-10%    11jan2021      21dec2020       Obs              28,500
-25%    12feb2021      21dec2020       Sum of Wgt.      28,500
-
-50%    07apr2021                      Mean          06apr2021
-                        Largest       Std. Dev.      61.85137
-75%    30may2021      22jul2021
-90%    01jul2021      22jul2021       Variance       3825.592
-95%    12jul2021      22jul2021       Skewness       .0003259
-99%    21jul2021      22jul2021       Kurtosis       1.796102
-
-                    covid_tpp_codes_test
--------------------------------------------------------------
-      Percentiles      Smallest
- 1%    23dec2020      21dec2020
- 5%    31dec2020      21dec2020
-10%    11jan2021      21dec2020       Obs              28,500
-25%    12feb2021      21dec2020       Sum of Wgt.      28,500
-
-50%    06apr2021                      Mean          06apr2021
-                        Largest       Std. Dev.       61.7509
-75%    30may2021      22jul2021
-90%    01jul2021      22jul2021       Variance       3813.174
-95%    12jul2021      22jul2021       Skewness       .0107103
-99%    20jul2021      22jul2021       Kurtosis       1.804111
-
-                     covid_tpp_codes_seq
--------------------------------------------------------------
-      Percentiles      Smallest
- 1%    23dec2020      21dec2020
- 5%    01jan2021      21dec2020
-10%    11jan2021      21dec2020       Obs              28,500
-25%    13feb2021      21dec2020       Sum of Wgt.      28,500
-
-50%    08apr2021                      Mean          07apr2021
-                        Largest       Std. Dev.      61.55854
-75%    30may2021      22jul2021
-90%    01jul2021      22jul2021       Variance       3789.454
-95%    12jul2021      22jul2021       Skewness      -.0142721
-99%    20jul2021      22jul2021       Kurtosis       1.804773
-
-                        died_date_ons
--------------------------------------------------------------
-      Percentiles      Smallest
- 1%    23dec2020      21dec2020
- 5%    01jan2021      21dec2020
-10%    11jan2021      21dec2020       Obs              24,001
-25%    12feb2021      21dec2020       Sum of Wgt.      24,001
-
-50%    06apr2021                      Mean          06apr2021
-                        Largest       Std. Dev.      61.58213
-75%    29may2021      22jul2021
-90%    01jul2021      22jul2021       Variance       3792.359
-95%    11jul2021      22jul2021       Skewness       .0032698
-99%    20jul2021      22jul2021       Kurtosis       1.799436
+50%    08apr2021                      Mean          08apr2021
+                        Largest       Std. Dev.      63.16735
+75%    01jun2021      27jul2021
+90%    06jul2021      27jul2021       Variance       3990.114
+95%    17jul2021      27jul2021       Skewness       .0163188
+99%    25jul2021      27jul2021       Kurtosis       1.812924
 
                     covid_admission_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    22dec2020      20dec2020
- 5%    30dec2020      20dec2020
-10%    10jan2021      20dec2020       Obs              25,160
-25%    11feb2021      20dec2020       Sum of Wgt.      25,160
+ 5%    31dec2020      20dec2020
+10%    11jan2021      20dec2020       Obs              13,275
+25%    13feb2021      20dec2020       Sum of Wgt.      13,275
 
-50%    06apr2021                      Mean          05apr2021
-                        Largest       Std. Dev.      62.07757
-75%    30may2021      22jul2021
-90%    01jul2021      22jul2021       Variance       3853.625
-95%    12jul2021      22jul2021       Skewness       .0055329
-99%    20jul2021      22jul2021       Kurtosis       1.801093
+50%    10apr2021                      Mean          09apr2021
+                        Largest       Std. Dev.      63.58522
+75%    04jun2021      27jul2021
+90%    06jul2021      27jul2021       Variance        4043.08
+95%    17jul2021      27jul2021       Skewness      -.0218986
+99%    25jul2021      27jul2021       Kurtosis        1.79413
 
                      covid_tpp_probable
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    23dec2020      21dec2020
- 5%    31dec2020      21dec2020
-10%    11jan2021      21dec2020       Obs              28,777
-25%    12feb2021      21dec2020       Sum of Wgt.      28,777
+ 5%    01jan2021      21dec2020
+10%    12jan2021      21dec2020       Obs              28,817
+25%    14feb2021      21dec2020       Sum of Wgt.      28,817
 
-50%    08apr2021                      Mean          07apr2021
-                        Largest       Std. Dev.      61.98641
-75%    31may2021      22jul2021
-90%    02jul2021      22jul2021       Variance       3842.315
-95%    13jul2021      22jul2021       Skewness      -.0118424
-99%    21jul2021      22jul2021       Kurtosis       1.797167
+50%    11apr2021                      Mean          10apr2021
+                        Largest       Std. Dev.      63.70093
+75%    05jun2021      27jul2021
+90%    07jul2021      27jul2021       Variance       4057.809
+95%    18jul2021      27jul2021       Skewness      -.0135615
+99%    25jul2021      27jul2021       Kurtosis       1.785557
 
                        covid_vacc_date
 -------------------------------------------------------------
@@ -990,59 +982,59 @@ no observations
  1%    11dec2020      09dec2020
  5%    20dec2020      09dec2020
 10%    31dec2020      09dec2020       Obs              15,000
-25%    01feb2021      09dec2020       Sum of Wgt.      15,000
+25%    02feb2021      09dec2020       Sum of Wgt.      15,000
 
-50%    28mar2021                      Mean          28mar2021
-                        Largest       Std. Dev.          63.2
+50%    29mar2021                      Mean          28mar2021
+                        Largest       Std. Dev.      63.46417
 75%    22may2021      16jul2021
-90%    24jun2021      16jul2021       Variance        3994.24
-95%    05jul2021      16jul2021       Skewness       .0052956
-99%    14jul2021      16jul2021       Kurtosis       1.806557
+90%    24jun2021      16jul2021       Variance       4027.701
+95%    05jul2021      16jul2021       Skewness      -.0076907
+99%    15jul2021      16jul2021       Kurtosis        1.80191
 
                  covid_vacc_second_dose_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    31dec2020      30dec2020
  5%    08jan2021      30dec2020
-10%    18jan2021      30dec2020       Obs               9,000
-25%    18feb2021      30dec2020       Sum of Wgt.       9,000
+10%    19jan2021      30dec2020       Obs               9,000
+25%    17feb2021      30dec2020       Sum of Wgt.       9,000
 
-50%    08apr2021                      Mean          08apr2021
-                        Largest       Std. Dev.       57.4675
-75%    28may2021      16jul2021
-90%    26jun2021      16jul2021       Variance       3302.514
-95%    07jul2021      16jul2021       Skewness       -.005446
-99%    14jul2021      16jul2021       Kurtosis       1.806259
+50%    06apr2021                      Mean          07apr2021
+                        Largest       Std. Dev.      57.41862
+75%    27may2021      16jul2021
+90%    26jun2021      16jul2021       Variance       3296.898
+95%    06jul2021      16jul2021       Skewness       .0171254
+99%    14jul2021      16jul2021       Kurtosis       1.796454
 
                 covid_admission_primary_date
 -------------------------------------------------------------
       Percentiles      Smallest
  1%        22271          22269
- 5%        22279          22269
-10%        22290          22269       Obs              23,905
-25%        22322          22269       Sum of Wgt.      23,905
+ 5%        22280          22269
+10%        22292          22269       Obs               6,676
+25%        22324          22269       Sum of Wgt.       6,676
 
-50%        22376                      Mean           22375.74
-                        Largest       Std. Dev.      62.05525
-75%        22430          22483
-90%        22462          22483       Variance       3850.854
-95%        22473          22483       Skewness       .0066196
-99%        22481          22483       Kurtosis       1.802172
+50%        22380                      Mean           22379.37
+                        Largest       Std. Dev.      63.35667
+75%        22435          22488
+90%        22467          22488       Variance       4014.067
+95%        22478          22488       Skewness      -.0006616
+99%        22486          22488       Kurtosis       1.798144
 
                 covid_primary_care_codes_only
 -------------------------------------------------------------
       Percentiles      Smallest
  1%    23dec2020      21dec2020
- 5%    31dec2020      21dec2020
-10%    11jan2021      21dec2020       Obs              28,500
-25%    12feb2021      21dec2020       Sum of Wgt.      28,500
+ 5%    01jan2021      21dec2020
+10%    12jan2021      21dec2020       Obs              28,500
+25%    13feb2021      21dec2020       Sum of Wgt.      28,500
 
-50%    07apr2021                      Mean          06apr2021
-                        Largest       Std. Dev.      61.67395
-75%    30may2021      22jul2021
-90%    01jul2021      22jul2021       Variance       3803.677
-95%    12jul2021      22jul2021       Skewness       -.001481
-99%    20jul2021      22jul2021       Kurtosis       1.805006
+50%    09apr2021                      Mean          09apr2021
+                        Largest       Std. Dev.      63.34902
+75%    04jun2021      27jul2021
+90%    06jul2021      27jul2021       Variance       4013.098
+95%    17jul2021      27jul2021       Skewness      -.0014167
+99%    25jul2021      27jul2021       Kurtosis       1.794158
 
 . 
 . 
@@ -1053,10 +1045,10 @@ no observations
 . 
 . * Sex
 . gen male = 1 if sex == "M"
-(15,288 missing values generated)
+(15,286 missing values generated)
 
 . replace male = 0 if sex == "F"
-(15,288 real changes made)
+(15,286 real changes made)
 
 . 
 . * Ethnicity 
@@ -1131,7 +1123,7 @@ no observations
 >                60/69.9999 = 5 ///
 >                    70/79.9999 = 6 ///
 >                    80/max = 7, gen(agegroup) 
-(23606 differences between age and agegroup)
+(23702 differences between age and agegroup)
 
 . 
 . label define agegroup   1 "18-<30" ///
@@ -1149,7 +1141,7 @@ no observations
 . * Create binary age (for age stratification)
 . recode age min/65.999999999 = 0 ///
 >            66/max = 1, gen(age66)
-(29644 differences between age and age66)
+(29669 differences between age and age66)
 
 . 
 . * Check there are no missing ages
@@ -1178,10 +1170,10 @@ DROP if HH ID==0
 
 . 
 . drop if care_home_type!="U"
-(897 observations deleted)
+(882 observations deleted)
 
 . count
-  29,103
+  29,118
 
 . 
 . noi di "DROP HH>=10 persons:"
@@ -1194,21 +1186,21 @@ DROP HH>=10 persons:
       Percentiles      Smallest
  1%            0              0
  5%            1              0
-10%            1              0       Obs              29,103
-25%            2              0       Sum of Wgt.      29,103
+10%            1              0       Obs              29,118
+25%            2              0       Sum of Wgt.      29,118
 
-50%            3                      Mean           2.505206
-                        Largest       Std. Dev.      1.036264
+50%            3                      Mean           2.504739
+                        Largest       Std. Dev.      1.037883
 75%            3              6
-90%            4              6       Variance       1.073842
-95%            4              7       Skewness        .049464
-99%            5              7       Kurtosis       2.932061
+90%            4              6       Variance         1.0772
+95%            4              6       Skewness       .0268966
+99%            5              7       Kurtosis       2.922417
 
 . drop if household_size>=10
 (0 observations deleted)
 
 . count
-  29,103
+  29,118
 
 . 
 . noi di "DROP AGE MISSING:"
@@ -1223,10 +1215,10 @@ DROP AGE MISSING:
 . bysort household_id: egen age_drop=max(age)
 
 . drop if age_drop==9
-(5 observations deleted)
+(6 observations deleted)
 
 . count
-  29,098
+  29,112
 
 . 
 . **************************** HOUSEHOLD VARS**********************************
@@ -1234,20 +1226,20 @@ DROP AGE MISSING:
 . ***KIDS_CAT5 (5 categories)
 . *Identify kids under 5/5-11/12-18
 . gen no_of_kids=1 if age<5
-(27,428 missing values generated)
+(27,414 missing values generated)
 
 . recode no_of_kids .=2 if age<12
-(no_of_kids: 2524 changes made)
+(no_of_kids: 2502 changes made)
 
 . recode no_of_kids .=3 if age<18 
-(no_of_kids: 2014 changes made)
+(no_of_kids: 1923 changes made)
 
 . 
 . *Make seperate files with only kids and household number
 . preserve
 
 . keep if age<18
-(22,890 observations deleted)
+(22,989 observations deleted)
 
 . keep household_id no_of_kids
 
@@ -1256,18 +1248,18 @@ DROP AGE MISSING:
 
 Duplicates in terms of all variables
 
-(3,980 observations deleted)
+(3,886 observations deleted)
 
 . *If a hh has >1 record, there must be mixed ages in it: flag these as categor
 > y 4
 . bysort household_id: replace no_of_kids=4 if _N>1
-(1,999 real changes made)
+(2,031 real changes made)
 
 . duplicates drop
 
 Duplicates in terms of all variables
 
-(1,257 observations deleted)
+(1,267 observations deleted)
 
 . rename no_of_kids kids_cat5
 
@@ -1283,11 +1275,11 @@ file kids_mixed_category.dta saved
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                           618
-        from master                       618  
+    not matched                           610
+        from master                       610  
         from using                          0  
 
-    matched                            28,480  
+    matched                            28,502  
     -----------------------------------------
 
 . 
@@ -1298,19 +1290,19 @@ file kids_mixed_category.dta saved
 . lab val kids_cat5 kids_cat5
 
 . recode kids_cat5 .=0
-(kids_cat5: 618 changes made)
+(kids_cat5: 610 changes made)
 
 . tab kids_cat5
 
     kids_cat5 |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-         none |        618        2.12        2.12
-only <5 years |        465        1.60        3.72
-    only 5-11 |        823        2.83        6.55
-       12-<18 |        501        1.72        8.27
-        mixed |     26,691       91.73      100.00
+         none |        610        2.10        2.10
+only <5 years |        338        1.16        3.26
+    only 5-11 |        845        2.90        6.16
+       12-<18 |        368        1.26        7.42
+        mixed |     26,951       92.58      100.00
 --------------+-----------------------------------
-        Total |     29,098      100.00
+        Total |     29,112      100.00
 
 . drop no_of_kids
 
@@ -1318,17 +1310,17 @@ only <5 years |        465        1.60        3.72
 . ***KIDS_CAT4 (4 categories)
 . *Identify kids under 0-11/12-18
 . gen no_of_kids=1 if age<12
-(24,904 missing values generated)
+(24,912 missing values generated)
 
 . recode no_of_kids .=2 if age<18 
-(no_of_kids: 2014 changes made)
+(no_of_kids: 1923 changes made)
 
 . 
 . *Make seperate files with only kids and household number
 . preserve
 
 . keep if age<18
-(22,890 observations deleted)
+(22,989 observations deleted)
 
 . keep household_id no_of_kids
 
@@ -1337,18 +1329,18 @@ only <5 years |        465        1.60        3.72
 
 Duplicates in terms of all variables
 
-(4,566 observations deleted)
+(4,473 observations deleted)
 
 . *If a hh has >1 record, there must be mixed ages in it: flag these as categor
 > y 4
 . bysort household_id: replace no_of_kids=3 if _N>1
-(1,342 real changes made)
+(1,360 real changes made)
 
 . duplicates drop
 
 Duplicates in terms of all variables
 
-(671 observations deleted)
+(680 observations deleted)
 
 . rename no_of_kids kids_cat4
 
@@ -1357,125 +1349,125 @@ Duplicates in terms of all variables
      +---------------------+
      | househ~d   kids_c~4 |
      |---------------------|
-  1. |      290          1 |
-  2. |      326          1 |
-  3. |      342          1 |
-  4. |      376          1 |
-  5. |      379          1 |
+  1. |      257          1 |
+  2. |      312          1 |
+  3. |      352          1 |
+  4. |      355          1 |
+  5. |      394          2 |
      |---------------------|
-  6. |      382          2 |
-  7. |      402          2 |
-  8. |      403          2 |
-  9. |      432          1 |
- 10. |      448          1 |
+  6. |      396          1 |
+  7. |      423          1 |
+  8. |      424          1 |
+  9. |      441          3 |
+ 10. |      447          1 |
      |---------------------|
- 11. |      459          1 |
- 12. |      467          1 |
- 13. |      469          1 |
- 14. |      470          1 |
- 15. |      472          2 |
+ 11. |      448          1 |
+ 12. |      451          1 |
+ 13. |      455          1 |
+ 14. |      459          1 |
+ 15. |      460          2 |
      |---------------------|
- 16. |      473          2 |
- 17. |      475          1 |
- 18. |      477          1 |
- 19. |      479          1 |
- 20. |      480          3 |
+ 16. |      462          1 |
+ 17. |      476          2 |
+ 18. |      478          2 |
+ 19. |      482          2 |
+ 20. |      485          1 |
      |---------------------|
- 21. |      481          1 |
- 22. |      484          1 |
- 23. |      486          2 |
- 24. |      487          1 |
- 25. |      488          1 |
+ 21. |      487          1 |
+ 22. |      490          1 |
+ 23. |      491          1 |
+ 24. |      493          1 |
+ 25. |      495          2 |
      |---------------------|
- 26. |      497          1 |
- 27. |      499          1 |
- 28. |      500          1 |
- 29. |      504          1 |
- 30. |      505          1 |
+ 26. |      496          1 |
+ 27. |      497          2 |
+ 28. |      498          2 |
+ 29. |      499          1 |
+ 30. |      507          1 |
      |---------------------|
- 31. |      510          1 |
- 32. |      515          1 |
- 33. |      516          3 |
- 34. |      517          1 |
- 35. |      518          1 |
+ 31. |      508          1 |
+ 32. |      509          2 |
+ 33. |      510          2 |
+ 34. |      515          3 |
+ 35. |      516          1 |
      |---------------------|
- 36. |      519          1 |
- 37. |      525          2 |
- 38. |      527          2 |
- 39. |      528          2 |
- 40. |      529          2 |
+ 36. |      517          2 |
+ 37. |      518          1 |
+ 38. |      523          3 |
+ 39. |      524          1 |
+ 40. |      529          1 |
      |---------------------|
- 41. |      530          2 |
- 42. |      531          3 |
- 43. |      532          3 |
- 44. |      533          2 |
- 45. |      534          2 |
+ 41. |      532          1 |
+ 42. |      534          1 |
+ 43. |      535          1 |
+ 44. |      536          1 |
+ 45. |      538          3 |
      |---------------------|
- 46. |      535          2 |
- 47. |      537          1 |
- 48. |      538          2 |
- 49. |      539          3 |
- 50. |      541          1 |
+ 46. |      539          1 |
+ 47. |      541          2 |
+ 48. |      543          1 |
+ 49. |      544          1 |
+ 50. |      545          1 |
      |---------------------|
- 51. |      542          1 |
- 52. |      546          2 |
- 53. |      547          1 |
- 54. |      548          1 |
- 55. |      549          1 |
+ 51. |      546          1 |
+ 52. |      548          2 |
+ 53. |      549          1 |
+ 54. |      551          1 |
+ 55. |      552          1 |
      |---------------------|
- 56. |      551          2 |
- 57. |      552          3 |
- 58. |      553          1 |
- 59. |      554          1 |
- 60. |      555          3 |
+ 56. |      554          2 |
+ 57. |      555          1 |
+ 58. |      556          3 |
+ 59. |      557          2 |
+ 60. |      558          2 |
      |---------------------|
- 61. |      556          2 |
- 62. |      557          3 |
- 63. |      558          2 |
- 64. |      560          3 |
- 65. |      561          1 |
+ 61. |      560          1 |
+ 62. |      562          3 |
+ 63. |      563          1 |
+ 64. |      564          1 |
+ 65. |      565          1 |
      |---------------------|
- 66. |      562          1 |
- 67. |      563          1 |
- 68. |      564          2 |
- 69. |      565          3 |
- 70. |      566          1 |
+ 66. |      566          1 |
+ 67. |      568          1 |
+ 68. |      569          3 |
+ 69. |      570          1 |
+ 70. |      571          3 |
      |---------------------|
- 71. |      567          1 |
- 72. |      568          2 |
- 73. |      569          1 |
- 74. |      570          1 |
- 75. |      573          3 |
+ 71. |      575          1 |
+ 72. |      576          1 |
+ 73. |      577          1 |
+ 74. |      578          1 |
+ 75. |      579          2 |
      |---------------------|
- 76. |      574          1 |
- 77. |      575          1 |
- 78. |      576          1 |
- 79. |      579          1 |
- 80. |      580          1 |
+ 76. |      581          3 |
+ 77. |      582          3 |
+ 78. |      583          1 |
+ 79. |      584          1 |
+ 80. |      585          1 |
      |---------------------|
- 81. |      581          3 |
- 82. |      582          2 |
- 83. |      583          1 |
- 84. |      584          2 |
- 85. |      586          1 |
+ 81. |      586          1 |
+ 82. |      587          1 |
+ 83. |      588          3 |
+ 84. |      589          1 |
+ 85. |      590          1 |
      |---------------------|
- 86. |      588          1 |
- 87. |      589          3 |
- 88. |      591          1 |
- 89. |      592          3 |
- 90. |      593          1 |
+ 86. |      592          1 |
+ 87. |      593          1 |
+ 88. |      594          1 |
+ 89. |      596          3 |
+ 90. |      597          3 |
      |---------------------|
- 91. |      597          1 |
- 92. |      598          3 |
- 93. |      599          1 |
- 94. |      600          1 |
- 95. |      601          2 |
+ 91. |      598          3 |
+ 92. |      599          2 |
+ 93. |      602          3 |
+ 94. |      603          2 |
+ 95. |      604          3 |
      |---------------------|
- 96. |      602          3 |
- 97. |      603          3 |
- 98. |      604          3 |
- 99. |      605          1 |
-100. |      606          1 |
+ 96. |      605          3 |
+ 97. |      606          1 |
+ 98. |      607          1 |
+ 99. |      608          1 |
+100. |      609          3 |
      +---------------------+
 
 . save kids_mixed_category, replace
@@ -1489,11 +1481,11 @@ file kids_mixed_category.dta saved
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                           618
-        from master                       618  
+    not matched                           610
+        from master                       610  
         from using                          0  
 
-    matched                            28,480  
+    matched                            28,502  
     -----------------------------------------
 
 . 
@@ -1505,31 +1497,31 @@ file kids_mixed_category.dta saved
 . lab val kids_cat4 kids_cat4
 
 . recode kids_cat4 .=0
-(kids_cat4: 618 changes made)
+(kids_cat4: 610 changes made)
 
 . tab kids_cat4
 
      kids_cat4 |      Freq.     Percent        Cum.
 ---------------+-----------------------------------
-          none |        618        2.12        2.12
-only <12 years |      2,729        9.38       11.50
-    only 12-18 |        501        1.72       13.22
-         mixed |     25,250       86.78      100.00
+          none |        610        2.10        2.10
+only <12 years |      2,929       10.06       12.16
+    only 12-18 |        368        1.26       13.42
+         mixed |     25,205       86.58      100.00
 ---------------+-----------------------------------
-         Total |     29,098      100.00
+         Total |     29,112      100.00
 
 . 
 . *Dose-response exposure: identify number of kids in hh where there are ONLY u
 > nder 11 yr olds
 . bysort household_id: egen number_kids=sum(no_of_kids) if kids_cat4==1
-(26369 missing values generated)
+(26183 missing values generated)
 
 . 
 . gen gp_number_kids=number_kids
-(26,369 missing values generated)
+(26,183 missing values generated)
 
 . recode gp_number_kids 4/max=4
-(gp_number_kids: 812 changes made)
+(gp_number_kids: 861 changes made)
 
 . 
 . lab var gp_number_kids "Number kids under 12 years in hh"
@@ -1547,62 +1539,62 @@ only <12 years |      2,729        9.38       11.50
 
      kids_cat4 |      Freq.     Percent        Cum.
 ---------------+-----------------------------------
-          none |        618        2.12        2.12
-only <12 years |      2,729        9.38       11.50
-    only 12-18 |        501        1.72       13.22
-         mixed |     25,250       86.78      100.00
+          none |        610        2.10        2.10
+only <12 years |      2,929       10.06       12.16
+    only 12-18 |        368        1.26       13.42
+         mixed |     25,205       86.58      100.00
 ---------------+-----------------------------------
-         Total |     29,098      100.00
+         Total |     29,112      100.00
 
 . tab kids_cat5
 
     kids_cat5 |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-         none |        618        2.12        2.12
-only <5 years |        465        1.60        3.72
-    only 5-11 |        823        2.83        6.55
-       12-<18 |        501        1.72        8.27
-        mixed |     26,691       91.73      100.00
+         none |        610        2.10        2.10
+only <5 years |        338        1.16        3.26
+    only 5-11 |        845        2.90        6.16
+       12-<18 |        368        1.26        7.42
+        mixed |     26,951       92.58      100.00
 --------------+-----------------------------------
-        Total |     29,098      100.00
+        Total |     29,112      100.00
 
 . tab kids_cat*
 
               |                  kids_cat4
     kids_cat5 |      none  only <12   only 12-1      mixed |     Total
 --------------+--------------------------------------------+----------
-         none |       618          0          0          0 |       618 
-only <5 years |         0        465          0          0 |       465 
-    only 5-11 |         0        823          0          0 |       823 
-       12-<18 |         0          0        501          0 |       501 
-        mixed |         0      1,441          0     25,250 |    26,691 
+         none |       610          0          0          0 |       610 
+only <5 years |         0        338          0          0 |       338 
+    only 5-11 |         0        845          0          0 |       845 
+       12-<18 |         0          0        368          0 |       368 
+        mixed |         0      1,746          0     25,205 |    26,951 
 --------------+--------------------------------------------+----------
-        Total |       618      2,729        501     25,250 |    29,098 
+        Total |       610      2,929        368     25,205 |    29,112 
 
 . 
 . 
 . /* DROP ALL KIDS, AS HH COMPOSITION VARS ARE NOW MADE */
 . drop if age<18
-(6,208 observations deleted)
+(6,123 observations deleted)
 
 . 
 . *Total number adults in household (to check hh size)
 . bysort household_id: gen tot_adults_hh=_N
 
 . recode tot_adults_hh 3/max=3
-(tot_adults_hh: 22420 changes made)
+(tot_adults_hh: 22521 changes made)
 
 . 
 . tab kids_cat4
 
      kids_cat4 |      Freq.     Percent        Cum.
 ---------------+-----------------------------------
-          none |        618        2.70        2.70
-only <12 years |      2,234        9.76       12.46
-    only 12-18 |        407        1.78       14.24
-         mixed |     19,631       85.76      100.00
+          none |        610        2.65        2.65
+only <12 years |      2,390       10.40       13.05
+    only 12-18 |        296        1.29       14.34
+         mixed |     19,693       85.66      100.00
 ---------------+-----------------------------------
-         Total |     22,890      100.00
+         Total |     22,989      100.00
 
 . tab gp_num if kids_cat4==1
 
@@ -1610,12 +1602,12 @@ only <12 years |      2,234        9.76       12.46
  under 12 years |
           in hh |      Freq.     Percent        Cum.
 ----------------+-----------------------------------
-    1 child <12 |        626       28.02       28.02
- 2 children <12 |        394       17.64       45.66
- 3 children <12 |        398       17.82       63.47
-4+ children <12 |        816       36.53      100.00
+    1 child <12 |        479       20.04       20.04
+ 2 children <12 |        527       22.05       42.09
+ 3 children <12 |        369       15.44       57.53
+4+ children <12 |      1,015       42.47      100.00
 ----------------+-----------------------------------
-          Total |      2,234      100.00
+          Total |      2,390      100.00
 
 . 
 . erase kids_mixed_category.dta
@@ -1690,22 +1682,22 @@ only <12 years |      2,234        9.76       12.46
 . 
 . * Recode strange values 
 . replace bmi = . if bmi == 0 
-(1,141 real changes made, 1,141 to missing)
+(1,138 real changes made, 1,138 to missing)
 
 . replace bmi = . if !inrange(bmi, 15, 50)
-(3,615 real changes made, 3,615 to missing)
+(3,592 real changes made, 3,592 to missing)
 
 . 
 . * Restrict to within 10 years of index and aged > 16 
 . gen bmi_time = (date("$indexdate", "DMY") - bmi_measured_date)/365.25
-(1,141 missing values generated)
+(1,138 missing values generated)
 
 . gen bmi_age = age - bmi_time
-(1,141 missing values generated)
+(1,138 missing values generated)
 
 . 
 . replace bmi = . if bmi_age < 16 
-(411 real changes made, 411 to missing)
+(423 real changes made, 423 to missing)
 
 . replace bmi = . if bmi_time > 10 & bmi_time != . 
 (0 real changes made)
@@ -1716,35 +1708,35 @@ only <12 years |      2,234        9.76       12.46
 (0 real changes made)
 
 . replace bmi_measured_date = . if bmi == . 
-(4,026 real changes made, 4,026 to missing)
+(4,015 real changes made, 4,015 to missing)
 
 . replace bmi_measured = . if bmi == . 
-(5,167 real changes made, 5,167 to missing)
+(5,153 real changes made, 5,153 to missing)
 
 . 
 . gen     bmicat = .
-(22,890 missing values generated)
+(22,989 missing values generated)
 
 . recode  bmicat . = 1 if bmi < 18.5
-(bmicat: 2088 changes made)
+(bmicat: 2113 changes made)
 
 . recode  bmicat . = 2 if bmi < 25
-(bmicat: 5096 changes made)
+(bmicat: 5158 changes made)
 
 . recode  bmicat . = 3 if bmi < 30
-(bmicat: 4063 changes made)
+(bmicat: 4096 changes made)
 
 . recode  bmicat . = 4 if bmi < 35
-(bmicat: 3183 changes made)
+(bmicat: 3177 changes made)
 
 . recode  bmicat . = 5 if bmi < 40
-(bmicat: 2007 changes made)
+(bmicat: 2044 changes made)
 
 . recode  bmicat . = 6 if bmi < .
-(bmicat: 1286 changes made)
+(bmicat: 1248 changes made)
 
 . replace bmicat = .u if bmi >= .
-(5,167 real changes made, 5,167 to missing)
+(5,153 real changes made, 5,153 to missing)
 
 . 
 . label define bmicat 1 "Underweight (<18.5)"     ///
@@ -1762,7 +1754,7 @@ only <12 years |      2,234        9.76       12.46
 . 
 . * Create less  granular categorisation
 . recode bmicat 1/3 .u = 1 4 = 2 5 = 3 6 = 4, gen(obese4cat)
-(20802 differences between bmicat and obese4cat)
+(20876 differences between bmicat and obese4cat)
 
 . 
 . label define obese4cat  1 "No record of obesity"        ///
@@ -1787,19 +1779,19 @@ only <12 years |      2,234        9.76       12.46
 
 . 
 . gen     smoke = 1  if smoking_status == "N"
-(21,985 missing values generated)
+(22,067 missing values generated)
 
 . replace smoke = 2  if smoking_status == "E"
-(460 real changes made)
+(458 real changes made)
 
 . replace smoke = 3  if smoking_status == "S"
-(2,760 real changes made)
+(2,732 real changes made)
 
 . replace smoke = .u if smoking_status == "M"
-(440 real changes made, 440 to missing)
+(503 real changes made, 503 to missing)
 
 . replace smoke = .u if smoking_status == "" 
-(18,325 real changes made, 18,325 to missing)
+(18,374 real changes made, 18,374 to missing)
 
 . 
 . label values smoke smoke
@@ -1810,7 +1802,7 @@ only <12 years |      2,234        9.76       12.46
 . * Create non-missing 3-category variable for current smoking
 . * Assumes missing smoking is never smoking 
 . recode smoke .u = 1, gen(smoke_nomiss)
-(18765 differences between smoke and smoke_nomiss)
+(18877 differences between smoke and smoke_nomiss)
 
 . order smoke_nomiss, after(smoke)
 
@@ -1826,18 +1818,18 @@ only <12 years |      2,234        9.76       12.46
 . * Haematological malignancies
 . gen     cancer_haem_cat = 4 if inrange(cancer_haem_date, d(1/1/1900), d(1/2/2
 > 015))
-(18,860 missing values generated)
+(18,956 missing values generated)
 
 . replace cancer_haem_cat = 3 if inrange(cancer_haem_date, d(1/2/2015), d(1/2/2
 > 019))
-(336 real changes made)
+(374 real changes made)
 
 . replace cancer_haem_cat = 2 if inrange(cancer_haem_date, d(1/2/2019), d(1/2/2
 > 020))
-(93 real changes made)
+(94 real changes made)
 
 . recode  cancer_haem_cat . = 1
-(cancer_haem_cat: 18431 changes made)
+(cancer_haem_cat: 18488 changes made)
 
 . label values cancer_haem_cat cancer
 
@@ -1846,18 +1838,18 @@ only <12 years |      2,234        9.76       12.46
 . * All other cancers
 . gen     cancer_exhaem_cat = 4 if inrange(cancer_nonhaem_date,  d(1/1/1900), d
 > (1/2/2015)) 
-(18,874 missing values generated)
+(18,998 missing values generated)
 
 . replace cancer_exhaem_cat = 3 if inrange(cancer_nonhaem_date,  d(1/2/2015), d
 > (1/2/2019))
-(379 real changes made)
+(389 real changes made)
 
 . replace cancer_exhaem_cat = 2 if inrange(cancer_nonhaem_date,  d(1/2/2019), d
 > (1/2/2020)) 
-(96 real changes made)
+(102 real changes made)
 
 . recode  cancer_exhaem_cat . = 1
-(cancer_exhaem_cat: 18399 changes made)
+(cancer_exhaem_cat: 18507 changes made)
 
 . label values cancer_exhaem_cat cancer
 
@@ -1869,7 +1861,7 @@ only <12 years |      2,234        9.76       12.46
 . * Permanent immunodeficiency ever, OR 
 . * Temporary immunodeficiency  last year
 . gen temp1  = 1 if perm_immunodef_date!=.
-(18,353 missing values generated)
+(18,423 missing values generated)
 
 . gen temp2  = inrange(temp_immunodef_date, (date("$indexdate", "DMY") - 365), 
 > date("$indexdate", "DMY"))
@@ -1886,19 +1878,19 @@ only <12 years |      2,234        9.76       12.46
 . 
 . * Categorise
 . gen     bpcat = 1 if bp_sys < 120 &  bp_dias < 80
-(21,745 missing values generated)
+(16,641 missing values generated)
 
 . replace bpcat = 2 if inrange(bp_sys, 120, 130) & bp_dias<80
-(0 real changes made)
+(3,935 real changes made)
 
 . replace bpcat = 3 if inrange(bp_sys, 130, 140) | inrange(bp_dias, 80, 90)
-(39 real changes made)
+(9,505 real changes made)
 
 . replace bpcat = 4 if (bp_sys>=140 & bp_sys<.) | (bp_dias>=90 & bp_dias<.) 
-(21,706 real changes made)
+(3,864 real changes made)
 
 . replace bpcat = .u if bp_sys>=. | bp_dias>=. | bp_sys==0 | bp_dias==0
-(2,245 real changes made, 2,245 to missing)
+(2,276 real changes made, 2,276 to missing)
 
 . 
 . label define bpcat 1 "Normal" 2 "Elevated" 3 "High, stage I"    ///
@@ -1908,7 +1900,7 @@ only <12 years |      2,234        9.76       12.46
 
 . 
 . recode bpcat .u=1, gen(bpcat_nomiss)
-(2245 differences between bpcat and bpcat_nomiss)
+(2276 differences between bpcat and bpcat_nomiss)
 
 . label values bpcat_nomiss bpcat
 
@@ -1922,7 +1914,7 @@ only <12 years |      2,234        9.76       12.46
 . gen htdiag_or_highbp = bphigh
 
 . recode htdiag_or_highbp 0 = 1 if hypertension==1 
-(htdiag_or_highbp: 466 changes made)
+(htdiag_or_highbp: 3885 changes made)
 
 . 
 . 
@@ -1933,67 +1925,67 @@ only <12 years |      2,234        9.76       12.46
 . * Set implausible creatinine values to missing (Note: zero changed to missing
 > )
 . replace creatinine = . if !inrange(creatinine, 20, 3000) 
-(1,222 real changes made, 1,222 to missing)
+(1,196 real changes made, 1,196 to missing)
 
 .         
 . * Divide by 88.4 (to convert umol/l to mg/dl)
 . gen SCr_adj = creatinine/88.4
-(1,222 missing values generated)
+(1,196 missing values generated)
 
 . 
 . gen min=.
-(22,890 missing values generated)
+(22,989 missing values generated)
 
 . replace min = SCr_adj/0.7 if male==0
-(10,999 real changes made)
+(11,126 real changes made)
 
 . replace min = SCr_adj/0.9 if male==1
-(10,669 real changes made)
+(10,667 real changes made)
 
 . replace min = min^-0.329  if male==0
-(10,999 real changes made)
+(11,126 real changes made)
 
 . replace min = min^-0.411  if male==1
-(10,669 real changes made)
+(10,667 real changes made)
 
 . replace min = 1 if min<1
-(5,958 real changes made)
+(5,959 real changes made)
 
 . 
 . gen max=.
-(22,890 missing values generated)
+(22,989 missing values generated)
 
 . replace max=SCr_adj/0.7 if male==0
-(10,999 real changes made)
+(11,126 real changes made)
 
 . replace max=SCr_adj/0.9 if male==1
-(10,669 real changes made)
+(10,667 real changes made)
 
 . replace max=max^-1.209
-(21,668 real changes made)
+(21,793 real changes made)
 
 . replace max=1 if max>1
-(16,932 real changes made)
+(17,030 real changes made)
 
 . 
 . gen egfr=min*max*141
-(1,222 missing values generated)
+(1,196 missing values generated)
 
 . replace egfr=egfr*(0.993^age)
-(21,668 real changes made)
+(21,793 real changes made)
 
 . replace egfr=egfr*1.018 if male==0
-(10,999 real changes made)
+(11,126 real changes made)
 
 . label var egfr "egfr calculated using CKD-EPI formula with no eth"
 
 . 
 . * Categorise into ckd stages
 . egen egfr_cat = cut(egfr), at(0, 15, 30, 45, 60, 5000)
-(1222 missing values generated)
+(1196 missing values generated)
 
 . recode egfr_cat 0=5 15=4 30=3 45=2 60=0, generate(ckd)
-(21668 differences between egfr_cat and ckd)
+(21793 differences between egfr_cat and ckd)
 
 . * 0 = "No CKD"  2 "stage 3a" 3 "stage 3b" 4 "stage 4" 5 "stage 5"
 . label define ckd 0 "No CKD" 1 "CKD"
@@ -2007,10 +1999,10 @@ only <12 years |      2,234        9.76       12.46
 . *replace chronic_kidney_disease = 0 if creatinine==. 
 .         
 . recode ckd 0=1 2/3=2 4/5=3, gen(reduced_kidney_function_cat)
-(21397 differences between ckd and reduced_kidney_function_cat)
+(21529 differences between ckd and reduced_kidney_function_cat)
 
 . replace reduced_kidney_function_cat = 1 if creatinine==. 
-(1,222 real changes made)
+(1,196 real changes made)
 
 . label define reduced_kidney_function_catlab ///
 >         1 "None" 2 "Stage 3a/3b egfr 30-60      " 3 "Stage 4/5 egfr<30"
@@ -2023,10 +2015,10 @@ only <12 years |      2,234        9.76       12.46
 . 
 . /*ESDR: dialysis or kidney transplant*/
 . gen esrd=1 if dialysis==1 | kidney_transplant==1
-(14,622 missing values generated)
+(14,691 missing values generated)
 
 . recode esrd .=0
-(esrd: 14622 changes made)
+(esrd: 14691 changes made)
 
 . 
 . 
@@ -2040,10 +2032,10 @@ only <12 years |      2,234        9.76       12.46
 . 
 . * Set zero or negative to missing
 . replace hba1c_percentage   = . if hba1c_percentage <= 0
-(1,276 real changes made, 1,276 to missing)
+(1,297 real changes made, 1,297 to missing)
 
 . replace hba1c_mmol_per_mol = . if hba1c_mmol_per_mol <= 0
-(1,671 real changes made, 1,671 to missing)
+(1,594 real changes made, 1,594 to missing)
 
 . 
 . /* Express  HbA1c as percentage  */ 
@@ -2053,14 +2045,14 @@ only <12 years |      2,234        9.76       12.46
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-hba1c_per~ge |     21,614    5.023875     1.95984   .0002053   13.37002
-hba1c_mmol~l |     21,219    40.80051    18.70602   .0316837   115.3485
+hba1c_per~ge |     21,692    5.019464    1.956656   .0000974   12.77763
+hba1c_mmol~l |     21,395    41.22155    19.02412   .0085653   112.0714
 
 . gen     hba1c_pct = hba1c_percentage 
-(1,276 missing values generated)
+(1,297 missing values generated)
 
 . replace hba1c_pct = (hba1c_mmol_per_mol/10.929)+2.15 if hba1c_mmol_per_mol<. 
-(21,219 real changes made)
+(21,395 real changes made)
 
 . 
 . * Valid % range between 0-20  /195 mmol/mol
@@ -2068,23 +2060,23 @@ hba1c_mmol~l |     21,219    40.80051    18.70602   .0316837   115.3485
 (0 real changes made)
 
 . replace hba1c_pct = round(hba1c_pct, 0.1)
-(22,793 real changes made)
+(22,913 real changes made)
 
 . 
 . 
 . /* Categorise hba1c and diabetes  */
 . /* Diabetes type */
 . gen dm_type=1 if diabetes_type=="T1DM"
-(22,203 missing values generated)
+(22,326 missing values generated)
 
 . replace dm_type=2 if diabetes_type=="T2DM"
-(4,653 real changes made)
+(4,520 real changes made)
 
 . replace dm_type=3 if diabetes_type=="UNKNOWN_DM"
-(464 real changes made)
+(465 real changes made)
 
 . replace dm_type=0 if diabetes_type=="NO_DM"
-(17,086 real changes made)
+(17,341 real changes made)
 
 . 
 . safetab dm_type diabetes_type
@@ -2093,46 +2085,39 @@ hba1c_mmol~l |     21,219    40.80051    18.70602   .0316837   115.3485
            |                diabetes_type
    dm_type |     NO_DM       T1DM       T2DM  UNKNOWN.. |     Total
 -----------+--------------------------------------------+----------
-         0 |    17,086          0          0          0 |    17,086 
-         1 |         0        687          0          0 |       687 
-         2 |         0          0      4,653          0 |     4,653 
-         3 |         0          0          0        464 |       464 
+         0 |    17,341          0          0          0 |    17,341 
+         1 |         0        663          0          0 |       663 
+         2 |         0          0      4,520          0 |     4,520 
+         3 |         0          0          0        465 |       465 
 -----------+--------------------------------------------+----------
-     Total |    17,086        687      4,653        464 |    22,890 
+     Total |    17,341        663      4,520        465 |    22,989 
 
 . label define dm_type 0"No DM" 1"T1DM" 2"T2DM" 3"UNKNOWN_DM"
 
 . label values dm_type dm_type
 
 . 
-. *Open safely diabetes codes with exeter algorithm
-. gen dm_type_exeter_os=1 if diabetes_exeter_os=="T1DM_EX_OS"
-(22,174 missing values generated)
-
-. replace dm_type_exeter_os=2 if diabetes_exeter_os=="T2DM_EX_OS"
-(4,538 real changes made)
-
-. replace dm_type_exeter_os=0 if diabetes_exeter_os=="NO_DM"
-(17,636 real changes made)
-
-. label values  dm_type_exeter_os dm_type
-
+. /*Open safely diabetes codes with exeter algorithm
+> gen dm_type_exeter_os=1 if diabetes_exeter_os=="T1DM_EX_OS"
+> replace dm_type_exeter_os=2 if diabetes_exeter_os=="T2DM_EX_OS"
+> replace dm_type_exeter_os=0 if diabetes_exeter_os=="NO_DM"
+> label values  dm_type_exeter_os dm_type*/
 . 
 . * Group hba1c
 . gen     hba1ccat = 0 if hba1c_pct <  6.5
-(8,201 missing values generated)
+(8,454 missing values generated)
 
 . replace hba1ccat = 1 if hba1c_pct >= 6.5  & hba1c_pct < 7.5
-(4,060 real changes made)
+(4,049 real changes made)
 
 . replace hba1ccat = 2 if hba1c_pct >= 7.5  & hba1c_pct < 8
-(1,364 real changes made)
+(1,442 real changes made)
 
 . replace hba1ccat = 3 if hba1c_pct >= 8    & hba1c_pct < 9
-(1,783 real changes made)
+(1,844 real changes made)
 
 . replace hba1ccat = 4 if hba1c_pct >= 9    & hba1c_pct !=.
-(897 real changes made)
+(1,043 real changes made)
 
 . label define hba1ccat 0 "<6.5%" 1">=6.5-7.4" 2">=7.5-7.9" 3">=8-8.9" 4">=9"
 
@@ -2143,20 +2128,20 @@ hba1c_mmol~l |     21,219    40.80051    18.70602   .0316837   115.3485
 
    hba1ccat |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      <6.5% |     14,689       64.45       64.45
-  >=6.5-7.4 |      4,060       17.81       82.26
-  >=7.5-7.9 |      1,364        5.98       88.24
-    >=8-8.9 |      1,783        7.82       96.06
-        >=9 |        897        3.94      100.00
+      <6.5% |     14,535       63.44       63.44
+  >=6.5-7.4 |      4,049       17.67       81.11
+  >=7.5-7.9 |      1,442        6.29       87.40
+    >=8-8.9 |      1,844        8.05       95.45
+        >=9 |      1,043        4.55      100.00
 ------------+-----------------------------------
-      Total |     22,793      100.00
+      Total |     22,913      100.00
 
 . 
 . gen hba1c75=0 if hba1c_pct<7.5
-(4,141 missing values generated)
+(4,405 missing values generated)
 
 . replace hba1c75=1 if hba1c_pct>=7.5 & hba1c_pct!=.
-(4,044 real changes made)
+(4,329 real changes made)
 
 . label define hba1c75 0"<7.5" 1">=7.5"
 
@@ -2165,31 +2150,31 @@ hba1c_mmol~l |     21,219    40.80051    18.70602   .0316837   115.3485
 
     hba1c75 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     18,749       81.91       81.91
-          1 |      4,044       17.67       99.58
-          . |         97        0.42      100.00
+          0 |     18,584       80.84       80.84
+          1 |      4,329       18.83       99.67
+          . |         76        0.33      100.00
 ------------+-----------------------------------
-      Total |     22,890      100.00
+      Total |     22,989      100.00
 
 . 
 . * Create diabetes, split by control/not
 . gen     diabcat = 1 if dm_type==0 | dm_type==.
-(5,804 missing values generated)
+(5,648 missing values generated)
 
 . replace diabcat = 2 if dm_type==1 & inlist(hba1ccat, 0, 1)
-(564 real changes made)
+(521 real changes made)
 
 . replace diabcat = 3 if dm_type==1 & inlist(hba1ccat, 2, 3, 4)
-(120 real changes made)
+(142 real changes made)
 
 . replace diabcat = 4 if dm_type==2 & inlist(hba1ccat, 0, 1)
-(3,821 real changes made)
+(3,671 real changes made)
 
 . replace diabcat = 5 if dm_type==2 & inlist(hba1ccat, 2, 3, 4)
-(818 real changes made)
+(837 real changes made)
 
 . replace diabcat = 6 if dm_type==1 & hba1c_pct==. | dm_type==2 & hba1c_pct==.
-(17 real changes made)
+(12 real changes made)
 
 . 
 . 
@@ -2211,18 +2196,18 @@ hba1c_mmol~l |     21,219    40.80051    18.70602   .0316837   115.3485
 
            diabcat |      Freq.     Percent        Cum.
 -------------------+-----------------------------------
-       No diabetes |     17,086       74.64       74.64
-  T1DM, controlled |        564        2.46       77.11
-T1DM, uncontrolled |        120        0.52       77.63
-  T2DM, controlled |      3,821       16.69       94.33
-T2DM, uncontrolled |        818        3.57       97.90
-Diabetes, no HbA1c |         17        0.07       97.97
-                 . |        464        2.03      100.00
+       No diabetes |     17,341       75.43       75.43
+  T1DM, controlled |        521        2.27       77.70
+T1DM, uncontrolled |        142        0.62       78.32
+  T2DM, controlled |      3,671       15.97       94.28
+T2DM, uncontrolled |        837        3.64       97.93
+Diabetes, no HbA1c |         12        0.05       97.98
+                 . |        465        2.02      100.00
 -------------------+-----------------------------------
-             Total |     22,890      100.00
+             Total |     22,989      100.00
 
 . recode diabcat .=1
-(diabcat: 464 changes made)
+(diabcat: 465 changes made)
 
 . 
 . 
@@ -2234,7 +2219,7 @@ Diabetes, no HbA1c |         17        0.07       97.97
 . rename asthma asthmacat
 
 . recode asthmacat 0=1 1=2 2=3
-(asthmacat: 4603 changes made)
+(asthmacat: 4606 changes made)
 
 . label define asthmacat 1 "No" 2 "Yes, no OCS" 3 "Yes with OCS"
 
@@ -2249,10 +2234,10 @@ Diabetes, no HbA1c |         17        0.07       97.97
 >  ///
 > chronic_respiratory_disease==1 | cancer_haem==1 | cancer_nonhaem==1 | ///
 > asplenia==1 | other_immuno==1
-(3,584 missing values generated)
+(3,617 missing values generated)
 
 . recode shield .=0
-(shield: 3584 changes made)
+(shield: 3617 changes made)
 
 . 
 . /*Any comorbidity*/
@@ -2272,19 +2257,19 @@ Diabetes, no HbA1c |         17        0.07       97.97
 >                                         asplenia==1 | ///
 >                                         ra_sle_psoriasis==1 | ///
 >                                         other_immuno==1 
-(913 missing values generated)
+(953 missing values generated)
 
 . recode anycomorb .=0
-(anycomorb: 913 changes made)
+(anycomorb: 953 changes made)
 
 . tab anyco
 
   anycomorb |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        913        3.99        3.99
-          1 |     21,977       96.01      100.00
+          0 |        953        4.15        4.15
+          1 |     22,036       95.85      100.00
 ------------+-----------------------------------
-      Total |     22,890      100.00
+      Total |     22,989      100.00
 
 . 
 . * Comorbidities of interest 
@@ -2371,17 +2356,17 @@ Diabetes, no HbA1c |         17        0.07       97.97
 . 
 . * Date of Covid death in ONS
 . gen died_date_onscovid = died_date_ons if died_ons_covid_flag_any == 1
-(11,869 missing values generated)
+(11,993 missing values generated)
 
 . gen died_date_onscovid_part1 = died_date_ons if died_ons_covid_flag_underlyin
 > g == 1
-(11,916 missing values generated)
+(11,941 missing values generated)
 
 . 
 . * Date of non-COVID death in ONS 
 . * If missing date of death resulting died_date will also be missing
 . gen died_date_onsnoncovid = died_date_ons if died_ons_covid_flag_any != 1 
-(15,568 missing values generated)
+(15,565 missing values generated)
 
 . 
 . *Date probable covid in TPP
@@ -2443,47 +2428,47 @@ Diabetes, no HbA1c |         17        0.07       97.97
 . 
 . * If outcome was after censoring occurred, set to zero
 . replace covid_tpp_prob = 0 if (date_covid_tpp_prob > study_end_censor ) 
-(653 real changes made)
+(1,235 real changes made)
 
 . replace non_covid_death = 0 if (died_date_onsnoncovid > study_end_censor )
-(214 real changes made)
+(384 real changes made)
 
 . replace covid_death = 0 if (died_date_onscovid > study_end_censor )
-(284 real changes made)
+(560 real changes made)
 
 . replace covid_icu = 0 if (covid_icu_date > study_end_censor)
-(527 real changes made)
+(919 real changes made)
 
 . replace covidadmission  = 0 if (covid_admission_primary_date > SUS_study_end_
 > censor  | covid_admission_primary_date > died_date_ons) 
-(8,002 real changes made)
+(2,363 real changes made)
 
 . replace covid_death_part1 = 0 if (died_date_onscovid_part1 > study_end_censor
 >  )
-(294 real changes made)
+(572 real changes made)
 
 . 
 . * If outcome was after censoring occurred, set date to missing
 . replace date_covid_tpp_prob = . if (date_covid_tpp_prob > study_end_censor ) 
-(653 real changes made, 653 to missing)
+(1,235 real changes made, 1,235 to missing)
 
 . replace died_date_onsnoncovid = . if (died_date_onsnoncovid > study_end_censo
 > r )
-(214 real changes made, 214 to missing)
+(384 real changes made, 384 to missing)
 
 . replace died_date_onscovid = . if (died_date_onscovid > study_end_censor )
-(284 real changes made, 284 to missing)
+(560 real changes made, 560 to missing)
 
 . replace covid_icu_date = . if (covid_icu_date > study_end_censor)
-(527 real changes made, 527 to missing)
+(919 real changes made, 919 to missing)
 
 . replace covid_admission_primary_date    = . if (covid_admission_primary_date 
 > > SUS_study_end_censor  | covid_admission_primary_date > died_date_ons) 
-(8,002 real changes made, 8,002 to missing)
+(2,363 real changes made, 2,363 to missing)
 
 . replace died_date_onscovid_part1 = . if (died_date_onscovid_part1 > study_end
 > _censor )
-(294 real changes made, 294 to missing)
+(572 real changes made, 572 to missing)
 
 . 
 . 
@@ -2500,35 +2485,35 @@ Diabetes, no HbA1c |         17        0.07       97.97
 
 . replace covid_primary_care_codes = 0 if (date_covid_primary_care_codes > stud
 > y_end_censor )
-(600 real changes made)
+(1,132 real changes made)
 
 . replace positive_SGSS = 0 if (date_positive_SGSS > study_end_censor )
-(1,143 real changes made)
+(1,816 real changes made)
 
 . 
 . replace date_covid_primary_care_codes = . if (date_covid_primary_care_codes >
 >  study_end_censor )
-(600 real changes made, 600 to missing)
+(1,132 real changes made, 1,132 to missing)
 
 . replace date_positive_SGSS = . if (date_positive_SGSS > study_end_censor )
-(1,143 real changes made, 1,143 to missing)
+(1,816 real changes made, 1,816 to missing)
 
 . 
 . 
 . gen reported_infection_source=1 if covid_tpp_prob==1
-(1,588 missing values generated)
+(2,146 missing values generated)
 
 . recode reported_infection_source 1=2 if date_covid_tpp_prob== covid_tpp_codes
 > _test 
-(reported_infection_source: 105 changes made)
+(reported_infection_source: 50 changes made)
 
 . recode reported_infection_source 1=3 if date_covid_tpp_prob==covid_tpp_codes_
 > seq 
-(reported_infection_source: 103 changes made)
+(reported_infection_source: 46 changes made)
 
 . recode reported_infection_source 1=4 if date_covid_tpp_prob==covid_tpp_codes_
 > clinical 
-(reported_infection_source: 83 changes made)
+(reported_infection_source: 52 changes made)
 
 . lab define reported_infection_source 1 SGSS 2 test_code 3 sequalae_code 4 dia
 > gnosis_code
@@ -2805,16 +2790,16 @@ Diabetes, no HbA1c |         17        0.07       97.97
 > =*/
 . *  Drop variables that are not needed (those not labelled)
 . ds, not(varlabel)
-ethnicity_~e  hba1c_mmol~e  sgtf          hba1c_mmol~l  bmi_time
-bmi_measured  hba1c_per~te  lft_pcr       hba1c_per~ge  bmi_age
-bp_sys_dat~e  cancer_haem   sex           asthmacat     SCr_adj
-bp_sys_dat~d  cancer_non~m  care_home_~e  diabetes      min
-bp_dias_da~e  esrf_date     bp_sys        covid_tpp_~l  max
-bp_dias_da~d  esrf          bp_dias       covid_tpp_~t  hba1c_pct
-crea~te_date  dialysis_d~e  creatinine    covid_tpp_~q  dm_type
-crea~ne_date  dialysis      diabetes_t~e  covid_admi~e  dm_type_ex~s
-smoki~e_date  died_ons_c~y  diabetes_e~s  age_drop      hba1ccat
-smoki~s_date  died_ons_c~g  diabetes_e~r  no_of_kids    hba1c75
+ethnicity_~e  hba1c_mmol~e  sgtf          asthmacat     SCr_adj
+bmi_measured  hba1c_per~te  lft_pcr       diabetes      min
+bp_sys_dat~e  cancer_haem   sex           covid_tpp_~l  max
+bp_sys_dat~d  cancer_non~m  care_home_~e  covid_tpp_~t  hba1c_pct
+bp_dias_da~e  esrf_date     bp_sys        covid_tpp_~q  dm_type
+bp_dias_da~d  esrf          bp_dias       covid_admi~e  hba1ccat
+crea~te_date  dialysis_d~e  creatinine    age_drop      hba1c75
+crea~ne_date  dialysis      diabetes_t~e  no_of_kids
+smoki~e_date  died_ons_c~y  hba1c_mmol~l  bmi_time
+smoki~s_date  died_ons_c~g  hba1c_per~ge  bmi_age
 
 . drop `r(varlist)'
 
@@ -2835,7 +2820,7 @@ DROP AGE >110:
 (0 observations deleted)
 
 . count
-  22,890
+  22,989
 
 . 
 . noi di "DROP IF DIED BEFORE INDEX"
@@ -2845,7 +2830,7 @@ DROP IF DIED BEFORE INDEX
 (0 observations deleted)
 
 . count
-  22,890
+  22,989
 
 . 
 . noi di "DROP IF COVID IN TPP BEFORE INDEX"
@@ -2855,7 +2840,7 @@ DROP IF COVID IN TPP BEFORE INDEX
 (0 observations deleted)
 
 . count
-  22,890
+  22,989
 
 . 
 . noi di "DROP IMD MISSING"
@@ -2871,7 +2856,7 @@ DROP IMD MISSING
 (0 observations deleted)
 
 . count
-  22,890
+  22,989
 
 . 
 . noi di "DROP MISSING GENDER:"
@@ -2887,7 +2872,7 @@ DROP MISSING GENDER:
 (0 observations deleted)
 
 . count   
-  22,890
+  22,989
 
 .         
 . ***************
@@ -2904,7 +2889,7 @@ file tempdata/analysis_dataset_with_missing_ethnicity.dta saved
 DROP NO ETHNICITY DATA
 
 . keep if ethnicity!=.u   
-(2,278 observations deleted)
+(2,319 observations deleted)
 
 . 
 . save $tempdir/analysis_dataset, replace
@@ -2917,7 +2902,7 @@ file tempdata/analysis_dataset.dta saved
 . use  $tempdir/analysis_dataset, clear
 
 . keep if age<=65
-(4,605 observations deleted)
+(4,559 observations deleted)
 
 . * Create restricted cubic splines for age
 . mkspline age = age, cubic nknots(4)
@@ -2931,7 +2916,7 @@ file tempdata/analysis_dataset_ageband_0.dta saved
 . use  $tempdir/analysis_dataset, clear
 
 . keep if age>65
-(16,007 observations deleted)
+(16,111 observations deleted)
 
 . * Create restricted cubic splines for age
 . mkspline age = age, cubic nknots(4)
@@ -3020,13 +3005,13 @@ obs. time interval:  (stime_non_covid_death[_n-1], stime_non_covid_death]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-     16,007  total observations
-          2  observations end on or before enter()
+     16,111  total observations
+          3  observations end on or before enter()
 ------------------------------------------------------------------------------
-     16,005  observations remaining, representing
-     16,005  subjects
-      5,024  failures in single-failure-per-subject data
-  2,032,124  total analysis time at risk and under observation
+     16,108  observations remaining, representing
+     16,108  subjects
+      4,912  failures in single-failure-per-subject data
+  2,072,507  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       208
@@ -3044,13 +3029,13 @@ obs. time interval:  (stime_covid_icu[_n-1], stime_covid_icu]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-     16,007  total observations
-          2  observations end on or before enter()
+     16,111  total observations
+          3  observations end on or before enter()
 ------------------------------------------------------------------------------
-     16,005  observations remaining, representing
-     16,005  subjects
-     12,418  failures in single-failure-per-subject data
-  1,416,301  total analysis time at risk and under observation
+     16,108  observations remaining, representing
+     16,108  subjects
+     12,211  failures in single-failure-per-subject data
+  1,464,691  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       208
@@ -3067,13 +3052,13 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-     16,007  total observations
-          2  observations end on or before enter()
+     16,111  total observations
+          3  observations end on or before enter()
 ------------------------------------------------------------------------------
-     16,005  observations remaining, representing
-     16,005  subjects
-      7,472  failures in single-failure-per-subject data
-  2,032,124  total analysis time at risk and under observation
+     16,108  observations remaining, representing
+     16,108  subjects
+      7,347  failures in single-failure-per-subject data
+  2,072,507  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       208
@@ -3090,13 +3075,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-     16,007  total observations
-          2  observations end on or before enter()
+     16,111  total observations
+          3  observations end on or before enter()
 ------------------------------------------------------------------------------
-     16,005  observations remaining, representing
-     16,005  subjects
-     14,907  failures in single-failure-per-subject data
-  1,298,440  total analysis time at risk and under observation
+     16,108  observations remaining, representing
+     16,108  subjects
+     14,619  failures in single-failure-per-subject data
+  1,334,617  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       208
@@ -3114,13 +3099,13 @@ obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-     16,007  total observations
-         61  observations end on or before enter()
+     16,111  total observations
+         19  observations end on or before enter()
 ------------------------------------------------------------------------------
-     15,946  observations remaining, representing
-     15,946  subjects
-      7,092  failures in single-failure-per-subject data
-  1,376,151  total analysis time at risk and under observation
+     16,092  observations remaining, representing
+     16,092  subjects
+      1,927  failures in single-failure-per-subject data
+  1,787,018  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       178
@@ -3138,13 +3123,13 @@ obs. time interval:  (stime_non_covid_death[_n-1], stime_non_covid_death]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-      4,605  total observations
-          0  exclusions
+      4,559  total observations
+          1  observation ends on or before enter()
 ------------------------------------------------------------------------------
-      4,605  observations remaining, representing
-      4,605  subjects
-      1,385  failures in single-failure-per-subject data
-    587,267  total analysis time at risk and under observation
+      4,558  observations remaining, representing
+      4,558  subjects
+      1,431  failures in single-failure-per-subject data
+    587,956  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       208
@@ -3162,13 +3147,13 @@ obs. time interval:  (stime_covid_icu[_n-1], stime_covid_icu]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-      4,605  total observations
-          0  exclusions
+      4,559  total observations
+          1  observation ends on or before enter()
 ------------------------------------------------------------------------------
-      4,605  observations remaining, representing
-      4,605  subjects
-      3,588  failures in single-failure-per-subject data
-    410,789  total analysis time at risk and under observation
+      4,558  observations remaining, representing
+      4,558  subjects
+      3,460  failures in single-failure-per-subject data
+    412,321  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       208
@@ -3185,13 +3170,13 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-      4,605  total observations
-          0  exclusions
+      4,559  total observations
+          1  observation ends on or before enter()
 ------------------------------------------------------------------------------
-      4,605  observations remaining, representing
-      4,605  subjects
-      2,188  failures in single-failure-per-subject data
-    587,267  total analysis time at risk and under observation
+      4,558  observations remaining, representing
+      4,558  subjects
+      2,025  failures in single-failure-per-subject data
+    587,956  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       208
@@ -3208,13 +3193,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-      4,605  total observations
-          0  exclusions
+      4,559  total observations
+          1  observation ends on or before enter()
 ------------------------------------------------------------------------------
-      4,605  observations remaining, representing
-      4,605  subjects
-      4,271  failures in single-failure-per-subject data
-    373,895  total analysis time at risk and under observation
+      4,558  observations remaining, representing
+      4,558  subjects
+      4,117  failures in single-failure-per-subject data
+    387,249  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       208
@@ -3232,13 +3217,13 @@ obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
             origin:  time enter_date
 
 ------------------------------------------------------------------------------
-      4,605  total observations
-         16  observations end on or before enter()
+      4,559  total observations
+          4  observations end on or before enter()
 ------------------------------------------------------------------------------
-      4,589  observations remaining, representing
-      4,589  subjects
-      2,086  failures in single-failure-per-subject data
-    390,392  total analysis time at risk and under observation
+      4,555  observations remaining, representing
+      4,555  subjects
+        535  failures in single-failure-per-subject data
+    506,608  total analysis time at risk and under observation
                                                 at risk from t =         0
                                      earliest observed entry t =         0
                                           last observed exit t =       178
@@ -3253,5 +3238,5 @@ file tempdata/cr_create_analysis_dataset_STSET_covidadmission_ageband_1.dta sav
       name:  <unnamed>
        log:  /workspace/logs/01_cr_analysis_dataset.log
   log type:  text
- closed on:  24 Jul 2021, 22:59:26
+ closed on:  27 Jul 2021, 11:18:23
 -------------------------------------------------------------------------------

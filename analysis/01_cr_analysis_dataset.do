@@ -567,11 +567,11 @@ safetab dm_type diabetes_type
 label define dm_type 0"No DM" 1"T1DM" 2"T2DM" 3"UNKNOWN_DM"
 label values dm_type dm_type
 
-*Open safely diabetes codes with exeter algorithm
+/*Open safely diabetes codes with exeter algorithm
 gen dm_type_exeter_os=1 if diabetes_exeter_os=="T1DM_EX_OS"
 replace dm_type_exeter_os=2 if diabetes_exeter_os=="T2DM_EX_OS"
 replace dm_type_exeter_os=0 if diabetes_exeter_os=="NO_DM"
-label values  dm_type_exeter_os dm_type
+label values  dm_type_exeter_os dm_type*/
 
 * Group hba1c
 gen 	hba1ccat = 0 if hba1c_pct <  6.5
