@@ -1,8 +1,4 @@
-from cohortextractor import (
-    codelist_from_csv,
-    codelist,
-)
-
+from cohortextractor import codelist, codelist_from_csv
 
 # OUTCOME CODELISTS
 covid_codelist = codelist_from_csv(
