@@ -28,18 +28,27 @@ log using "$logdir/08_an_tablecontent_HRtable_`outcome'", text replace
 cap prog drop outputHRsforvar
 prog define outputHRsforvar
 syntax, variable(string) min(real) max(real) outcome(string)
-foreach period in 1 2 3 {
+foreach period in 0 1 2  {
 forvalues x=0/1 {
 file write tablecontents ("age") ("`x'") _n
 forvalues i=`min'/`max'{
 local endwith "_tab"
 
+use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
+
+stsplit cat_time, at(0,78,147,400)
+recode cat_time 78=1 147=2 400=3
+recode `outcome' .=0 
+tab cat_time
+tab cat_time `outcome'
+
+keep if cat_time==`period'
+
 	*put the varname and condition to left so that alignment can be checked vs shell
 	file write tablecontents ("`variable'") _tab ("`i'") _tab ("`period'") _tab 
 	
-	use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 	*put total N, PYFU and Rate in table
-	cou if `variable' == `i' & _d == 1
+	cou if `variable' == `i' & _d == 1 
 	local event = r(N)
     bysort `variable': egen total_follow_up = total(_t)
 	su total_follow_up if `variable' == `i'

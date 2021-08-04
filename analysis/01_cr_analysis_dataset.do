@@ -96,9 +96,11 @@ covid_vacc_date  covid_vacc_second_dose_date	{
 	rename `var' `var'_dstr
 	gen `var' = date(`var'_dstr, "YMD")
 	drop `var'_dstr
-	format `var' %td 
-	
+	format `var' %td 	
 }
+
+*Amend vaccine dates
+replace covid_vacc_second_dose_date=. if covid_vacc_date==covid_vacc_second_dose_date
 
 gen covid_admission_primary_date = covid_admission_date ///
 if (covid_admission_primary_diagnosi == "U071"| covid_admission_primary_diagnosi == "U072")
