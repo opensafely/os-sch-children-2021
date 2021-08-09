@@ -78,7 +78,7 @@ end
 *************************************************************************************
 
 * Open dataset and fit specified model(s)
-forvalues x=0/1 {
+foreach x in 0 {
 forvalues period=0/2 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
