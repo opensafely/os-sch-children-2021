@@ -165,16 +165,15 @@ study = StudyDefinition(
     # SECOND DOSE COVID VACCINATION
     covid_vacc_second_dose_date=patients.with_tpp_vaccination_record(
         target_disease_matches="SARS-2 CORONAVIRUS",
-        on_or_after="2020-12-01",
-        find_last_match_in_period=True,
+        on_or_after="covid_vacc_date + 21 days",  
+        find_first_match_in_period=True,
         returning="date",
         date_format="YYYY-MM-DD",
         return_expectations={
             "date": {
-                "earliest": "2020-12-29",  # first reported second dose administered on the 29/12
-                "latest": "2021-07-16",
-            },
-            "incidence": 0.3,
+                "earliest": "2020-12-08",  # first vaccine administered on the 8/12
+                "latest": "2021-03-01",
+            }
         },
     ),
     ## DEMOGRAPHIC COVARIATES
