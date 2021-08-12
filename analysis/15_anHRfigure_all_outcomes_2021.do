@@ -9,6 +9,13 @@
 *
 *Date drafted: 30th June 2021
 *************************************************************************
+global outdir  	  "output" 
+global logdir     "logs"
+global tempdir    "tempdata"
+
+* Open a log file
+capture log close
+log using "$logdir/15_an_tablecontents_HRtable_all_outcomes_ANALYSES", text replace
 
 
 ***********************************************************************************************************************
@@ -38,7 +45,7 @@ local endwith "_tab"
 		*1) GET THE RIGHT ESTIMATES INTO MEMORY
 	
 		if "`modeltype'"=="plus_ethadj" {
-				cap estimates use ./output/an_multivariate_cox_models_`outcome'_`variable'_MAINFULLYADJMODEL_ageband_`x'_timeperiod`period'
+				cap estimates use ./output/an_multivariate_cox_models_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period'
 				if _rc!=0 local noestimatesflag 1
 				}
 		
@@ -91,6 +98,8 @@ postclose HRestimates_all_outcomes
 
 use `HRestimates_all_outcomes', clear
 save ./output/HRestimates_all_outcomes, replace
+
+log close
 
 /*
 foreach dataset in MAIN W2 { 
