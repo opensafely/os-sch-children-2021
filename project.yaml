@@ -259,6 +259,18 @@ actions:
         log: logs/11_an_interaction_HR_tables_forest_covidadmission.log
         data: "output/11_an_int_tab_contents_HRtable_covidadmission.txt"
 
+  15_anHRfigure_all_outcomes_2021:
+    needs:  
+      - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob
+      - 07b_an_multivariable_cox_models_FULL_covid_icu
+      - 07b_an_multivariable_cox_models_FULL_covidadmission
+      - 07b_an_multivariable_cox_models_FULL_covid_death
+    run: stata-mp:latest analysis/15_anHRfigure_all_outcomes_2021.do
+    outputs:
+      moderately_sensitive:
+        data: "output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES.txt"
+
+
   run_all:
     needs:
       - 02_an_data_checks
@@ -272,6 +284,7 @@ actions:
       - 08_an_tablecontent_HRtable_covid_icu
       - 08_an_tablecontent_HRtable_covid_death
       - 08_an_tablecontent_HRtable_covid_tpp_prob
+      - 15_anHRfigure_all_outcomes_2021
     # In order to be valid this action needs to define a run commmand and
     # some output. We don't really care what these are but the below seems to
     # do the trick.
