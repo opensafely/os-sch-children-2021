@@ -1,0 +1,74 @@
+period	age	exposure	exposure level	outcome	int_type	int_level	HR	lci	uci	pval
+0	0	kids_cat4	1	covidadmission	male	0	1.14	1.05	1.25	0.70
+0	0	kids_cat4	1	covidadmission	male	1	1.12	1.03	1.21	
+0	0	kids_cat4	1	covidadmission	vaccine	0	1.21	1.14	1.28	   .
+0	0	kids_cat4	1	covidadmission	vaccine	1	0.00	0.00	0.00	
+0	0	kids_cat4	2	covidadmission	male	0	1.07	0.97	1.18	0.04
+0	0	kids_cat4	2	covidadmission	male	1	1.22	1.12	1.33	
+0	0	kids_cat4	2	covidadmission	vaccine	0	1.17	1.10	1.25	0.04
+0	0	kids_cat4	2	covidadmission	vaccine	1	0.15	0.02	1.07	
+0	0	kids_cat4	3	covidadmission	male	0	1.07	0.96	1.21	0.08
+0	0	kids_cat4	3	covidadmission	male	1	1.22	1.11	1.35	
+0	0	kids_cat4	3	covidadmission	vaccine	0	1.23	1.15	1.33	   .
+0	0	kids_cat4	3	covidadmission	vaccine	1	0.00	0.00	0.00	
+0	1	kids_cat4	1	covidadmission	male	0	1.13	0.93	1.37	0.17
+0	1	kids_cat4	1	covidadmission	male	1	1.33	1.13	1.56	
+0	1	kids_cat4	1	covidadmission	vaccine	0	DID NOT FIT
+0	1	kids_cat4	1	covidadmission	vaccine	1	DID NOT FIT
+0	1	kids_cat4	2	covidadmission	male	0	1.11	0.88	1.39	0.31
+0	1	kids_cat4	2	covidadmission	male	1	1.29	1.06	1.56	
+0	1	kids_cat4	2	covidadmission	vaccine	0	DID NOT FIT
+0	1	kids_cat4	2	covidadmission	vaccine	1	DID NOT FIT
+0	1	kids_cat4	3	covidadmission	male	0	0.97	0.72	1.31	0.28
+0	1	kids_cat4	3	covidadmission	male	1	1.20	0.92	1.56	
+0	1	kids_cat4	3	covidadmission	vaccine	0	DID NOT FIT
+0	1	kids_cat4	3	covidadmission	vaccine	1	DID NOT FIT
+1	0	kids_cat4	1	covidadmission	male	0	1.83	1.44	2.31	0.96
+1	0	kids_cat4	1	covidadmission	male	1	1.84	1.49	2.27	
+1	0	kids_cat4	1	covidadmission	vaccine	0	1.21	1.14	1.28	   .
+1	0	kids_cat4	1	covidadmission	vaccine	1	0.00	0.00	0.00	
+1	0	kids_cat4	2	covidadmission	male	0	1.38	1.03	1.85	0.54
+1	0	kids_cat4	2	covidadmission	male	1	1.22	0.92	1.61	
+1	0	kids_cat4	2	covidadmission	vaccine	0	1.17	1.10	1.25	0.04
+1	0	kids_cat4	2	covidadmission	vaccine	1	0.15	0.02	1.07	
+1	0	kids_cat4	3	covidadmission	male	0	2.24	1.68	2.98	0.05
+1	0	kids_cat4	3	covidadmission	male	1	1.54	1.16	2.05	
+1	0	kids_cat4	3	covidadmission	vaccine	0	1.23	1.15	1.33	   .
+1	0	kids_cat4	3	covidadmission	vaccine	1	0.00	0.00	0.00	
+1	1	kids_cat4	1	covidadmission	male	0	1.09	0.49	2.42	0.98
+1	1	kids_cat4	1	covidadmission	male	1	1.07	0.49	2.36	
+1	1	kids_cat4	1	covidadmission	vaccine	0	DID NOT FIT
+1	1	kids_cat4	1	covidadmission	vaccine	1	DID NOT FIT
+1	1	kids_cat4	2	covidadmission	male	0	1.82	0.88	3.79	0.65
+1	1	kids_cat4	2	covidadmission	male	1	2.29	1.14	4.59	
+1	1	kids_cat4	2	covidadmission	vaccine	0	DID NOT FIT
+1	1	kids_cat4	2	covidadmission	vaccine	1	DID NOT FIT
+1	1	kids_cat4	3	covidadmission	male	0	3.21	1.65	6.26	0.13
+1	1	kids_cat4	3	covidadmission	male	1	1.31	0.47	3.65	
+1	1	kids_cat4	3	covidadmission	vaccine	0	DID NOT FIT
+1	1	kids_cat4	3	covidadmission	vaccine	1	DID NOT FIT
+2	0	kids_cat4	1	covidadmission	male	0	2.06	0.84	5.02	0.92
+2	0	kids_cat4	1	covidadmission	male	1	2.19	0.91	5.28	
+2	0	kids_cat4	1	covidadmission	vaccine	0	1.21	1.14	1.28	   .
+2	0	kids_cat4	1	covidadmission	vaccine	1	0.00	0.00	0.00	
+2	0	kids_cat4	2	covidadmission	male	0	2.74	1.06	7.13	0.66
+2	0	kids_cat4	2	covidadmission	male	1	1.95	0.60	6.39	
+2	0	kids_cat4	2	covidadmission	vaccine	0	1.17	1.10	1.25	0.04
+2	0	kids_cat4	2	covidadmission	vaccine	1	0.15	0.02	1.07	
+2	0	kids_cat4	3	covidadmission	male	0	1.76	0.59	5.20	0.94
+2	0	kids_cat4	3	covidadmission	male	1	1.87	0.59	5.86	
+2	0	kids_cat4	3	covidadmission	vaccine	0	1.23	1.15	1.33	   .
+2	0	kids_cat4	3	covidadmission	vaccine	1	0.00	0.00	0.00	
+2	1	kids_cat4	1	covidadmission	male	0	0.00	   .	   .	   .
+2	1	kids_cat4	1	covidadmission	male	1	0.00	   .	   .	
+2	1	kids_cat4	1	covidadmission	vaccine	0	DID NOT FIT
+2	1	kids_cat4	1	covidadmission	vaccine	1	DID NOT FIT
+2	1	kids_cat4	2	covidadmission	male	0	0.00	0.00	0.00	   .
+2	1	kids_cat4	2	covidadmission	male	1	3.42	0.35	33.63	
+2	1	kids_cat4	2	covidadmission	vaccine	0	DID NOT FIT
+2	1	kids_cat4	2	covidadmission	vaccine	1	DID NOT FIT
+2	1	kids_cat4	3	covidadmission	male	0	0.00	   .	   .	   .
+2	1	kids_cat4	3	covidadmission	male	1	0.00	   .	   .	
+2	1	kids_cat4	3	covidadmission	vaccine	0	DID NOT FIT
+2	1	kids_cat4	3	covidadmission	vaccine	1	DID NOT FIT
+
