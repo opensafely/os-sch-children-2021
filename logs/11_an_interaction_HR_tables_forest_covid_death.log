@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_death.log
   log type:  text
- opened on:  25 Jul 2021, 08:36:03
+ opened on:  17 Aug 2021, 07:55:22
 
 . 
 . *****************************************************************************
@@ -20,7 +20,7 @@
   3. foreach period in 0 1 2  {
   4. forvalues x=0/1 {
   5. forvalues i=`min'/`max'{
-  6. foreach int_type in male vaccine {
+  6. foreach int_type in male vaccine shield {
   7. 
 . forvalues int_level=0/1 {
   8. 
@@ -124,615 +124,360 @@
 
  ( 1)  1.male#1.kids_cat4 = 0
 
-           chi2(  1) =    0.09
-         Prob > chi2 =    0.7631
+           chi2(  1) =    1.24
+         Prob > chi2 =    0.2657
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.60
-         Prob > chi2 =    0.7404
+           chi2(  2) =    1.31
+         Prob > chi2 =    0.5205
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.60
-         Prob > chi2 =    0.7404
-
- ( 1)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  1) =    3.93
-         Prob > chi2 =    0.0474
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
+           chi2(  2) =    1.31
+         Prob > chi2 =    0.5205
 
  ( 1)  1.male#2.kids_cat4 = 0
 
-           chi2(  1) =    0.55
-         Prob > chi2 =    0.4569
+           chi2(  1) =    0.12
+         Prob > chi2 =    0.7295
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.60
-         Prob > chi2 =    0.7404
+           chi2(  2) =    1.31
+         Prob > chi2 =    0.5205
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.60
-         Prob > chi2 =    0.7404
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
-
-           chi2(  1) =    2.65
-         Prob > chi2 =    0.1033
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
+           chi2(  2) =    1.31
+         Prob > chi2 =    0.5205
 
  ( 1)  1.male#3.kids_cat4 = 0
 
-           chi2(  1) =    0.28
-         Prob > chi2 =    0.5949
+           chi2(  1) =    0.03
+         Prob > chi2 =    0.8565
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.60
-         Prob > chi2 =    0.7404
+           chi2(  2) =    1.31
+         Prob > chi2 =    0.5205
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.60
-         Prob > chi2 =    0.7404
-
- ( 1)  1.vaccine#3.kids_cat4 = 0
-
-           chi2(  1) =   17.91
-         Prob > chi2 =    0.0000
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
+           chi2(  2) =    1.31
+         Prob > chi2 =    0.5205
 
  ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    0.78
-         Prob > chi2 =    0.3767
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    2.10
-         Prob > chi2 =    0.3493
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    2.10
-         Prob > chi2 =    0.3493
-
- ( 1)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  1) =    1.65
-         Prob > chi2 =    0.1985
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    0.34
-         Prob > chi2 =    0.5592
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    2.10
-         Prob > chi2 =    0.3493
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    2.10
-         Prob > chi2 =    0.3493
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
-
-           chi2(  1) =    0.29
-         Prob > chi2 =    0.5880
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    0.55
-         Prob > chi2 =    0.4577
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    2.10
-         Prob > chi2 =    0.3493
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    2.10
-         Prob > chi2 =    0.3493
-
- ( 1)  1.vaccine#3.kids_cat4 = 0
-
-           chi2(  1) =    3.78
-         Prob > chi2 =    0.0520
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    3.73
-         Prob > chi2 =    0.0535
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    3.95
-         Prob > chi2 =    0.1384
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    3.95
-         Prob > chi2 =    0.1384
-
- ( 1)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  1) =    3.93
-         Prob > chi2 =    0.0474
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    2.20
-         Prob > chi2 =    0.1381
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    3.95
-         Prob > chi2 =    0.1384
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    3.95
-         Prob > chi2 =    0.1384
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
-
-           chi2(  1) =    2.65
-         Prob > chi2 =    0.1033
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    2.68
-         Prob > chi2 =    0.1013
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    3.95
-         Prob > chi2 =    0.1384
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    3.95
-         Prob > chi2 =    0.1384
-
- ( 1)  1.vaccine#3.kids_cat4 = 0
-
-           chi2(  1) =   17.91
-         Prob > chi2 =    0.0000
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    1.38
-         Prob > chi2 =    0.2407
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.99
-         Prob > chi2 =    0.3696
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.99
-         Prob > chi2 =    0.3696
-
- ( 1)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  1) =    1.65
-         Prob > chi2 =    0.1985
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    1.49
-         Prob > chi2 =    0.2229
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.99
-         Prob > chi2 =    0.3696
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.99
-         Prob > chi2 =    0.3696
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
-
-           chi2(  1) =    0.29
-         Prob > chi2 =    0.5880
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    1.47
-         Prob > chi2 =    0.2259
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.99
-         Prob > chi2 =    0.3696
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.99
-         Prob > chi2 =    0.3696
-
- ( 1)  1.vaccine#3.kids_cat4 = 0
-
-           chi2(  1) =    3.78
-         Prob > chi2 =    0.0520
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    0.00
-         Prob > chi2 =    0.9497
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.02
-         Prob > chi2 =    0.9922
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.02
-         Prob > chi2 =    0.9922
-
- ( 1)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  1) =    3.93
-         Prob > chi2 =    0.0474
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.male#2.kids_cat4 = 0
 
            chi2(  1) =    0.02
-         Prob > chi2 =    0.9006
+         Prob > chi2 =    0.8945
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.02
-         Prob > chi2 =    0.9922
+           chi2(  2) =    3.43
+         Prob > chi2 =    0.1802
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.02
-         Prob > chi2 =    0.9922
+           chi2(  2) =    3.43
+         Prob > chi2 =    0.1802
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 1)  1.male#2.kids_cat4 = 0
 
-           chi2(  1) =    2.65
-         Prob > chi2 =    0.1033
+           chi2(  1) =    3.07
+         Prob > chi2 =    0.0796
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
+           chi2(  2) =    3.43
+         Prob > chi2 =    0.1802
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
+           chi2(  2) =    3.43
+         Prob > chi2 =    0.1802
 
  ( 1)  1.male#3.kids_cat4 = 0
 
-           chi2(  1) =    0.72
-         Prob > chi2 =    0.3976
+           chi2(  1) =    1.02
+         Prob > chi2 =    0.3122
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.02
-         Prob > chi2 =    0.9922
+           chi2(  2) =    3.43
+         Prob > chi2 =    0.1802
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.02
-         Prob > chi2 =    0.9922
-
- ( 1)  1.vaccine#3.kids_cat4 = 0
-
-           chi2(  1) =   17.91
-         Prob > chi2 =    0.0000
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
-
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
-
-           chi2(  2) =    6.58
-         Prob > chi2 =    0.0373
+           chi2(  2) =    3.43
+         Prob > chi2 =    0.1802
 
  ( 1)  1.male#1.kids_cat4 = 0
 
-           chi2(  1) =    2.21
-         Prob > chi2 =    0.1368
+           chi2(  1) =    0.03
+         Prob > chi2 =    0.8573
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.51
-         Prob > chi2 =    0.2856
+           chi2(  2) =    0.32
+         Prob > chi2 =    0.8514
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.51
-         Prob > chi2 =    0.2856
+           chi2(  2) =    0.32
+         Prob > chi2 =    0.8514
 
  ( 1)  1.vaccine#1.kids_cat4 = 0
 
-           chi2(  1) =    1.65
-         Prob > chi2 =    0.1985
+           chi2(  1) =    8.77
+         Prob > chi2 =    0.0031
 
  ( 1)  1.vaccine#2.kids_cat4 = 0
  ( 2)  1.vaccine#1.kids_cat4 = 0
 
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
+           chi2(  2) =    9.08
+         Prob > chi2 =    0.0107
 
  ( 1)  1.vaccine#2.kids_cat4 = 0
  ( 2)  1.vaccine#1.kids_cat4 = 0
 
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
+           chi2(  2) =    9.08
+         Prob > chi2 =    0.0107
 
  ( 1)  1.male#2.kids_cat4 = 0
 
-           chi2(  1) =    2.03
-         Prob > chi2 =    0.1542
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    2.51
-         Prob > chi2 =    0.2856
+           chi2(  1) =    0.30
+         Prob > chi2 =    0.5865
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.51
-         Prob > chi2 =    0.2856
+           chi2(  2) =    0.32
+         Prob > chi2 =    0.8514
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.32
+         Prob > chi2 =    0.8514
 
  ( 1)  1.vaccine#2.kids_cat4 = 0
 
-           chi2(  1) =    0.29
-         Prob > chi2 =    0.5880
+           chi2(  1) =    0.33
+         Prob > chi2 =    0.5681
 
  ( 1)  1.vaccine#2.kids_cat4 = 0
  ( 2)  1.vaccine#1.kids_cat4 = 0
 
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
+           chi2(  2) =    9.08
+         Prob > chi2 =    0.0107
 
  ( 1)  1.vaccine#2.kids_cat4 = 0
  ( 2)  1.vaccine#1.kids_cat4 = 0
 
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
+           chi2(  2) =    9.08
+         Prob > chi2 =    0.0107
 
  ( 1)  1.male#3.kids_cat4 = 0
 
-           chi2(  1) =    1.43
-         Prob > chi2 =    0.2325
+           chi2(  1) =    0.41
+         Prob > chi2 =    0.5213
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.51
-         Prob > chi2 =    0.2856
+           chi2(  2) =    0.32
+         Prob > chi2 =    0.8514
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.51
-         Prob > chi2 =    0.2856
+           chi2(  2) =    0.32
+         Prob > chi2 =    0.8514
 
  ( 1)  1.vaccine#3.kids_cat4 = 0
 
-           chi2(  1) =    3.78
-         Prob > chi2 =    0.0520
+           chi2(  1) =   15.99
+         Prob > chi2 =    0.0001
 
  ( 1)  1.vaccine#2.kids_cat4 = 0
  ( 2)  1.vaccine#1.kids_cat4 = 0
 
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
+           chi2(  2) =    9.08
+         Prob > chi2 =    0.0107
 
  ( 1)  1.vaccine#2.kids_cat4 = 0
  ( 2)  1.vaccine#1.kids_cat4 = 0
 
-           chi2(  2) =    1.95
-         Prob > chi2 =    0.3763
+           chi2(  2) =    9.08
+         Prob > chi2 =    0.0107
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    0.02
+         Prob > chi2 =    0.8979
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.40
+         Prob > chi2 =    0.4955
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.40
+         Prob > chi2 =    0.4955
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    1.23
+         Prob > chi2 =    0.2680
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.40
+         Prob > chi2 =    0.4955
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.40
+         Prob > chi2 =    0.4955
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.24
+         Prob > chi2 =    0.6208
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.40
+         Prob > chi2 =    0.4955
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.40
+         Prob > chi2 =    0.4955
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    1.66
+         Prob > chi2 =    0.1973
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.66
+         Prob > chi2 =    0.4352
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.66
+         Prob > chi2 =    0.4352
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    0.38
+         Prob > chi2 =    0.5359
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.66
+         Prob > chi2 =    0.4352
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.66
+         Prob > chi2 =    0.4352
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.00
+         Prob > chi2 =    0.9872
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.66
+         Prob > chi2 =    0.4352
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.66
+         Prob > chi2 =    0.4352
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    0.30
+         Prob > chi2 =    0.5826
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.41
+         Prob > chi2 =    0.8143
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.41
+         Prob > chi2 =    0.8143
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    0.00
+         Prob > chi2 =    0.9861
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.41
+         Prob > chi2 =    0.8143
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.41
+         Prob > chi2 =    0.8143
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.47
+         Prob > chi2 =    0.4950
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.41
+         Prob > chi2 =    0.8143
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.41
+         Prob > chi2 =    0.8143
 
 . file write tablecontents_int _n
 
@@ -747,5 +492,5 @@
       name:  <unnamed>
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_death.log
   log type:  text
- closed on:  25 Jul 2021, 08:36:04
+ closed on:  17 Aug 2021, 07:55:23
 -------------------------------------------------------------------------------

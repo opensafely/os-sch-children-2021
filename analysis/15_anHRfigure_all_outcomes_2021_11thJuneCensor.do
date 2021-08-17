@@ -15,7 +15,7 @@ global tempdir    "tempdata"
 
 * Open a log file
 capture log close
-log using "$logdir/15_an_tablecontents_HRtable_all_outcomes_ANALYSES", text replace
+log using "$logdir/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_11thJuneCensor", text replace
 
 
 ***********************************************************************************************************************
@@ -45,7 +45,7 @@ local endwith "_tab"
 		*1) GET THE RIGHT ESTIMATES INTO MEMORY
 	
 		if "`modeltype'"=="plus_ethadj" {
-				cap estimates use ./output/an_multivariate_cox_models_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period'
+				cap estimates use ./output/an_multivariate_cox_models_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_11thJuneCensor
 				if _rc!=0 local noestimatesflag 1
 				}
 		
@@ -81,7 +81,7 @@ end
 
 
 cap file close tablecontents_all_outcomes
-file open tablecontents_all_outcomes using ./output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES.txt, t w replace 
+file open tablecontents_all_outcomes using ./output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_11thJuneCensor.txt, t w replace 
 
 tempfile HRestimates_all_outcomes
 cap postutil clear
@@ -97,7 +97,7 @@ file close tablecontents_all_outcomes
 postclose HRestimates_all_outcomes
 
 use `HRestimates_all_outcomes', clear
-save ./output/HRestimates_all_outcomes, replace
+save ./output/HRestimates_all_outcomes_11thJuneCensor, replace
 
 log close
 

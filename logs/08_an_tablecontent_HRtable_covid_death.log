@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /workspace/logs/08_an_tablecontent_HRtable_covid_death.log
   log type:  text
- opened on:  25 Jul 2021, 08:15:52
+ opened on:  17 Aug 2021, 07:49:56
 
 . 
 . 
@@ -14,92 +14,101 @@
 
 . prog define outputHRsforvar
   1. syntax, variable(string) min(real) max(real) outcome(string)
-  2. foreach period in 1 2 3 {
+  2. foreach period in 0 1 2  {
   3. forvalues x=0/1 {
   4. file write tablecontents ("age") ("`x'") _n
   5. forvalues i=`min'/`max'{
   6. local endwith "_tab"
   7. 
+. use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", cl
+> ear
+  8. 
+. stsplit cat_time, at(0,78,147,400)
+  9. recode cat_time 78=1 147=2 400=3
+ 10. recode `outcome' .=0 
+ 11. tab cat_time
+ 12. tab cat_time `outcome'
+ 13. 
+. keep if cat_time==`period'
+ 14. 
 .         *put the varname and condition to left so that alignment can be check
 > ed vs shell
 .         file write tablecontents ("`variable'") _tab ("`i'") _tab ("`period'"
 > ) _tab 
-  8.         
-.         use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.
-> dta", clear
-  9.         *put total N, PYFU and Rate in table
-.         cou if `variable' == `i' & _d == 1
- 10.         local event = r(N)
- 11.     bysort `variable': egen total_follow_up = total(_t)
- 12.         su total_follow_up if `variable' == `i'
- 13.         local person_days = r(mean)
- 14.         local person_years=`person_days'/365.25
- 15.         local rate = 100000*(`event'/`person_years')
- 16.         
+ 15.         
+.         *put total N, PYFU and Rate in table
+.         cou if `variable' == `i' & _d == 1 
+ 16.         local event = r(N)
+ 17.     bysort `variable': egen total_follow_up = total(_t)
+ 18.         su total_follow_up if `variable' == `i'
+ 19.         local person_days = r(mean)
+ 20.         local person_years=`person_days'/365.25
+ 21.         local rate = 100000*(`event'/`person_years')
+ 22.         
 .         file write tablecontents (`event') _tab %10.0f (`person_years') _tab 
 > %3.2f (`rate') _tab
- 17.         drop total_follow_up
- 18.         
+ 23.         drop total_follow_up
+ 24.         
 .         
 .         *models
 .         foreach modeltype of any minadj demogadj fulladj  {
- 19.         
+ 25.         
 .                 local noestimatesflag 0 /*reset*/
- 20. 
+ 26. 
 . *CHANGE THE OUTCOME BELOW TO LAST IF BRINGING IN MORE COLS
 .                 if "`modeltype'"=="fulladj" local endwith "_n"
- 21. 
+ 27. 
 .                 ***********************
 .                 *1) GET THE RIGHT ESTIMATES INTO MEMORY
 .                 
 .                 if "`modeltype'"=="minadj" {
- 22.                         cap estimates use ./output/an_univariable_cox_mode
+ 28.                         cap estimates use ./output/an_univariable_cox_mode
 > ls_`variable'_`outcome'_AGESEX_ageband_`x'_timeperiod`period'
- 23.                         if _rc!=0 local noestimatesflag 1
- 24.                         }
- 25.                 if "`modeltype'"=="demogadj" {
- 26.                         cap estimates use ./output/an_multivariate_cox_mod
+ 29.                         if _rc!=0 local noestimatesflag 1
+ 30.                         }
+ 31.                 if "`modeltype'"=="demogadj" {
+ 32.                         cap estimates use ./output/an_multivariate_cox_mod
 > els_`outcome'_`variable'_DEMOGADJ_ageband_`x'_timeperiod`period'
- 27.                         if _rc!=0 local noestimatesflag 1
- 28.                         }
- 29.                 if "`modeltype'"=="fulladj" {
- 30.                         cap estimates use ./output/an_multivariate_cox_mod
+ 33.                         if _rc!=0 local noestimatesflag 1
+ 34.                         }
+ 35.                 if "`modeltype'"=="fulladj" {
+ 36.                         cap estimates use ./output/an_multivariate_cox_mod
 > els_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period' 
- 31.                         if _rc!=0 local noestimatesflag 1
- 32.                         }
- 33.                 
+ 37.                         if _rc!=0 local noestimatesflag 1
+ 38.                         }
+ 39.                 
 .                 ***********************
 .                 *2) WRITE THE HRs TO THE OUTPUT FILE
 .                 
 .                 if `noestimatesflag'==0{
- 34.                         cap lincom `i'.`variable', eform
- 35.                         if _rc==0 file write tablecontents %4.2f (r(estima
+ 40.                         cap lincom `i'.`variable', eform
+ 41.                         if _rc==0 file write tablecontents %4.2f (r(estima
 > te)) (" (") %4.2f (r(lb)) ("-") %4.2f (r(ub)) (")") `endwith'
- 36.                                 else file write tablecontents %4.2f ("ERR 
+ 42.                                 else file write tablecontents %4.2f ("ERR 
 > IN MODEL") `endwith'
- 37.                         }
- 38.                         else file write tablecontents %4.2f ("DID NOT FIT"
+ 43.                         }
+ 44.                         else file write tablecontents %4.2f ("DID NOT FIT"
 > ) `endwith' 
- 39.                         
+ 45.                         
 .                 *3) Save the estimates for plotting
 .                 if `noestimatesflag'==0{
- 40.                         if "`modeltype'"=="fulladj" {
- 41.                                 local hr = r(estimate)
- 42.                                 local lb = r(lb)
- 43.                                 local ub = r(ub)
- 44.                                 cap gen `variable'=.
- 45.                                 testparm i.`variable'
- 46.                                 *drop `variable'
+ 46.                         if "`modeltype'"=="fulladj" {
+ 47.                                 local hr = r(estimate)
+ 48.                                 local lb = r(lb)
+ 49.                                 local ub = r(ub)
+ 50.                                 cap gen `variable'=.
+ 51.                                 testparm i.`variable'
+ 52.                                 *drop `variable'
 .                                 }
- 47.                 }       
- 48.                 } /*min adj, full adj*/
- 49.                 
+ 53.                 }       
+ 54.                 } /*min adj, full adj*/
+ 55.                 
 . } /*variable levels*/
- 50. 
+ 56. 
 . } /*agebands*/
- 51. 
+ 57. 
 . } /*Waves*/
- 52. end
+ 58. end
 
 . *****************************************************************************
 > ******************************************
@@ -122,534 +131,1746 @@
 . 
 . *Primary exposure
 . outputHRsforvar, variable("kids_cat4") min(0) max(3) outcome(`outcome')
-  185
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
+  79
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        405       51483           0      51483      51483
+total_foll~p |        472       31431           0      31431      31431
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    1.86
-         Prob > chi2 =    0.6011
-  744
+           chi2(  3) =    2.88
+         Prob > chi2 =    0.4113
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
+  280
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |      1,561      199048           0     199048     199048
+total_foll~p |      1,664      112557           0     112557     112557
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    1.86
-         Prob > chi2 =    0.6011
-  116
+           chi2(  3) =    2.88
+         Prob > chi2 =    0.4113
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
+  44
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        273       35114           0      35114      35114
+total_foll~p |        265       18301           0      18301      18301
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    1.86
-         Prob > chi2 =    0.6011
-  6,427
+           chi2(  3) =    2.88
+         Prob > chi2 =    0.4113
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
+  2,114
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |     13,768     1746479           0    1746479    1746479
+total_foll~p |     13,745      933303           0     933303     933303
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    1.86
-         Prob > chi2 =    0.6011
-  68
+           chi2(  3) =    2.88
+         Prob > chi2 =    0.4113
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
+  27
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        143       16619           0      16619      16619
+total_foll~p |        133        9066           0       9066       9066
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    3.82
-         Prob > chi2 =    0.2813
-  198
+           chi2(  3) =    1.96
+         Prob > chi2 =    0.5804
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
+  78
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        455       57848           0      57848      57848
+total_foll~p |        490       33425           0      33425      33425
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    3.82
-         Prob > chi2 =    0.2813
+           chi2(  3) =    1.96
+         Prob > chi2 =    0.5804
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
+  9
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         59        3748           0       3748       3748
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    1.96
+         Prob > chi2 =    0.5804
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
+  620
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      3,822      259329           0     259329     259329
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    1.96
+         Prob > chi2 =    0.5804
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
+  58
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        340       46448           0      46448      46448
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.19
+         Prob > chi2 =    0.5345
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
+  231
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,211      165109           0     165109     165109
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.19
+         Prob > chi2 =    0.5345
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
+  41
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        199       26632           0      26632      26632
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.19
+         Prob > chi2 =    0.5345
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
+  1,901
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     10,173     1387513           0    1387513    1387513
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.19
+         Prob > chi2 =    0.5345
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
+  27
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         96       12712           0      12712      12712
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.80
+         Prob > chi2 =    0.4241
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
+  76
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        368       49900           0      49900      49900
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.80
+         Prob > chi2 =    0.4241
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
+  8
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         41        5581           0       5581       5581
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.80
+         Prob > chi2 =    0.4241
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
+  513
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      2,814      384246           0     384246     384246
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.80
+         Prob > chi2 =    0.4241
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
+  61
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        235       46140           0      46140      46140
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    3.27
+         Prob > chi2 =    0.3522
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
+  200
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        827      162520           0     162520     162520
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    3.27
+         Prob > chi2 =    0.3522
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
   38
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         85       10710           0      10710      10710
+total_foll~p |        125       24316           0      24316      24316
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    3.82
-         Prob > chi2 =    0.2813
-  1,884
+           chi2(  3) =    3.27
+         Prob > chi2 =    0.3522
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
+  1,716
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |      3,922      502090           0     502090     502090
+total_foll~p |      6,992     1367611           0    1367611    1367611
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    3.82
-         Prob > chi2 =    0.2813
-  185
+           chi2(  3) =    3.27
+         Prob > chi2 =    0.3522
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
+  19
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        405       51483           0      51483      51483
+total_foll~p |         60       11578           0      11578      11578
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    4.55
-         Prob > chi2 =    0.2080
-  744
+           chi2(  3) =    5.12
+         Prob > chi2 =    0.1630
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
+  61
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |      1,561      199048           0     199048     199048
+total_foll~p |        257       50477           0      50477      50477
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    4.55
-         Prob > chi2 =    0.2080
-  116
+           chi2(  3) =    5.12
+         Prob > chi2 =    0.1630
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
+  9
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        273       35114           0      35114      35114
+total_foll~p |         29        5645           0       5645       5645
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    4.55
-         Prob > chi2 =    0.2080
-  6,427
+           chi2(  3) =    5.12
+         Prob > chi2 =    0.1630
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
+  425
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |     13,768     1746479           0    1746479    1746479
+total_foll~p |      1,934      380533           0     380533     380533
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    4.55
-         Prob > chi2 =    0.2080
-  68
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        143       16619           0      16619      16619
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    3.65
-         Prob > chi2 =    0.3017
-  198
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        455       57848           0      57848      57848
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    3.65
-         Prob > chi2 =    0.3017
-  38
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         85       10710           0      10710      10710
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    3.65
-         Prob > chi2 =    0.3017
-  1,884
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |      3,922      502090           0     502090     502090
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    3.65
-         Prob > chi2 =    0.3017
-  185
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        405       51483           0      51483      51483
-  744
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |      1,561      199048           0     199048     199048
-  116
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        273       35114           0      35114      35114
-  6,427
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |     13,768     1746479           0    1746479    1746479
-  68
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        143       16619           0      16619      16619
-  198
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        455       57848           0      57848      57848
-  38
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         85       10710           0      10710      10710
-  1,884
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |      3,922      502090           0     502090     502090
+           chi2(  3) =    5.12
+         Prob > chi2 =    0.1630
 
 . file write tablecontents _n
 
 . 
 . *Number kids
 . outputHRsforvar, variable("gp_number_kids") min(0) max(4) outcome(`outcome')
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
   0
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          0
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
 
-           chi2(  3) =    2.58
-         Prob > chi2 =    0.4606
-  202
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        424       53822           0      53822      53822
-
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
-
-           chi2(  3) =    2.58
-         Prob > chi2 =    0.4606
-  138
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        284       35419           0      35419      35419
-
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
-
-           chi2(  3) =    2.58
-         Prob > chi2 =    0.4606
-  133
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
+  57
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        279       36402           0      36402      36402
+total_foll~p |        373       24902           0      24902      24902
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
 
-           chi2(  3) =    2.58
-         Prob > chi2 =    0.4606
-  271
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
+  51
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        574       73405           0      73405      73405
+total_foll~p |        307       20662           0      20662      20662
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
 
-           chi2(  3) =    2.58
-         Prob > chi2 =    0.4606
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
+  44
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        227       15659           0      15659      15659
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(20,105 observations deleted)
+  128
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        757       51334           0      51334      51334
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
   0
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          0
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
 
-           chi2(  3) =    1.29
-         Prob > chi2 =    0.7312
-  64
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        136       17410           0      17410      17410
-
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
-
-           chi2(  3) =    1.29
-         Prob > chi2 =    0.7312
-  31
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         76       10291           0      10291      10291
-
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
-
-           chi2(  3) =    1.29
-         Prob > chi2 =    0.7312
-  35
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
+  27
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         74        9586           0       9586       9586
+total_foll~p |        135        8862           0       8862       8862
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
 
-           chi2(  3) =    1.29
-         Prob > chi2 =    0.7312
-  68
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
+  9
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        169       20561           0      20561      20561
+total_foll~p |         85        5826           0       5826       5826
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
 
-           chi2(  3) =    1.29
-         Prob > chi2 =    0.7312
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
+  13
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         61        4188           0       4188       4188
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(5,600 observations deleted)
+  29
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        209       14549           0      14549      14549
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
   0
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          0
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
 
-           chi2(  3) =    1.40
-         Prob > chi2 =    0.7067
-  202
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        424       53822           0      53822      53822
-
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
-
-           chi2(  3) =    1.40
-         Prob > chi2 =    0.7067
-  138
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        284       35419           0      35419      35419
-
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
-
-           chi2(  3) =    1.40
-         Prob > chi2 =    0.7067
-  133
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
+  49
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        279       36402           0      36402      36402
+total_foll~p |        266       36355           0      36355      36355
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
 
-           chi2(  3) =    1.40
-         Prob > chi2 =    0.7067
-  271
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
+  49
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        574       73405           0      73405      73405
+total_foll~p |        227       30716           0      30716      30716
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
 
-           chi2(  3) =    1.40
-         Prob > chi2 =    0.7067
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
+  22
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        163       22407           0      22407      22407
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(24,328 observations deleted)
+  111
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        555       75631           0      75631      75631
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
   0
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          0
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
 
-           chi2(  3) =    4.59
-         Prob > chi2 =    0.2042
-  64
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        136       17410           0      17410      17410
-
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
-
-           chi2(  3) =    4.59
-         Prob > chi2 =    0.2042
-  31
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         76       10291           0      10291      10291
-
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
-
-           chi2(  3) =    4.59
-         Prob > chi2 =    0.2042
-  35
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
+  16
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         74        9586           0       9586       9586
+total_foll~p |         95       12826           0      12826      12826
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
 
-           chi2(  3) =    4.59
-         Prob > chi2 =    0.2042
-  68
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
+  18
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        169       20561           0      20561      20561
+total_foll~p |         68        9175           0       9175       9175
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
 
- ( 1)  2.gp_number_kids = 0
- ( 2)  3.gp_number_kids = 0
- ( 3)  4.gp_number_kids = 0
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
 
-           chi2(  3) =    4.59
-         Prob > chi2 =    0.2042
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
+  12
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         45        6123           0       6123       6123
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(6,785 observations deleted)
+  30
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        160       21776           0      21776      21776
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
   0
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          0
-  202
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
+  41
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        424       53822           0      53822      53822
-  138
+total_foll~p |        186       36835           0      36835      36835
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
+  46
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        284       35419           0      35419      35419
-  133
+total_foll~p |        147       28254           0      28254      28254
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
+  32
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        279       36402           0      36402      36402
-  271
+total_foll~p |        118       23118           0      23118      23118
+(20,102 observations (episodes) created)
+(cat_time: 20102 changes made)
+(covid_death: 20102 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     16,146       44.54       44.54
+          1 |     11,923       32.89       77.44
+          2 |      8,179       22.56      100.00
+------------+-----------------------------------
+      Total |     36,248      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    13,629      2,517 |    16,146 
+         1 |     9,692      2,231 |    11,923 
+         2 |     6,164      2,015 |     8,179 
+-----------+----------------------+----------
+     Total |    29,485      6,763 |    36,248 
+(28,072 observations deleted)
+  81
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        574       73405           0      73405      73405
+total_foll~p |        376       74313           0      74313      74313
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
   0
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          0
-  64
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
+  23
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        136       17410           0      17410      17410
-  31
+total_foll~p |         67       13170           0      13170      13170
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
+  8
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         76       10291           0      10291      10291
-  35
+total_foll~p |         46        8978           0       8978       8978
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
+  5
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         74        9586           0       9586       9586
-  68
+total_foll~p |         31        6022           0       6022       6022
+(5,599 observations (episodes) created)
+(cat_time: 5599 changes made)
+(covid_death: 5599 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,504       44.58       44.58
+          1 |      3,319       32.85       77.43
+          2 |      2,280       22.57      100.00
+------------+-----------------------------------
+      Total |     10,103      100.00
+
+           |   Failure/censoring
+           |     indicator for
+observatio | outcome: covid death
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     3,770        734 |     4,504 
+         1 |     2,695        624 |     3,319 
+         2 |     1,766        514 |     2,280 
+-----------+----------------------+----------
+     Total |     8,231      1,872 |    10,103 
+(7,824 observations deleted)
+  25
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        169       20561           0      20561      20561
+total_foll~p |        113       22307           0      22307      22307
 
 . file write tablecontents _n 
 
@@ -662,5 +1883,5 @@ total_foll~p |        169       20561           0      20561      20561
       name:  <unnamed>
        log:  /workspace/logs/08_an_tablecontent_HRtable_covid_death.log
   log type:  text
- closed on:  25 Jul 2021, 08:15:54
+ closed on:  17 Aug 2021, 07:50:11
 -------------------------------------------------------------------------------

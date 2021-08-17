@@ -54,7 +54,7 @@ local outcome `1'
 
 * Open a log file
 capture log close
-log using "$logdir/07b_an_multivariable_cox_models_`outcome'", text replace
+log using "$logdir/07b_an_multivariable_cox_models_`outcome'_11thJuneCensor", text replace
 
 
 *************************************************************************************
@@ -81,13 +81,15 @@ forvalues x=0/1 {
 forvalues period=0/3 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
-stsplit cat_time, at(0,78,147,400)
-recode cat_time 78=1 147=2 400=3
+stsplit cat_time, at(0,78,147,173)
+recode cat_time 78=1 147=2 173=3
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
 
 keep if cat_time==`period'
+
+
 
 ******************************
 *  Multivariable Cox models  *
@@ -101,7 +103,7 @@ foreach exposure_type in kids_cat4  {
 basecoxmodel, exposure("i.`exposure_type'") age("age1 age2 age3") 
 if _rc==0{
 estimates
-estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'", replace
+estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_11thJuneCensor", replace
 	*  Proportional Hazards test 
 	* Based on Schoenfeld residuals	
 	timer clear 

@@ -1,0 +1,789 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/10_an_interaction_cox_models_vaccine_covidadmissio
+> n_sex_shield.log
+  log type:  text
+ opened on:  17 Aug 2021, 07:54:31
+
+. 
+. *****************************************************************************
+> ********
+. 
+. * Open dataset and fit specified model(s)
+. foreach x in 0 {
+  2. 
+. use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", cl
+> ear
+  3. 
+. *Censor at date of first child being vaccinated in hh
+. replace stime_`outcome'         = under18vacc if stime_`outcome'>under18vacc
+  4. stset stime_`outcome', fail(`outcome')          ///
+>         id(patient_id) enter(enter_date) origin(enter_date)
+  5. 
+. gen first_vacc_plus_14d=covid_vacc_date+14
+  6. gen second_vacc_plus_14d=covid_vacc_second_dose_date+14
+  7. format first_vacc_plus_14d second_vacc_plus_14d %td
+  8. 
+. stsplit vaccine, after(first_vacc_plus_14d) at(0)
+  9. replace vaccine = vaccine +1
+ 10. stsplit vaccine2, after(second_vacc_plus_14d) at(2)
+ 11. replace vaccine2 = vaccine2 +1
+ 12. replace vaccine=2 if vaccine2==2
+ 13. 
+. bysort patient: replace vaccine=0 if _N==1
+ 14. sort patient vaccine
+ 15. bysort patient: replace vaccine=2 if _N==3 & vaccine2==3
+ 16. 
+. recode `outcome' .=0 
+ 17. tab vaccine
+ 18. tab vaccine `outcome'
+ 19. recode vaccine 1=0 2=1
+ 20. 
+. foreach strata in male shield {
+ 21. 
+. foreach level in 0 1 {  
+ 22. 
+. *Age spline model (not adj ethnicity, interaction)
+. stcox   i.kids_cat4     age1 age2 age3                                  ///
+>                         $demogadjlist                                        
+>            ///
+>                         $comordidadjlist                                     
+>            ///
+>                         1.vaccine#1.kids_cat4 1.vaccine#2.kids_cat4 1.vaccine
+> #3.kids_cat4       if `strata'==`level'                            ///
+>                         , strata(stp) vce(cluster household_id)
+ 23. if _rc==0       {
+ 24. di _n "kids_cat4 " _n "****************"
+ 25. lincom 1.kids_cat4 + 1.vaccine#1.kids_cat4, eform
+ 26. di "kids_cat4" _n "****************"
+ 27. lincom 2.kids_cat4 + 1.vaccine#2.kids_cat4, eform
+ 28. di "kids_cat4" _n "****************"
+ 29. lincom 3.kids_cat4 + 1.vaccine#3.kids_cat4, eform
+ 30. estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vacc
+> ine_`x'`strata'`level', replace
+ 31. }
+ 32. else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
+ 33. }
+ 34. }
+ 35. }
+(12,669 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,149  total observations
+      3,450  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,699  observations remaining, representing
+     12,699  subjects
+      1,470  failures in single-failure-per-subject data
+    600,160  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(8,075 missing values generated)
+(12,912 missing values generated)
+(1,316 observations (episodes) created)
+(14,015 real changes made)
+(1,058 observations (episodes) created)
+(15,073 real changes made)
+(0 real changes made)
+(9,238 real changes made)
+(312 real changes made)
+(covidadmission: 2374 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,898       85.83       85.83
+          1 |      2,313       12.49       98.32
+          2 |        312        1.68      100.00
+------------+-----------------------------------
+      Total |     18,523      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,170      1,728 |    15,898 
+         1 |     2,158        155 |     2,313 
+         2 |       295         17 |       312 
+-----------+----------------------+----------
+     Total |    16,623      1,900 |    18,523 
+(vaccine: 2625 changes made)
+
+         failure _d:  covidadmission
+   analysis time _t:  (stime_covidadmission-origin)
+             origin:  time enter_date
+  enter on or after:  time enter_date
+                 id:  patient_id
+
+note: age1 omitted because of collinearity
+note: age2 omitted because of collinearity
+note: age3 omitted because of collinearity
+note: 0.male omitted because of collinearity
+Iteration 0:   log pseudolikelihood = -4063.7772
+Iteration 1:   log pseudolikelihood = -4028.2948
+Iteration 2:   log pseudolikelihood = -4026.5093
+Iteration 3:   log pseudolikelihood = -4026.4241
+Iteration 4:   log pseudolikelihood = -4026.4152
+Iteration 5:   log pseudolikelihood = -4026.4121
+Iteration 6:   log pseudolikelihood = -4026.4109
+Iteration 7:   log pseudolikelihood = -4026.4105
+Iteration 8:   log pseudolikelihood = -4026.4104
+Iteration 9:   log pseudolikelihood = -4026.4103
+Iteration 10:  log pseudolikelihood = -4026.4103
+Iteration 11:  log pseudolikelihood = -4026.4103
+Iteration 12:  log pseudolikelihood = -4026.4103
+Iteration 13:  log pseudolikelihood = -4026.4103
+Iteration 14:  log pseudolikelihood = -4026.4103
+Iteration 15:  log pseudolikelihood = -4026.4103
+Iteration 16:  log pseudolikelihood = -4026.4103
+Iteration 17:  log pseudolikelihood = -4026.4103
+Iteration 18:  log pseudolikelihood = -4026.4103
+Iteration 19:  log pseudolikelihood = -4026.4103
+Iteration 20:  log pseudolikelihood = -4026.4103
+Iteration 21:  log pseudolikelihood = -4026.4103
+Iteration 22:  log pseudolikelihood = -4026.4103
+Iteration 23:  log pseudolikelihood = -4026.4103
+Iteration 24:  log pseudolikelihood = -4026.4103
+Iteration 25:  log pseudolikelihood = -4026.4103
+Iteration 26:  log pseudolikelihood = -4026.4103
+Refining estimates:
+Iteration 0:   log pseudolikelihood = -4026.4103
+Iteration 1:   log pseudolikelihood = -4026.4103
+Iteration 2:   log pseudolikelihood = -4026.4103
+Iteration 3:   log pseudolikelihood = -4026.4103
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        6,538             Number of obs    =       7,725
+No. of failures      =          715
+Time at risk         =       308255
+                                                Wald chi2(44)    =     1218.51
+Log pseudolikelihood =   -4026.4103             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 874 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   .9966889   .2021005    -0.02   0.987     .6698227    1.483062
+ only 12-18  |   1.120282   .3040131     0.42   0.676     .6581655    1.906863
+      mixed  |   1.582221   .2648281     2.74   0.006     1.139712    2.196539
+             |
+        age1 |   .9928815   .0141511    -0.50   0.616     .9655297    1.021008
+        age2 |   1.013906   .0454874     0.31   0.758     .9285595    1.107097
+        age3 |   .9636288   .1227655    -0.29   0.771     .7507016     1.23695
+        age1 |          1  (omitted)
+        age2 |          1  (omitted)
+        age3 |          1  (omitted)
+      0.male |          1  (omitted)
+             |
+   ethnicity |
+Asian or ..  |   .9806536   .1244329    -0.15   0.878     .7647308    1.257543
+      Other  |    .940349   .1262228    -0.46   0.647     .7228239    1.223336
+             |
+   obese4cat |
+Obese I ..)  |   .9641057    .102658    -0.34   0.731     .7825079    1.187847
+Obese II..)  |   .8814072   .1293651    -0.86   0.390      .661066    1.175191
+Obese II..)  |   .8085857   .1383272    -1.24   0.214     .5782405     1.13069
+             |
+smoke_nomiss |
+     Former  |   .8445687   .2330657    -0.61   0.540     .4917438    1.450545
+    Current  |   .8637136   .1093102    -1.16   0.247     .6739738     1.10687
+             |
+         imd |
+          4  |   1.008925   .0933703     0.10   0.924     .8415601    1.209575
+5 most de..  |   .8537066   .1133426    -1.19   0.234     .6581101    1.107436
+             |
+tot_adults~h |
+          2  |   .7307565   .5166955    -0.44   0.657     .1827739     2.92167
+          3  |   1.733483   .7160463     1.33   0.183      .771464    3.895146
+             |
+1.htdiag_o~p |   .8626045   .0727843    -1.75   0.080     .7311215    1.017733
+1.~y_disease |   .9713841   .0954889    -0.30   0.768     .8011545    1.177784
+    1.asthma |    1.33921   .1690281     2.31   0.021     1.045718    1.715074
+1.~c_disease |   .9790162    .097034    -0.21   0.831     .8061652    1.188928
+             |
+     diabcat |
+T1DM, con..  |   .9557382   .2550122    -0.17   0.865     .5665255    1.612347
+T1DM, unc..  |   .2074646   .2140385    -1.52   0.127     .0274644    1.567174
+T2DM, con..  |   1.079204   .1067659     0.77   0.441     .8889839    1.310126
+T2DM, unc..  |   1.297851   .2344424     1.44   0.149     .9108873    1.849204
+Diabetes,..  |   3.993674   2.701109     2.05   0.041     1.060877    15.03419
+             |
+cancer_exh~t |
+  Last year  |   .9603305   .5838343    -0.07   0.947     .2916967    3.161622
+2-5 years..  |    1.08085   .2906762     0.29   0.773     .6380419    1.830971
+   5+ years  |   .8856534    .094779    -1.13   0.257     .7180781    1.092335
+             |
+cancer_hae~t |
+  Last year  |   2.542674   1.136563     2.09   0.037     1.058785    6.106235
+2-5 years..  |   1.243832   .3846155     0.71   0.480     .6785078    2.280178
+   5+ years  |   .9729402   .0968151    -0.28   0.783     .8005435    1.182462
+             |
+1.~r_disease |    .833261   .0821585    -1.85   0.064     .6868369    1.010901
+1.stroke_d~a |    1.10121   .1009907     1.05   0.293     .9200413    1.318053
+1.other_ne~o |   1.198545   .1149237     1.89   0.059     .9931984    1.446348
+             |
+reduced_ki~t |
+Stage 3a/..  |   .6850158   .3630024    -0.71   0.475     .2424563    1.935387
+      1.esrd |   1.061143   .0803589     0.78   0.433     .9147731    1.230932
+1.other_tr~t |   1.138276   .1038304     1.42   0.156     .9519266    1.361106
+  1.asplenia |   1.119291   .0967802     1.30   0.192     .9448077    1.325998
+1.ra_sle_p~s |   .9123065    .088564    -0.95   0.344     .7542385    1.103501
+1.other_im~o |   1.013962   .0953739     0.15   0.883     .8432513    1.219232
+             |
+     vaccine#|
+   kids_cat4 |
+          1 #|
+only <12 ..  |   1.014612   .5402474     0.03   0.978     .3573248    2.880957
+          1 #|
+ only 12-18  |   2.83e-13   2.74e-13   -29.84   0.000     4.25e-14    1.89e-12
+    1#mixed  |   .5085512   .2661332    -1.29   0.196     .1823421    1.418347
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+
+kids_cat4 
+****************
+
+ ( 1)  1.kids_cat4 + 1.vaccine#1.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.011252   .5569004     0.02   0.984     .3436369    2.975907
+------------------------------------------------------------------------------
+kids_cat4
+****************
+
+ ( 1)  2.kids_cat4 + 1.vaccine#2.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   3.17e-13   2.96e-13   -30.86   0.000     5.10e-14    1.97e-12
+------------------------------------------------------------------------------
+kids_cat4
+****************
+
+ ( 1)  3.kids_cat4 + 1.vaccine#3.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .8046403   .4403615    -0.40   0.691     .2752696    2.352043
+------------------------------------------------------------------------------
+(note: file ./output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine
+> _0male0.ster not found)
+file ./output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine_0male0
+> .ster saved
+
+         failure _d:  covidadmission
+   analysis time _t:  (stime_covidadmission-origin)
+             origin:  time enter_date
+  enter on or after:  time enter_date
+                 id:  patient_id
+
+note: age1 omitted because of collinearity
+note: age2 omitted because of collinearity
+note: age3 omitted because of collinearity
+note: 1.male omitted because of collinearity
+note: 1.reduced_kidney_function_cat omitted because of collinearity
+Iteration 0:   log pseudolikelihood = -4264.1554
+Iteration 1:   log pseudolikelihood = -4215.4967
+Iteration 2:   log pseudolikelihood = -4211.6138
+Iteration 3:   log pseudolikelihood = -4211.1775
+Iteration 4:   log pseudolikelihood = -4211.0664
+Iteration 5:   log pseudolikelihood = -4211.0261
+Iteration 6:   log pseudolikelihood = -4211.0114
+Iteration 7:   log pseudolikelihood = -4211.0059
+Iteration 8:   log pseudolikelihood = -4211.0039
+Iteration 9:   log pseudolikelihood = -4211.0032
+Iteration 10:  log pseudolikelihood = -4211.0029
+Iteration 11:  log pseudolikelihood = -4211.0028
+Iteration 12:  log pseudolikelihood = -4211.0028
+Iteration 13:  log pseudolikelihood = -4211.0028
+Iteration 14:  log pseudolikelihood = -4211.0028
+Iteration 15:  log pseudolikelihood = -4211.0027
+Iteration 16:  log pseudolikelihood = -4211.0027
+Iteration 17:  log pseudolikelihood = -4211.0027
+Iteration 18:  log pseudolikelihood = -4211.0027
+Iteration 19:  log pseudolikelihood = -4211.0027
+Iteration 20:  log pseudolikelihood = -4211.0027
+Iteration 21:  log pseudolikelihood = -4211.0027
+Iteration 22:  log pseudolikelihood = -4211.0027
+Iteration 23:  log pseudolikelihood = -4211.0027
+Iteration 24:  log pseudolikelihood = -4211.0027
+Iteration 25:  log pseudolikelihood = -4211.0027
+Iteration 26:  log pseudolikelihood = -4211.0027
+Iteration 27:  log pseudolikelihood = -4211.0027
+Iteration 28:  log pseudolikelihood = -4211.0027
+Iteration 29:  log pseudolikelihood = -4211.0027
+Refining estimates:
+Iteration 0:   log pseudolikelihood = -4211.0027
+Iteration 1:   log pseudolikelihood = -4211.0027
+Iteration 2:   log pseudolikelihood = -4211.0027
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        6,161             Number of obs    =       7,348
+No. of failures      =          755
+Time at risk         =       291905
+                                                Wald chi2(43)    =    13068.50
+Log pseudolikelihood =   -4211.0027             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 859 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   2.139061   .5410576     3.01   0.003     1.302923    3.511782
+ only 12-18  |   1.404772   .5544373     0.86   0.389     .6481158    3.044803
+      mixed  |    3.13754   .7229781     4.96   0.000     1.997323    4.928675
+             |
+        age1 |   1.013554   .0141676     0.96   0.335     .9861629    1.041706
+        age2 |   .9229518   .0402125    -1.84   0.066     .8474082     1.00523
+        age3 |   1.286388   .1577959     2.05   0.040     1.011483    1.636008
+        age1 |          1  (omitted)
+        age2 |          1  (omitted)
+        age3 |          1  (omitted)
+      1.male |          1  (omitted)
+             |
+   ethnicity |
+Asian or ..  |   .9566739   .1163368    -0.36   0.716     .7537948    1.214157
+      Other  |   .9027291   .1217296    -0.76   0.448     .6930684    1.175814
+             |
+   obese4cat |
+Obese I ..)  |   .9933853    .109481    -0.06   0.952     .8003995    1.232902
+Obese II..)  |   .9879105   .1315741    -0.09   0.927      .760941    1.282579
+Obese II..)  |   .7819714    .142648    -1.35   0.178     .5469075    1.118067
+             |
+smoke_nomiss |
+     Former  |   1.212804   .2917871     0.80   0.423      .756835    1.943481
+    Current  |   1.117753   .1291756     0.96   0.335      .891199    1.401899
+             |
+         imd |
+          4  |   .9689009   .0904708    -0.34   0.735      .806861    1.163483
+5 most de..  |   1.099683   .1357565     0.77   0.441     .8633481    1.400712
+             |
+tot_adults~h |
+          2  |   .5456264   .4022003    -0.82   0.411     .1286604    2.313907
+          3  |   1.268205   .6560486     0.46   0.646     .4601069    3.495587
+             |
+1.htdiag_o~p |   .9924501   .0739301    -0.10   0.919     .8576311    1.148462
+1.~y_disease |   .9614929   .0881073    -0.43   0.668     .8034252    1.150659
+    1.asthma |   1.025639   .1277194     0.20   0.839     .8035211    1.309157
+1.~c_disease |   1.278141   .1095058     2.86   0.004     1.080566    1.511841
+             |
+     diabcat |
+T1DM, con..  |   1.135527   .2631723     0.55   0.583     .7209767    1.788438
+T1DM, unc..  |   1.500809      .9058     0.67   0.501     .4598223    4.898472
+T2DM, con..  |     1.1855   .1144282     1.76   0.078     .9811625    1.432393
+T2DM, unc..  |   1.020478   .1917229     0.11   0.914     .7061287    1.474768
+Diabetes,..  |   3.72e-14   3.04e-14   -37.76   0.000     7.47e-15    1.85e-13
+             |
+cancer_exh~t |
+  Last year  |   .4903937   .5265933    -0.66   0.507     .0597737    4.023276
+2-5 years..  |   .8870844    .293233    -0.36   0.717     .4640804    1.695652
+   5+ years  |   1.121689    .101883     1.26   0.206     .9387669    1.340254
+             |
+cancer_hae~t |
+  Last year  |   .6454534   .4626462    -0.61   0.541     .1583956    2.630187
+2-5 years..  |   .6342405   .2672044    -1.08   0.280     .2777437    1.448317
+   5+ years  |   1.053746   .0983315     0.56   0.575      .877617    1.265222
+             |
+1.~r_disease |   .9305304   .0867985    -0.77   0.440     .7750537    1.117196
+1.stroke_d~a |   1.116079   .0998708     1.23   0.220     .9365396    1.330036
+1.other_ne~o |   1.158764   .1012208     1.69   0.092     .9764287    1.375148
+             |
+reduced_ki~t |
+       None  |          1  (omitted)
+      1.esrd |   1.009238   .0774146     0.12   0.905      .868363    1.172967
+1.other_tr~t |   .9703468   .0847977    -0.34   0.731     .8176008    1.151629
+  1.asplenia |    1.05236   .0972935     0.55   0.581     .8779471    1.261421
+1.ra_sle_p~s |    .998832   .0933205    -0.01   0.990     .8316967    1.199554
+1.other_im~o |   1.064513   .0977397     0.68   0.496     .8891942    1.274398
+             |
+     vaccine#|
+   kids_cat4 |
+          1 #|
+only <12 ..  |   3.75e-14   1.15e-14  -100.51   0.000     2.05e-14    6.86e-14
+          1 #|
+ only 12-18  |   6.277342   8.226776     1.40   0.161     .4810974    81.90655
+    1#mixed  |   .6368278     .26397    -1.09   0.276     .2826132    1.434999
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+
+kids_cat4 
+****************
+
+ ( 1)  1.kids_cat4 + 1.vaccine#1.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   8.03e-14   2.94e-14   -82.32   0.000     3.92e-14    1.65e-13
+------------------------------------------------------------------------------
+kids_cat4
+****************
+
+ ( 1)  2.kids_cat4 + 1.vaccine#2.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   8.818236    11.2668     1.70   0.088     .7208195     107.879
+------------------------------------------------------------------------------
+kids_cat4
+****************
+
+ ( 1)  3.kids_cat4 + 1.vaccine#3.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.998072   .9363166     1.48   0.140     .7974983    5.006022
+------------------------------------------------------------------------------
+(note: file ./output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine
+> _0male1.ster not found)
+file ./output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine_0male1
+> .ster saved
+
+         failure _d:  covidadmission
+   analysis time _t:  (stime_covidadmission-origin)
+             origin:  time enter_date
+  enter on or after:  time enter_date
+                 id:  patient_id
+
+note: age1 omitted because of collinearity
+note: age2 omitted because of collinearity
+note: age3 omitted because of collinearity
+note: 0.chronic_respiratory_disease omitted because of collinearity
+note: 0.asthma omitted because of collinearity
+note: 1.cancer_exhaem_cat omitted because of collinearity
+note: 1.cancer_haem_cat omitted because of collinearity
+note: 0.esrd omitted because of collinearity
+note: 0.other_transplant omitted because of collinearity
+note: 0.asplenia omitted because of collinearity
+note: 0.other_immuno omitted because of collinearity
+note: 1.vaccine#2.kids_cat4 identifies no observations in the sample
+Iteration 0:   log pseudolikelihood =  -905.0592
+Iteration 1:   log pseudolikelihood = -883.46414
+Iteration 2:   log pseudolikelihood = -881.81618
+Iteration 3:   log pseudolikelihood = -881.45214
+Iteration 4:   log pseudolikelihood = -881.32038
+Iteration 5:   log pseudolikelihood = -881.27206
+Iteration 6:   log pseudolikelihood =  -881.2543
+Iteration 7:   log pseudolikelihood = -881.24777
+Iteration 8:   log pseudolikelihood = -881.24537
+Iteration 9:   log pseudolikelihood = -881.24449
+Iteration 10:  log pseudolikelihood = -881.24416
+Iteration 11:  log pseudolikelihood = -881.24404
+Iteration 12:  log pseudolikelihood =   -881.244
+Iteration 13:  log pseudolikelihood = -881.24398
+Iteration 14:  log pseudolikelihood = -881.24398
+Iteration 15:  log pseudolikelihood = -881.24398
+Iteration 16:  log pseudolikelihood = -881.24397
+Iteration 17:  log pseudolikelihood = -881.24397
+Iteration 18:  log pseudolikelihood = -881.24397
+Iteration 19:  log pseudolikelihood = -881.24397
+Iteration 20:  log pseudolikelihood = -881.24397
+Iteration 21:  log pseudolikelihood = -881.24397
+Iteration 22:  log pseudolikelihood = -881.24397
+Iteration 23:  log pseudolikelihood = -881.24397
+Iteration 24:  log pseudolikelihood = -881.24397
+Iteration 25:  log pseudolikelihood = -881.24397
+Iteration 26:  log pseudolikelihood = -881.24397
+Iteration 27:  log pseudolikelihood = -881.24397
+Iteration 28:  log pseudolikelihood = -881.24397
+Iteration 29:  log pseudolikelihood = -881.24397
+Iteration 30:  log pseudolikelihood = -881.24397
+Iteration 31:  log pseudolikelihood = -881.24397
+Refining estimates:
+Iteration 0:   log pseudolikelihood = -881.24397
+Iteration 1:   log pseudolikelihood = -881.24397
+Iteration 2:   log pseudolikelihood = -881.24397
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        1,968             Number of obs    =       2,329
+No. of failures      =          200
+Time at risk         =        93246
+                                                Wald chi2(32)    =    16882.93
+Log pseudolikelihood =   -881.24397             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 661 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   1.400127   .5704938     0.83   0.409     .6299961    3.111694
+ only 12-18  |   2.255968   1.188382     1.54   0.122     .8034214    6.334647
+      mixed  |   1.973953    .702576     1.91   0.056      .982594    3.965512
+             |
+        age1 |   1.035601   .0297319     1.22   0.223     .9789363    1.095545
+        age2 |   .9197576   .0811032    -0.95   0.343     .7737762     1.09328
+        age3 |   1.190418   .2953115     0.70   0.482     .7320467    1.935799
+        age1 |          1  (omitted)
+        age2 |          1  (omitted)
+        age3 |          1  (omitted)
+      1.male |   1.206894    .186304     1.22   0.223     .8918099    1.633301
+             |
+   ethnicity |
+Asian or ..  |   1.398521   .2923092     1.60   0.109     .9284465    2.106596
+      Other  |   .6931157   .2012721    -1.26   0.207     .3923084    1.224571
+             |
+   obese4cat |
+Obese I ..)  |   .9124033    .200632    -0.42   0.677     .5929427     1.40398
+Obese II..)  |   .4429622   .1530106    -2.36   0.018     .2250815    .8717534
+Obese II..)  |   .6883659   .2294885    -1.12   0.263     .3581331    1.323105
+             |
+smoke_nomiss |
+     Former  |   .9954882   .5437061    -0.01   0.993     .3412991    2.903602
+    Current  |   1.493042   .3063383     1.95   0.051     .9986761    2.232128
+             |
+         imd |
+          4  |   .8417294   .1699228    -0.85   0.393     .5666795     1.25028
+5 most de..  |   .6936361   .1882426    -1.35   0.178     .4075006    1.180688
+             |
+tot_adults~h |
+          2  |   5.49e-15   4.27e-15   -42.17   0.000     1.19e-15    2.52e-14
+          3  |   .9487072   .5979878    -0.08   0.933     .2758062    3.263326
+             |
+1.htdiag_o~p |   1.036408   .1637945     0.23   0.821     .7603379    1.412717
+0.~y_disease |          1  (omitted)
+    0.asthma |          1  (omitted)
+1.~c_disease |   .9696435   .1878416    -0.16   0.874     .6633082    1.417453
+             |
+     diabcat |
+T1DM, con..  |   .5264799   .3047833    -1.11   0.268     .1692835    1.637378
+T1DM, unc..  |   .8273805   .7954287    -0.20   0.844     .1257116    5.445466
+T2DM, con..  |   1.222886   .2254117     1.09   0.275     .8520913    1.755036
+T2DM, unc..  |   1.627402   .4752642     1.67   0.095     .9181448    2.884553
+Diabetes,..  |   4.02e-15   4.88e-15   -27.29   0.000     3.71e-16    4.34e-14
+             |
+cancer_exh~t |
+      Never  |          1  (omitted)
+             |
+cancer_hae~t |
+      Never  |          1  (omitted)
+1.~r_disease |   1.099751   .1982114     0.53   0.598     .7724664    1.565701
+1.stroke_d~a |   .9599781   .1666069    -0.24   0.814     .6831765    1.348931
+1.other_ne~o |   1.360023    .235773     1.77   0.076     .9682387    1.910338
+             |
+reduced_ki~t |
+Stage 3a/..  |   6.21e-15   2.74e-15   -74.10   0.000     2.61e-15    1.48e-14
+      0.esrd |          1  (omitted)
+0.other_tr~t |          1  (omitted)
+  0.asplenia |          1  (omitted)
+1.ra_sle_p~s |   1.076608   .1876677     0.42   0.672     .7650352    1.515074
+0.other_im~o |          1  (omitted)
+             |
+     vaccine#|
+   kids_cat4 |
+          1 #|
+only <12 ..  |   3.95e-15   2.52e-15   -51.91   0.000     1.13e-15    1.38e-14
+          1 #|
+ only 12-18  |          1  (empty)
+    1#mixed  |   .6900185   .4760512    -0.54   0.591     .1784874    2.667558
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+
+kids_cat4 
+****************
+
+ ( 1)  1.kids_cat4 + 1.vaccine#1.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   5.53e-15   4.04e-15   -44.88   0.000     1.32e-15    2.32e-14
+------------------------------------------------------------------------------
+kids_cat4
+****************
+
+ ( 1)  2.kids_cat4 + 1o.vaccine#2o.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   2.255968   1.188382     1.54   0.122     .8034214    6.334647
+------------------------------------------------------------------------------
+kids_cat4
+****************
+
+ ( 1)  3.kids_cat4 + 1.vaccine#3.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.362064   1.071711     0.39   0.695     .2913719     6.36718
+------------------------------------------------------------------------------
+(note: file ./output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine
+> _0shield0.ster not found)
+file ./output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine_0shiel
+> d0.ster saved
+
+         failure _d:  covidadmission
+   analysis time _t:  (stime_covidadmission-origin)
+             origin:  time enter_date
+  enter on or after:  time enter_date
+                 id:  patient_id
+
+note: age1 omitted because of collinearity
+note: age2 omitted because of collinearity
+note: age3 omitted because of collinearity
+Iteration 0:   log pseudolikelihood = -7858.0868
+Iteration 1:   log pseudolikelihood = -7794.8616
+Iteration 2:   log pseudolikelihood = -7792.7636
+Iteration 3:   log pseudolikelihood = -7792.7247
+Iteration 4:   log pseudolikelihood = -7792.7246
+Refining estimates:
+Iteration 0:   log pseudolikelihood = -7792.7246
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =       10,731             Number of obs    =      12,744
+No. of failures      =        1,270
+Time at risk         =       506914
+                                                Wald chi2(45)    =      117.11
+Log pseudolikelihood =   -7792.7246             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 957 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   1.423171   .2371951     2.12   0.034     1.026574    1.972986
+ only 12-18  |   1.008996   .2465642     0.04   0.971     .6250071    1.628899
+      mixed  |   2.162639   .3046796     5.47   0.000     1.640831    2.850388
+             |
+        age1 |   .9978956   .0107364    -0.20   0.845      .977073    1.019162
+        age2 |   .9760361   .0329718    -0.72   0.473     .9135055    1.042847
+        age3 |   1.098161   .1049122     0.98   0.327     .9106407    1.324296
+        age1 |          1  (omitted)
+        age2 |          1  (omitted)
+        age3 |          1  (omitted)
+      1.male |   1.090195   .0637865     1.48   0.140     .9720775    1.222664
+             |
+   ethnicity |
+Asian or ..  |   .9119932   .0881722    -0.95   0.341     .7545652    1.102266
+      Other  |   .9760981   .0986065    -0.24   0.811     .8007633    1.189824
+             |
+   obese4cat |
+Obese I ..)  |   .9888903   .0819398    -0.13   0.893     .8406539    1.163266
+Obese II..)  |   1.032484    .103296     0.32   0.749     .8486411    1.256154
+Obese II..)  |   .7970852   .1040809    -1.74   0.082     .6171027    1.029561
+             |
+smoke_nomiss |
+     Former  |   1.082749   .2054879     0.42   0.675     .7464209    1.570623
+    Current  |   .9252385   .0813109    -0.88   0.377     .7788418    1.099153
+             |
+         imd |
+          4  |   1.013263   .0705629     0.19   0.850      .883985    1.161446
+5 most de..  |   1.051617   .0957901     0.55   0.581      .879677    1.257165
+             |
+tot_adults~h |
+          2  |   .7840837    .419547    -0.45   0.649     .2747274    2.237808
+          3  |   1.610355   .5861412     1.31   0.191     .7890399     3.28658
+             |
+1.htdiag_o~p |   .8972717   .0548801    -1.77   0.076     .7959058    1.011547
+1.~y_disease |   .9456118   .0680639    -0.78   0.437     .8211916    1.088883
+    1.asthma |   1.154837   .1026518     1.62   0.105     .9701943    1.374621
+1.~c_disease |   1.154656   .0778731     2.13   0.033     1.011685    1.317831
+             |
+     diabcat |
+T1DM, con..  |    1.09794    .197313     0.52   0.603     .7719822    1.561528
+T1DM, unc..  |   .6037822   .3357314    -0.91   0.364     .2030355    1.795513
+T2DM, con..  |   1.092996   .0808805     1.20   0.229     .9454323    1.263591
+T2DM, unc..  |   1.069063    .158234     0.45   0.652     .7998629    1.428866
+Diabetes,..  |   1.178237   1.201448     0.16   0.872     .1596845    8.693664
+             |
+cancer_exh~t |
+  Last year  |   .7500835   .3915592    -0.55   0.582     .2696278    2.086674
+2-5 years..  |   .9775648   .2181908    -0.10   0.919     .6311881    1.514022
+   5+ years  |   .9796839   .0721019    -0.28   0.780     .8480862    1.131702
+             |
+cancer_hae~t |
+  Last year  |   1.341074    .506131     0.78   0.437     .6400338    2.809974
+2-5 years..  |   .8884115   .2150488    -0.49   0.625     .5528055    1.427762
+   5+ years  |   .9809768   .0708348    -0.27   0.790     .8515199    1.130115
+             |
+1.~r_disease |   .8483908   .0603405    -2.31   0.021     .7379986    .9752958
+1.stroke_d~a |   1.118072   .0776639     1.61   0.108     .9757607    1.281139
+1.other_ne~o |   1.146961   .0791058     1.99   0.047      1.00194    1.312974
+             |
+reduced_ki~t |
+Stage 3a/..  |   .8603545   .4609425    -0.28   0.779       .30105     2.45876
+      1.esrd |   .9960017   .0570502    -0.07   0.944     .8902335    1.114336
+1.other_tr~t |   1.021887   .0663594     0.33   0.739     .8997621    1.160589
+  1.asplenia |   1.047391   .0697152     0.70   0.487     .9192889    1.193343
+1.ra_sle_p~s |   .9213209   .0669021    -1.13   0.259     .7990989    1.062237
+1.other_im~o |   1.007463   .0696294     0.11   0.914     .8798316    1.153609
+             |
+     vaccine#|
+   kids_cat4 |
+          1 #|
+only <12 ..  |   .5773013   .3015767    -1.05   0.293     .2073686    1.607171
+          1 #|
+ only 12-18  |   2.483434   3.283024     0.69   0.491     .1861188    33.13714
+    1#mixed  |   .5544342   .1922216    -1.70   0.089     .2810215    1.093857
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+
+kids_cat4 
+****************
+
+ ( 1)  1.kids_cat4 + 1.vaccine#1.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .8215984   .4363496    -0.37   0.711     .2901268    2.326651
+------------------------------------------------------------------------------
+kids_cat4
+****************
+
+ ( 1)  2.kids_cat4 + 1.vaccine#2.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   2.505776    3.26113     0.71   0.480     .1955014    32.11696
+------------------------------------------------------------------------------
+kids_cat4
+****************
+
+ ( 1)  3.kids_cat4 + 1.vaccine#3.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.199041   .4479544     0.49   0.627     .5765411    2.493663
+------------------------------------------------------------------------------
+(note: file ./output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine
+> _0shield1.ster not found)
+file ./output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine_0shiel
+> d1.ster saved
+
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/10_an_interaction_cox_models_vaccine_covidadmissio
+> n_sex_shield.log
+  log type:  text
+ closed on:  17 Aug 2021, 07:54:49
+-------------------------------------------------------------------------------

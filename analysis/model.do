@@ -54,19 +54,29 @@ do "04b_an_descriptive_table_2.do"
 *MULTIVARIATE MODELS (this fits the models needed for fully adj col of Table 2)
  do "07a_an_multivariable_cox_models_demogADJ.do"  
 
-foreach outcome of any covid_tpp_prob covid_death covid_icu covidadmission   {
+foreach outcome of any covid_tpp_prob   {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "07b_an_multivariable_cox_models_FULL.do" `outcome' 
 }
 
 *INTERACTIONS 
 *Sex
-foreach outcome of any covid_tpp_prob covid_death covid_icu covidadmission   {
+foreach outcome of any covid_tpp_prob   {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_sex" `outcome'	
 }
 
 *Vaccine
-foreach outcome of any covid_tpp_prob covid_death covid_icu covidadmission   {
+foreach outcome of any covid_tpp_prob    {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_vaccine" `outcome'
+}
+
+*Sheild
+foreach outcome of any covid_tpp_prob    {
+winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_shield" `outcome'
+}
+
+*Vaccine strata
+foreach outcome of any covid_tpp_prob    {
+winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10a_an_interaction_cox_models_vaccine_sex_shield" `outcome'
 }
 
 *Tabulate results
@@ -77,7 +87,10 @@ foreach outcome of any  covid_tpp_prob covid_death covid_icu covidadmission   {
 *put results in figure
 do "15_anHRfigure_all_outcomes.do"
 
-foreach outcome of any  covid_tpp_prob covidadmission covid_icu covid_death     {
+foreach outcome of any  covid_tpp_prob     {
 	do "11_an_interaction_HR_tables_forest.do" 	 `outcome'
 }
-	
+
+foreach outcome of any  covid_tpp_prob      {
+	do "11_an_interaction_HR_tables_forest_vaccine_analysis.do" 	 `outcome'
+}	
