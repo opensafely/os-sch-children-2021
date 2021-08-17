@@ -114,6 +114,10 @@ replace covid_tpp_probable=positive_covid_test_ever if covid_tpp_probable==. & c
 sum, d f
 
 
+/*Flag earliest date under18s vaccinated*/
+gen under18vacc_temp=covid_vacc_date if age<18
+bysort household_id: egen under18vacc=min(under18vacc_temp)
+format under18vacc* %td
 /* CREATE VARIABLES===========================================================*/
 
 /* DEMOGRAPHICS */ 
@@ -872,7 +876,7 @@ label var  stime_covid_death_part1				"Survival time (date); outcome covid death
 label var   died_date_ons				"Date death ONS"
 label var  has_12_m_follow_up			"Has 12 months follow-up"
 lab var  dereg_date						"Date deregistration from practice"
-
+lab var under18vacc						"Date first child in hh vaccinated"
 
 
 
