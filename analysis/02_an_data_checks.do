@@ -157,10 +157,12 @@ local total_`outcome'=`r(N)'
 hist date_`outcome' if date_`outcome'<=22500 & agegp==`age', saving(output/`outcome'_age`age', replace) ///
 xlabel(22281 22340 22401 22462,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq  ///
-ylabel(0 5000,labsize(tiny))  ytitle("Number", size(vsmall)) xline(22347 22416) ///
-title("N=`total_`outcome''", size(vsmall)) 
+ylabel(0 4000,labsize(tiny))  ytitle("Number", size(vsmall)) xline(22347 22416) ///
+title("N=`total_`outcome''", size(vsmall)) addlabels addlabopts(mlabsize(half_tiny))
 }
 }
+
+
 * Combine histograms
 graph combine output/covid_tpp_prob_age0.gph output/covid_tpp_prob_age1.gph ///
 output/covidadmission_age0.gph output/covidadmission_age1.gph ///
