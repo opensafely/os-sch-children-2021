@@ -85,7 +85,7 @@ foreach outcome of any  covid_tpp_prob  {
 }
 
 *put results in figure
-do "15_anHRfigure_all_outcomes.do"
+do "15_anHRfigure_all_outcomes_2021.do"
 
 foreach outcome of any  covid_tpp_prob     {
 	do "11_an_interaction_HR_tables_forest.do" 	 `outcome'

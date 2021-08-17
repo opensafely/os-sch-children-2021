@@ -84,7 +84,7 @@ file open tablecontents_all_outcomes using ./output/15_an_tablecontents_HRtable_
 
 tempfile HRestimates_all_outcomes
 cap postutil clear
-postfile HRestimates_all_outcomes str10 period str10 x str10 outcome str27 variable i hr lci uci N using `HRestimates_all_outcomes'
+postfile HRestimates_all_outcomes str10 period str10 x str10 outcome str27 variable i hr lci uci using `HRestimates_all_outcomes'
 
 
 *Primary exposure
