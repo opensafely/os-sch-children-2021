@@ -64,8 +64,7 @@ local endwith "_tab"
 				local hr = r(estimate)
 				local lb = r(lb)
 				local ub = r(ub)
-				local N=e(N)
-				post HRestimates_all_outcomes ("`period'") ("`x'") ("`outcome'") ("`variable'") (`i') (`hr') (`lb') (`ub') (`N') 
+				post HRestimates_all_outcomes ("`period'") ("`x'") ("`outcome'") ("`variable'") (`i') (`hr') (`lb') (`ub')
 				}
 		}	
 		} /*min adj, full adj*/

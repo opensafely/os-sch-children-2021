@@ -80,7 +80,7 @@ winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10a_an_interaction_cox_mo
 }
 
 *Tabulate results
-foreach outcome of any  covid_tpp_prob covid_death covid_icu covidadmission   {
+foreach outcome of any  covid_tpp_prob  {
 	do "08_an_tablecontent_HRtable.do" `outcome'
 }
 
