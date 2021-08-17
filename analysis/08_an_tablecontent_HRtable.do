@@ -28,11 +28,15 @@ log using "$logdir/08_an_tablecontent_HRtable_`outcome'", text replace
 cap prog drop outputHRsforvar
 prog define outputHRsforvar
 syntax, variable(string) min(real) max(real) outcome(string)
+file write tablecontents ("Exposure") _tab ("exposure_level") _tab ("time_period") _tab ("events") _tab ("person_years") _tab ("rate") _tab ("age_sex_adj_hr") _tab ("demog_adj_hr") _tab ("full_adj_hr") _n
 foreach period in 0 1 2  {
 forvalues x=0/1 {
 file write tablecontents ("age") ("`x'") _n
 forvalues i=`min'/`max'{
 local endwith "_tab"
+
+
+
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 

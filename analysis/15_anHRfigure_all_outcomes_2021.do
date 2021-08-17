@@ -64,8 +64,7 @@ local endwith "_tab"
 				local hr = r(estimate)
 				local lb = r(lb)
 				local ub = r(ub)
-				local N=e(N)
-				post HRestimates_all_outcomes ("`period'") ("`x'") ("`outcome'") ("`variable'") (`i') (`hr') (`lb') (`ub') (`N') 
+				post HRestimates_all_outcomes ("`period'") ("`x'") ("`outcome'") ("`variable'") (`i') (`hr') (`lb') (`ub')
 				}
 		}	
 		} /*min adj, full adj*/
@@ -85,7 +84,7 @@ file open tablecontents_all_outcomes using ./output/15_an_tablecontents_HRtable_
 
 tempfile HRestimates_all_outcomes
 cap postutil clear
-postfile HRestimates_all_outcomes str10 period str10 x str10 outcome str27 variable i hr lci uci N using `HRestimates_all_outcomes'
+postfile HRestimates_all_outcomes str10 period str10 x str10 outcome str27 variable i hr lci uci using `HRestimates_all_outcomes'
 
 
 *Primary exposure
