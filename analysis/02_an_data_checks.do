@@ -168,7 +168,6 @@ di (5/4000)*100
 *connecting the line from the point (y=0,x=20) to (y=.1,x=20) -- a 
 *vertical line at x=20. 
 
-stop 
 * Combine histograms
 graph combine output/covid_tpp_prob_age0.gph output/covid_tpp_prob_age1.gph ///
 output/covidadmission_age0.gph output/covidadmission_age1.gph ///
