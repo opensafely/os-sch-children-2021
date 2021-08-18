@@ -15,6 +15,7 @@ global tempdir    "tempdata"
 
 local outcome `1'
 
+set trace on 
 
 * Open a log file
 capture log close
