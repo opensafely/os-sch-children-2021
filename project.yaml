@@ -262,6 +262,7 @@ actions:
     needs:
       - 10_an_interaction_cox_models_vaccine_covid_tpp_prob
       - 10_an_interaction_cox_models_sex_covid_tpp_prob
+      - 10_an_interaction_cox_models_shield_covid_death
     run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest.do covid_tpp_prob
     outputs:
       moderately_sensitive:
@@ -272,6 +273,7 @@ actions:
     needs:
       - 10_an_interaction_cox_models_vaccine_covid_death
       - 10_an_interaction_cox_models_sex_covid_death
+      - 10_an_interaction_cox_models_shield_covid_death
     run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest.do covid_death
     outputs:
       moderately_sensitive:
@@ -282,6 +284,7 @@ actions:
     needs:
       - 10_an_interaction_cox_models_vaccine_covidadmission
       - 10_an_interaction_cox_models_sex_covidadmission
+      - 10_an_interaction_cox_models_shield_covidadmission
     run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest.do covidadmission
     outputs:
       moderately_sensitive:
