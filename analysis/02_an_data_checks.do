@@ -150,23 +150,28 @@ replace agegp=1 if age>65
 tab agegp, miss
 
 foreach age in 0 1 {
-foreach outcome of any covid_primary_care_codes positive_SGSS  covid_tpp_prob covidadmission covid_icu covid_death    {
+foreach outcome of any covid_tpp_prob covidadmission covid_death    {
 summ  `outcome' if agegp==`age', format d 
 summ patient_id if `outcome'==1 & date_`outcome'<=22500 & agegp==`age'
 local total_`outcome'=`r(N)'
 hist date_`outcome' if date_`outcome'<=22500 & agegp==`age', saving(output/`outcome'_age`age', replace) ///
 xlabel(22281 22340 22401 22462,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq  ///
-ylabel(0 4000,labsize(tiny))  ytitle("Number", size(vsmall)) xline(22347 22416) ///
-title("N=`total_`outcome''", size(vsmall)) addlabels addlabopts(mlabsize(half_tiny))
+ylabel(0 5000,labsize(tiny))  ytitle("Number", size(vsmall)) xline(22347 22416) ///
+title("N=`total_`outcome''", size(vsmall)) addlabels addlabopts(mlabsize(tiny)) width(5) yline(5, lcolor(black%100)  lwidth(thick)) color(black%100)
 }
 }
 
 
+di (5/4000)*100
+*addplot(pci 0 20 .1 20): With the 2 supplied coordinates, we are just 
+*connecting the line from the point (y=0,x=20) to (y=.1,x=20) -- a 
+*vertical line at x=20. 
+
+stop 
 * Combine histograms
 graph combine output/covid_tpp_prob_age0.gph output/covid_tpp_prob_age1.gph ///
 output/covidadmission_age0.gph output/covidadmission_age1.gph ///
-output/covid_icu_age0.gph output/covid_icu_age1.gph ///
 output/covid_death_age0.gph output/covid_death_age1.gph, graphregion(color(white)) col(2) ysize(10)
 graph export "output/01_histogram_outcomes.svg", as(svg) replace 
 
