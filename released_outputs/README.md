@@ -10,6 +10,7 @@
     * [output/20210818/11_an_int_tab_contents_HRtable_covid_death.txt](output/20210818/11_an_int_tab_contents_HRtable_covid_death.txt)
     * [output/20210818/11_an_int_tab_contents_HRtable_covid_tpp_prob.txt](output/20210818/11_an_int_tab_contents_HRtable_covid_tpp_prob.txt)
     * [output/20210818/11_an_int_tab_contents_HRtable_covidadmission.txt](output/20210818/11_an_int_tab_contents_HRtable_covidadmission.txt)
+    * [output/20210818/11_an_int_tab_contents_HRtable_covidadmission_vaccine_strat.txt](output/20210818/11_an_int_tab_contents_HRtable_covidadmission_vaccine_strat.txt)
   * [output/an_tablecontents_HRtable_covid_death.txt](output/an_tablecontents_HRtable_covid_death.txt)
   * [output/an_tablecontents_HRtable_covid_icu.txt](output/an_tablecontents_HRtable_covid_icu.txt)
   * [output/an_tablecontents_HRtable_covid_tpp_prob.txt](output/an_tablecontents_HRtable_covid_tpp_prob.txt)

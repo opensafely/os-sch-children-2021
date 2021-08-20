@@ -1,0 +1,26 @@
+	exposure	exposure level	vaccine	outcome	strata	strata_level	HR	lci	uci	pval
+	kids_cat4	1	0	covidadmission	male	0	1.21	1.11	1.32	   .
+	kids_cat4	1	0	covidadmission	male	1	1.17	1.08	1.26	   .
+	kids_cat4	1	0	covidadmission	shield	0	1.30	1.22	1.40	   .
+	kids_cat4	1	0	covidadmission	shield	1	1.05	0.94	1.16	   .
+	kids_cat4	2	0	covidadmission	male	0	1.14	1.04	1.26	0.15
+	kids_cat4	2	0	covidadmission	male	1	1.20	1.11	1.31	   .
+	kids_cat4	2	0	covidadmission	shield	0	1.19	1.10	1.29	   .
+	kids_cat4	2	0	covidadmission	shield	1	1.17	1.05	1.30	0.31
+	kids_cat4	3	0	covidadmission	male	0	1.22	1.10	1.37	   .
+	kids_cat4	3	0	covidadmission	male	1	1.22	1.11	1.35	   .
+	kids_cat4	3	0	covidadmission	shield	0	1.31	1.20	1.43	   .
+	kids_cat4	3	0	covidadmission	shield	1	1.12	0.99	1.28	   .
+	kids_cat4	1	1	covidadmission	male	0	0.00	0.00	0.00	
+	kids_cat4	1	1	covidadmission	male	1	0.00	0.00	0.00	
+	kids_cat4	1	1	covidadmission	shield	0	0.00	0.00	0.00	
+	kids_cat4	1	1	covidadmission	shield	1	0.00	0.00	0.00	
+	kids_cat4	2	1	covidadmission	male	0	0.27	0.04	1.93	
+	kids_cat4	2	1	covidadmission	male	1	0.00	0.00	0.00	
+	kids_cat4	2	1	covidadmission	shield	0	0.00	0.00	0.00	
+	kids_cat4	2	1	covidadmission	shield	1	0.42	0.06	3.00	
+	kids_cat4	3	1	covidadmission	male	0	0.00	0.00	0.00	
+	kids_cat4	3	1	covidadmission	male	1	0.00	0.00	0.00	
+	kids_cat4	3	1	covidadmission	shield	0	0.00	0.00	0.00	
+	kids_cat4	3	1	covidadmission	shield	1	0.00	0.00	0.00	
+
