@@ -1,0 +1,26 @@
+	exposure	exposure level	vaccine	outcome	strata	strata_level	HR	lci	uci	pval
+	kids_cat4	1	0	covid_tpp_prob	male	0	1.19	1.18	1.20	0.00
+	kids_cat4	1	0	covid_tpp_prob	male	1	1.25	1.23	1.26	0.00
+	kids_cat4	1	0	covid_tpp_prob	shield	0	1.22	1.21	1.24	0.00
+	kids_cat4	1	0	covid_tpp_prob	shield	1	1.21	1.19	1.23	0.00
+	kids_cat4	2	0	covid_tpp_prob	male	0	1.27	1.26	1.29	0.00
+	kids_cat4	2	0	covid_tpp_prob	male	1	1.27	1.25	1.29	0.00
+	kids_cat4	2	0	covid_tpp_prob	shield	0	1.28	1.26	1.30	0.00
+	kids_cat4	2	0	covid_tpp_prob	shield	1	1.27	1.24	1.30	0.00
+	kids_cat4	3	0	covid_tpp_prob	male	0	1.31	1.29	1.33	0.00
+	kids_cat4	3	0	covid_tpp_prob	male	1	1.31	1.29	1.33	0.00
+	kids_cat4	3	0	covid_tpp_prob	shield	0	1.32	1.30	1.34	0.00
+	kids_cat4	3	0	covid_tpp_prob	shield	1	1.30	1.27	1.34	0.00
+	kids_cat4	1	1	covid_tpp_prob	male	0	0.81	0.79	0.84	
+	kids_cat4	1	1	covid_tpp_prob	male	1	0.68	0.64	0.71	
+	kids_cat4	1	1	covid_tpp_prob	shield	0	0.76	0.73	0.78	
+	kids_cat4	1	1	covid_tpp_prob	shield	1	0.73	0.69	0.77	
+	kids_cat4	2	1	covid_tpp_prob	male	0	1.10	1.06	1.14	
+	kids_cat4	2	1	covid_tpp_prob	male	1	0.93	0.88	0.97	
+	kids_cat4	2	1	covid_tpp_prob	shield	0	1.03	0.99	1.07	
+	kids_cat4	2	1	covid_tpp_prob	shield	1	0.99	0.94	1.06	
+	kids_cat4	3	1	covid_tpp_prob	male	0	1.07	1.02	1.12	
+	kids_cat4	3	1	covid_tpp_prob	male	1	0.83	0.78	0.89	
+	kids_cat4	3	1	covid_tpp_prob	shield	0	0.97	0.92	1.01	
+	kids_cat4	3	1	covid_tpp_prob	shield	1	0.95	0.88	1.02	
+
