@@ -54,9 +54,21 @@ do "04b_an_descriptive_table_2.do"
 *MULTIVARIATE MODELS (this fits the models needed for fully adj col of Table 2)
  do "07a_an_multivariable_cox_models_demogADJ.do"  
 
-foreach outcome of any covid_tpp_prob   {
+foreach outcome of any covid_tpp_prob covidadmission covid_death  {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "07b_an_multivariable_cox_models_FULL.do" `outcome' 
 }
+
+*Tabulate results
+foreach outcome of any covid_tpp_prob covidadmission covid_death  {
+	do "08_an_tablecontent_HRtable.do" `outcome'
+}
+
+*Early censoring 11th june
+foreach outcome of any covid_tpp_prob covidadmission covid_death  {
+winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "07b_an_multivariable_cox_models_FULL_sense_11thJuneCensor.do" `outcome' 
+}
+
+**********************************************************************************
 
 *INTERACTIONS 
 *Sex
@@ -79,10 +91,7 @@ foreach outcome of any covid_tpp_prob    {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10a_an_interaction_cox_models_vaccine_sex_shield" `outcome'
 }
 
-*Tabulate results
-foreach outcome of any  covid_tpp_prob  {
-	do "08_an_tablecontent_HRtable.do" `outcome'
-}
+
 
 *put results in figure
 do "15_anHRfigure_all_outcomes_2021.do"
