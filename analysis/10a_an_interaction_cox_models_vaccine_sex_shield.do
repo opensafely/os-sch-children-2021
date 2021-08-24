@@ -72,25 +72,25 @@ replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
 stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)
 
-gen first_vacc_plus_14d=covid_vacc_date+14
-gen second_vacc_plus_14d=covid_vacc_second_dose_date+14
-format first_vacc_plus_14d second_vacc_plus_14d %td
+gen first_vacc_plus_7d=covid_vacc_date+7
+gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+format first_vacc_plus_7d second_vacc_plus_7d %td
 
-stsplit vaccine, after(first_vacc_plus_14d) at(0)
+stsplit vaccine, after(first_vacc_plus_7d) at(0)
 replace vaccine = vaccine +1
-stsplit vaccine2, after(second_vacc_plus_14d) at(2)
+stsplit vaccine2, after(second_vacc_plus_7d) at(2)
 replace vaccine2 = vaccine2 +1
 replace vaccine=2 if vaccine2==2
 
 bysort patient: replace vaccine=0 if _N==1
 sort patient vaccine
 bysort patient: replace vaccine=2 if _N==3 & vaccine2==3
-
+sort patient vaccine vaccine2
+bysort patient: replace vaccine=1 if vaccine==2 & _n==2 & _N==3 & vaccine2==3
 recode `outcome' .=0 
+
 tab vaccine
 tab vaccine `outcome'
-recode vaccine 1=0 2=1
-
 foreach strata in male shield {
 
 foreach level in 0 1 {	
@@ -99,7 +99,7 @@ foreach level in 0 1 {
 stcox 	i.kids_cat4  	age1 age2 age3					///
 			$demogadjlist							///
 			$comordidadjlist						///
-			1.vaccine#1.kids_cat4 1.vaccine#2.kids_cat4 1.vaccine#3.kids_cat4	if `strata'==`level'				///
+			1.vaccine#1.kids_cat4 1.vaccine#2.kids_cat4 1.vaccine#3.kids_cat4 2.vaccine#1.kids_cat4 2.vaccine#2.kids_cat4 2.vaccine#3.kids_cat4	if `strata'==`level'				///
 			, strata(stp) vce(cluster household_id)
 if _rc==0 	{
 di _n "kids_cat4 " _n "****************"
@@ -108,6 +108,12 @@ di "kids_cat4" _n "****************"
 lincom 2.kids_cat4 + 1.vaccine#2.kids_cat4, eform
 di "kids_cat4" _n "****************"
 lincom 3.kids_cat4 + 1.vaccine#3.kids_cat4, eform
+di _n "kids_cat4 " _n "****************"
+lincom 1.kids_cat4 + 2.vaccine#1.kids_cat4, eform
+di "kids_cat4" _n "****************"
+lincom 2.kids_cat4 + 2.vaccine#2.kids_cat4, eform
+di "kids_cat4" _n "****************"
+lincom 3.kids_cat4 + 2.vaccine#3.kids_cat4, eform
 estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x'`strata'`level', replace
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"

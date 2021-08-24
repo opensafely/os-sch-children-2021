@@ -76,30 +76,38 @@ foreach outcome of any covid_tpp_prob   {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_sex" `outcome'	
 }
 
-*Vaccine
-foreach outcome of any covid_tpp_prob    {
-winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_vaccine" `outcome'
-}
-
 *Sheild
 foreach outcome of any covid_tpp_prob    {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_shield" `outcome'
 }
 
-*Vaccine strata
-foreach outcome of any covid_tpp_prob    {
-winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10a_an_interaction_cox_models_vaccine_sex_shield" `outcome'
-}
-
-
-
-*put results in figure
-do "15_anHRfigure_all_outcomes_2021.do"
-
 foreach outcome of any  covid_tpp_prob     {
 	do "11_an_interaction_HR_tables_forest.do" 	 `outcome'
 }
 
+**********************************************************************************
+*Vaccine analysis
+*Vaccine
+foreach outcome of any covid_tpp_prob    {
+ do "10_an_interaction_cox_models_vaccine" `outcome'
+}
+foreach outcome of any  covid_tpp_prob     {
+	do "11_an_interaction_HR_tables_forest_vaccine_main_analysis.do" 	 `outcome'
+}
+
+
+*Vaccine strata
+foreach outcome of any covid_tpp_prob    {
+do "10a_an_interaction_cox_models_vaccine_sex_shield" `outcome'
+}
+
+
+
 foreach outcome of any  covid_tpp_prob      {
 	do "11_an_interaction_HR_tables_forest_vaccine_analysis.do" 	 `outcome'
-}	
+}
+
+*put results in figure
+do "15_anHRfigure_all_outcomes_2021.do"
+
+	

@@ -17,27 +17,26 @@ local outcome `1'
 
 * Open a log file
 capture log close
-log using "$logdir/11_an_interaction_HR_tables_forest_`outcome'.log", text replace
+log using "$logdir/11_an_interaction_HR_tables_forest_vaccine_strat_`outcome'.log", text replace
 
 ***********************************************************************************************************************
 *Generic code to ouput the HRs across outcomes for all levels of a particular variables, in the right shape for table
 cap prog drop outputHRsforvar
 prog define outputHRsforvar
 syntax, variable(string) min(real) max(real) outcome(string)
-file write tablecontents_int ("period") _tab ("age") _tab ("exposure") _tab ("exposure level") ///
-_tab ("outcome") _tab ("int_type") _tab ("int_level") ///
+file write tablecontents_int _tab ("exposure") _tab ("exposure level") _tab ("vaccine") ///
+_tab ("outcome") _tab ("strata") _tab ("strata_level") ///
 _tab ("HR")  _tab ("lci")  _tab ("uci") _tab ("pval") _n
-foreach period in 0 1 2  {
-forvalues x=0/1 {
+foreach vaccine in 0 1 2 {
 forvalues i=`min'/`max'{
-foreach int_type in male shield {
+foreach strata in male shield {
 
-foreach int_level in 0 1 {
+forvalues level=0/1 {
 
 local endwith "_tab"
 
 	*put the varname and condition to left so that alignment can be checked vs shell
-	file write tablecontents_int ("`period'") _tab ("`x'") _tab ("`variable'") _tab ("`i'") _tab ("`outcome'") _tab ("`int_type'") _tab ("`int_level'") _tab
+	file write tablecontents_int  _tab ("`variable'") _tab ("`i'") _tab ("`vaccine'") _tab ("`outcome'") _tab ("`strata'") _tab ("`level'") _tab
 
 	foreach modeltype of any fulladj {
 
@@ -50,24 +49,29 @@ local endwith "_tab"
 		*1) GET THE RIGHT ESTIMATES INTO MEMORY
 
 		if "`modeltype'"=="fulladj" {
-				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_`int_type'_`x'_timeperiod`period'
+				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_0`strata'`level'
 				if _rc!=0 local noestimatesflag 1
 				}
 		***********************
 		*2) WRITE THE HRs TO THE OUTPUT FILE
 
 		if `noestimatesflag'==0{
-			if `int_level'==0 {
-			test 1.`int_type'#`i'.`variable'
-			*overall p-value for interaction: test 1.`int_type'#1.`variable' test 1.`int_type'#2.`variable'
+			if `vaccine'==0 {
+			test 1.vaccine#`i'.`variable'
+			*overall p-value for interaction: test 1.vaccine#1.`variable' test 1.`vaccine'#2.`variable'
 			local pval=r(p)
 			cap lincom `i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab %4.2f (`pval') `endwith'
 
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
-			if `int_level'==1 {
-			cap lincom `i'.`variable'+ 1.`int_type'#`i'.`variable', eform
+			if `vaccine'==1 {
+			cap lincom `i'.`variable'+ 1.vaccine#`i'.`variable', eform
+			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
+				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
+				}
+			if `vaccine'==2 {
+			cap lincom `i'.`variable'+ 2.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
@@ -81,29 +85,28 @@ local endwith "_tab"
 				local lb = r(lb)
 				local ub = r(ub)
 				cap gen `variable'=.
-				test 1.`int_type'#2.`variable' 1.`int_type'#1.`variable'
+				test 1.vaccine#2.`variable' 1.vaccine#1.`variable'
 				local pval=r(p)
-				post HRestimates_int ("`period'") ("`x'") ("`outcome'") ("`variable'") ("`int_type'") (`i') (`int_level') (`hr') (`lb') (`ub') (`pval')
+				post HRestimates_int ("`vaccine'") ("`outcome'") ("`variable'") ("`strata'") (`i') (`level') (`hr') (`lb') (`ub') (`pval')
 				drop `variable'
-				}
+			}
 		}
 		}
-		} /*int_level*/
+		} /*level*/
 		} /*full adj*/
 
 } /*variable levels*/
 } /*agebands*/
-} /*datsets*/
 end
 ***********************************************************************************************************************
 
 *MAIN CODE TO PRODUCE TABLE CONTENTS
 cap file close tablecontents_int
-file open tablecontents_int using ./output/11_an_int_tab_contents_HRtable_`outcome'.txt, t w replace
+file open tablecontents_int using ./output/11_an_int_tab_contents_HRtable_`outcome'_vaccine_strat.txt, t w replace
 
 tempfile HRestimates_int
 cap postutil clear
-postfile HRestimates_int str10 period str10 x str10 outcome str27 variable str27 int_type level int_level hr lci uci pval using `HRestimates_int'
+postfile HRestimates_int str10 vaccine str10 outcome str27 variable str27 strata i level hr lci uci pval using `HRestimates_int'
 
 *Primary exposure
 outputHRsforvar, variable("kids_cat4") min(1) max(3) outcome(`outcome')
