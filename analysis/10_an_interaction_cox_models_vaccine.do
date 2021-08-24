@@ -88,24 +88,26 @@ stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)
 	
 	
-gen first_vacc_plus_14d=covid_vacc_date+14
-gen second_vacc_plus_14d=covid_vacc_second_dose_date+14
-format first_vacc_plus_14d second_vacc_plus_14d %td
+gen first_vacc_plus_7d=covid_vacc_date+7
+gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+format first_vacc_plus_7d second_vacc_plus_7d %td
 
-stsplit vaccine, after(first_vacc_plus_14d) at(0)
+stsplit vaccine, after(first_vacc_plus_7d) at(0)
 replace vaccine = vaccine +1
-stsplit vaccine2, after(second_vacc_plus_14d) at(2)
+stsplit vaccine2, after(second_vacc_plus_7d) at(2)
 replace vaccine2 = vaccine2 +1
 replace vaccine=2 if vaccine2==2
 
 bysort patient: replace vaccine=0 if _N==1
 sort patient vaccine
 bysort patient: replace vaccine=2 if _N==3 & vaccine2==3
-
+sort patient vaccine vaccine2
+bysort patient: replace vaccine=1 if vaccine==2 & _n==2 & _N==3 & vaccine2==3
 recode `outcome' .=0 
+
 tab vaccine
 tab vaccine `outcome'
-recode vaccine 1=0 2=1
+
 
 foreach int_type in  vaccine  {
 
@@ -117,7 +119,7 @@ basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")
 
 *Age spline model (not adj ethnicity, interaction)
 basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")  ///
-interaction(1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type')
+interaction(1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' 2.`int_type'#1.`exposure_type' 2.`int_type'#2.`exposure_type' 2.`int_type'#3.`exposure_type')
 if _rc==0{
 testparm 1.`int_type'#i.`exposure_type'
 di _n "`exposure_type' " _n "****************"
@@ -126,7 +128,7 @@ di "`exposure_type'" _n "****************"
 lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
 di "`exposure_type'" _n "****************"
 lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
-estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`int_type'_`x'_timeperiod1, replace
+estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`int_type'_`x', replace
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
 }

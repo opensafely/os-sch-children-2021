@@ -118,13 +118,13 @@ stcox 	i.`exposure_type' 	age1 age2 age3			///
 if _rc==0{
 estimates
 estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'", replace
-	*  Proportional Hazards test 
+	/*  Proportional Hazards test 
 	* Based on Schoenfeld residuals	
 	timer clear 
 	timer on 1
 	if e(N_fail)>0 estat phtest, d
 	timer off 1
-	timer list 
+	timer list */
 	
 }
 else di "WARNING AGE SPLINE MODEL DID NOT FIT (OUTCOME `outcome')"
