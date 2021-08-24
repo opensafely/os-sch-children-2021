@@ -79,17 +79,32 @@ local outcome `1'
 * Open dataset and fit specified model(s)
 forvalues x=0/1 {
 forvalues period=0/3 {
-
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
-stsplit cat_time, at(0,78,147,173)
-recode cat_time 78=1 147=2 173=3
+*Split data by time of study period: 
+*-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
+*-alpha variant 15th March 2021 
+*-delta variant 24th May 2021 
+
+if "`outcome'"=="covid_tpp_prob" {
+stsplit cat_time, at(0,85,154,173)
+recode cat_time 85=1 154=2 173=3
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
+}
+
+*-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
+*-alpha variant 22nd March 2021 
+*-delta variant 31st May 2021 
+if "`outcome'"=="covidadmission" | "`outcome'"=="covid_death" {
+stsplit cat_time, at(0,92,161,173)
+recode cat_time 92=1 161=2 173=3
+recode `outcome' .=0 
+tab cat_time
+tab cat_time `outcome'
+}
 
 keep if cat_time==`period'
-
-
 
 ******************************
 *  Multivariable Cox models  *

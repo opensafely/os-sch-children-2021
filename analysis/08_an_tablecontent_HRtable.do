@@ -36,15 +36,39 @@ forvalues i=`min'/`max'{
 local endwith "_tab"
 
 
-
-
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
-stsplit cat_time, at(0,78,147,400)
-recode cat_time 78=1 147=2 400=3
+*Split data by time of study period: 
+*-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
+*-alpha variant 15th March 2021 
+*-delta variant 24th May 2021 
+
+if "`outcome'"=="covid_tpp_prob" {
+stsplit cat_time, at(0,85,154,400)
+recode cat_time 85=1 154=2 400=3
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
+}
+
+*-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
+*-alpha variant 22nd March 2021 
+*-delta variant 31st May 2021 
+if "`outcome'"=="covidadmission"  {
+stsplit cat_time, at(0,92,161,400)
+recode cat_time 92=1 161=2 400=3
+recode `outcome' .=0 
+tab cat_time
+tab cat_time `outcome'
+}
+
+if "`outcome'"=="covid_death" {
+stsplit cat_time, at(0,92,161,400)
+recode cat_time 92=1 161=2 400=3
+recode `outcome' .=0 
+tab cat_time
+tab cat_time `outcome'
+}
 
 keep if cat_time==`period'
 
@@ -133,10 +157,6 @@ file open tablecontents using ./output/an_tablecontents_HRtable_`outcome'.txt, t
 *Primary exposure
 outputHRsforvar, variable("kids_cat4") min(0) max(3) outcome(`outcome')
 file write tablecontents _n
-
-*Number kids
-outputHRsforvar, variable("gp_number_kids") min(0) max(4) outcome(`outcome')
-file write tablecontents _n 
 
 file close tablecontents
 
