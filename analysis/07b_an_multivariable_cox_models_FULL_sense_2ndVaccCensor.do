@@ -54,7 +54,7 @@ local outcome `1'
 
 * Open a log file
 capture log close
-log using "$logdir/07b_an_multivariable_cox_models_`outcome'_11thJuneCensor", text replace
+log using "$logdir/07b_an_multivariable_cox_models_`outcome'_2ndVaccCensor", text replace
 
 
 *************************************************************************************
@@ -78,8 +78,17 @@ local outcome `1'
 
 * Open dataset and fit specified model(s)
 foreach x in 0 {
-forvalues period=0/2 {
+forvalues period=0/3 {
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
+
+*Censor at date of second vacc_7ds
+gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+replace stime_`outcome' 	= second_vacc_plus_7d if stime_`outcome'>second_vacc_plus_7d
+stset stime_`outcome', fail(`outcome') 		///
+	id(patient_id) enter(enter_date) origin(enter_date)
+	
+	
+	
 *Split data by time of study period: 
 *-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
 *-alpha variant 15th March 2021 
@@ -118,7 +127,7 @@ foreach exposure_type in kids_cat4  {
 basecoxmodel, exposure("i.`exposure_type'") age("age1 age2 age3") 
 if _rc==0{
 estimates
-estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_11thJuneCensor", replace
+estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_2ndVaccCensor", replace
 	/*  Proportional Hazards test 
 	* Based on Schoenfeld residuals	
 	timer clear 

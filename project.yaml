@@ -123,6 +123,30 @@ actions:
         log: logs/07b_an_multivariable_cox_models_covidadmission_11thJuneCensor.log
         data: "output/an_multivariate_cox_models_covidadmission_*_FULLYADJMODEL_ageband_*_11thJuneCensor.ster"
 
+  07b_an_multivariable_cox_models_FULL_covid_death_2ndVaccCensor:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL_sense_2ndVaccCensor.do covid_death 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covid_death_2ndVaccCensor.log
+        data: "output/an_multivariate_cox_models_covid_death_*_FULLYADJMODEL_ageband_*_2ndVaccCensor.ster"
+
+  07b_an_multivariable_cox_models_FULL_covid_tpp_prob_2ndVaccCensor:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL_sense_2ndVaccCensor.do covid_tpp_prob 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covid_tpp_prob_2ndVaccCensor.log
+        data: "output/an_multivariate_cox_models_covid_tpp_prob_*_FULLYADJMODEL_ageband_*_2ndVaccCensor.ster"
+
+  07b_an_multivariable_cox_models_FULL_covidadmission_2ndVaccCensor:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL_sense_2ndVaccCensor.do covidadmission 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covidadmission_2ndVaccCensor.log
+        data: "output/an_multivariate_cox_models_covidadmission_*_FULLYADJMODEL_ageband_*_2ndVaccCensor.ster"
+
   08_an_tablecontent_HRtable_covid_tpp_prob:
     needs:
       - 01_cr_analysis_dataset
@@ -283,16 +307,19 @@ actions:
         log: logs/11_an_interaction_HR_tables_forest_vaccine_strat_covid_tpp_prob.log
         data: "output/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_strat.txt"
 
-  15_anHRfigure_all_outcomes_2021_11thJune_sense:
+  15_anHRfigure_data_all_outcomes_2021_SENSE:
     needs:  
       - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob_11thJuneCensor
       - 07b_an_multivariable_cox_models_FULL_covidadmission_11thJuneCensor
       - 07b_an_multivariable_cox_models_FULL_covid_death_11thJuneCensor
-    run: stata-mp:latest analysis/15_anHRfigure_all_outcomes_2021_11thJuneCensor.do
+      - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob_2ndVaccCensor
+      - 07b_an_multivariable_cox_models_FULL_covidadmission_2ndVaccCensor
+      - 07b_an_multivariable_cox_models_FULL_covid_death_2ndVaccCensor
+    run: stata-mp:latest analysis/15_anHRfigure_all_outcomes_2021_SENSE.do
     outputs:
       moderately_sensitive:
-        log: logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_11thJuneCensor.log
-        data: "output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_11thJuneCensor.txt"
+        log: logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_SENSE.log
+        data: "output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_SENSE.txt"
 
   run_all:
     needs:
@@ -312,6 +339,7 @@ actions:
       - 11_an_interaction_HR_tables_forest_covidadmission
       - 11_an_interaction_HR_tables_forest_covid_death
       - 15_anHRfigure_all_outcomes_2021
+      - 15_anHRfigure_data_all_outcomes_2021_SENSE
     # In order to be valid this action needs to define a run commmand and
     # some output. We don't really care what these are but the below seems to
     # do the trick.

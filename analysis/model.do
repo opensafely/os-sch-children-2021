@@ -68,6 +68,12 @@ foreach outcome of any covid_tpp_prob covidadmission covid_death  {
 winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "07b_an_multivariable_cox_models_FULL_sense_11thJuneCensor.do" `outcome' 
 }
 
+*Early censoring 2nd vacc
+foreach outcome of any covid_tpp_prob covidadmission covid_death  {
+winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "07b_an_multivariable_cox_models_FULL_sense_2ndVaccCensor.do" `outcome' 
+}
+
+
 **********************************************************************************
 
 *INTERACTIONS 
@@ -108,6 +114,6 @@ foreach outcome of any  covid_tpp_prob      {
 }
 
 *put results in figure
-do "15_anHRfigure_all_outcomes_2021.do"
+do "15_anHRfigure_all_outcomes_2021_SENSE.do"
 
 	

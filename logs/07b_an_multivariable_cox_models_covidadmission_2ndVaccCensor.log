@@ -1,0 +1,978 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/07b_an_multivariable_cox_models_covidadmission_2nd
+> VaccCensor.log
+  log type:  text
+ opened on:  24 Aug 2021, 11:56:43
+
+. 
+. 
+. *****************************************************************************
+> ********
+. *PROG TO DEFINE THE BASIC COX MODEL WITH OPTIONS FOR HANDLING OF AGE, BMI, ET
+> HNICITY:
+. cap prog drop basecoxmodel
+
+. prog define basecoxmodel
+  1.         syntax , exposure(string) age(string) 
+  2. 
+. timer clear
+  3. timer on 1
+  4.         capture stcox   `exposure'                              ///
+>                         $demogadjlist                                   ///
+>                         $comordidadjlist                                ///
+>                         `if'                                                 
+>    ///
+>                         , strata(stp) vce(cluster household_id)
+  5. timer off 1
+  6. timer list
+  7. end
+
+. *****************************************************************************
+> ********
+. local outcome `1'
+
+. 
+. * Open dataset and fit specified model(s)
+. foreach x in 0 {
+  2. forvalues period=0/3 {
+  3. use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta",
+>  clear
+  4. 
+. *Censor at date of second vacc_7ds
+. gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+  5. replace stime_`outcome'         = second_vacc_plus_7d if stime_`outcome'>s
+> econd_vacc_plus_7d
+  6. stset stime_`outcome', fail(`outcome')          ///
+>         id(patient_id) enter(enter_date) origin(enter_date)
+  7.         
+.         
+.         
+. *Split data by time of study period: 
+. *-School closure: 20th December 2020 (previous analysis up to 19th December 2
+> 020) 
+. *-alpha variant 15th March 2021 
+. *-delta variant 24th May 2021 
+. 
+. if "`outcome'"=="covid_tpp_prob" {
+  8. stsplit cat_time, at(0,85,154,173)
+  9. recode cat_time 85=1 154=2 173=3
+ 10. recode `outcome' .=0 
+ 11. tab cat_time
+ 12. tab cat_time `outcome'
+ 13. }
+ 14. 
+. *-School closure: 20th December 2020 (previous analysis up to 19th December 2
+> 020) 
+. *-alpha variant 22nd March 2021 
+. *-delta variant 31st May 2021 
+. if "`outcome'"=="covidadmission" | "`outcome'"=="covid_death" {
+ 15. stsplit cat_time, at(0,92,161,173)
+ 16. recode cat_time 92=1 161=2 173=3
+ 17. recode `outcome' .=0 
+ 18. tab cat_time
+ 19. tab cat_time `outcome'
+ 20. }
+ 21. 
+. keep if cat_time==`period'
+ 22. 
+. ******************************
+. *  Multivariable Cox models  *
+. ******************************
+. 
+. 
+. 
+. foreach exposure_type in kids_cat4  {
+ 23. 
+. *Age spline model (not adj ethnicity)
+. basecoxmodel, exposure("i.`exposure_type'") age("age1 age2 age3") 
+ 24. if _rc==0{
+ 25. estimates
+ 26. estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_ty
+> pe'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_2ndVaccCensor", replace
+ 27.         *  Proportional Hazards test 
+.         * Based on Schoenfeld residuals 
+.         timer clear 
+ 28.         timer on 1
+ 29.         if e(N_fail)>0 estat phtest, d
+ 30.         timer off 1
+ 31.         timer list 
+ 32.         
+. }
+ 33. else di "WARNING AGE SPLINE MODEL DID NOT FIT (OUTCOME `outcome')"
+ 34. 
+. }
+ 35. }
+ 36. }
+(12,894 missing values generated)
+(2,737 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+        222  observations end on or before enter()
+------------------------------------------------------------------------------
+     15,895  observations remaining, representing
+     15,895  subjects
+      1,901  failures in single-failure-per-subject data
+  1,612,928  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(17,925 observations (episodes) created)
+(cat_time: 17925 changes made)
+(covidadmission: 17925 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,895       47.00       47.00
+          1 |      8,210       24.28       71.27
+          2 |      5,108       15.10       86.38
+          3 |      4,607       13.62      100.00
+------------+-----------------------------------
+      Total |     33,820      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,540      1,355 |    15,895 
+         1 |     7,755        455 |     8,210 
+         2 |     5,048         60 |     5,108 
+         3 |     4,576         31 |     4,607 
+-----------+----------------------+----------
+     Total |    31,919      1,901 |    33,820 
+(18,147 observations deleted)
+   1:      9.58 /        1 =       9.5830
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =       15,895             Number of obs    =      15,895
+No. of failures      =        1,355
+Time at risk         =      1072292
+                                                Wald chi2(42)    =     8966.84
+Log pseudolikelihood =   -9592.5385             Prob > chi2      =      0.0000
+
+                       (Std. Err. adjusted for 1,127 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |    .970221   .2083148    -0.14   0.888     .6369573    1.477852
+ only 12-18  |   .9012096   .2540923    -0.37   0.712     .5186007    1.566096
+      mixed  |   1.121001   .2273629     0.56   0.573     .7532931    1.668198
+             |
+        age1 |   .9975181   .0103811    -0.24   0.811     .9773776    1.018074
+        age2 |   1.014896   .0337578     0.44   0.657     .9508424    1.083264
+        age3 |   .9523711   .0909073    -0.51   0.609     .7898705    1.148303
+      1.male |   1.029799    .055621     0.54   0.587     .9263554    1.144793
+             |
+   obese4cat |
+Obese I ..)  |   .9913914   .0782573    -0.11   0.913      .849286    1.157274
+Obese II..)  |   .9640734    .098882    -0.36   0.721      .788506    1.178732
+Obese II..)  |   .9099772   .1117539    -0.77   0.442     .7153108    1.157621
+             |
+smoke_nomiss |
+     Former  |   1.276773   .2324281     1.34   0.180     .8936311    1.824187
+    Current  |   1.116184   .0916667     1.34   0.181     .9502348    1.311115
+             |
+         imd |
+          4  |   1.048972   .0748083     0.67   0.503     .9121366    1.206336
+5 most de..  |   1.178029   .1016786     1.90   0.058     .9946871    1.395164
+             |
+tot_adults~h |
+          2  |   1.231842   .5451116     0.47   0.638     .5174678    2.932422
+          3  |   .9130619   .3481373    -0.24   0.811     .4324634    1.927752
+             |
+   ethnicity |
+Asian or ..  |   .8938157     .08019    -1.25   0.211      .749689    1.065651
+      Other  |   .9893723   .0897567    -0.12   0.906     .8282053    1.181902
+             |
+1.htdiag_o~p |   .9939406   .0569919    -0.11   0.916     .8882865    1.112161
+1.~y_disease |    .977068    .068575    -0.33   0.741      .851498    1.121156
+    1.asthma |   1.136316   .1060266     1.37   0.171     .9464025     1.36434
+1.~c_disease |   .9902779   .0662682    -0.15   0.884     .8685518    1.129064
+             |
+     diabcat |
+T1DM, con..  |   1.137399   .1821569     0.80   0.421     .8309808    1.556806
+T1DM, unc..  |   1.717555   .5159886     1.80   0.072     .9532179    3.094774
+T2DM, con..  |   .9373331   .0717131    -0.85   0.398     .8068087    1.088974
+T2DM, unc..  |   .8251274   .1324069    -1.20   0.231     .6024625    1.130087
+Diabetes,..  |   3.21e-14   1.08e-14   -92.16   0.000     1.66e-14    6.21e-14
+             |
+cancer_exh~t |
+  Last year  |    .892661   .3938836    -0.26   0.797     .3759212    2.119709
+2-5 years..  |   .6814178   .1760479    -1.48   0.138     .4106776    1.130644
+   5+ years  |   .9768606   .0725464    -0.32   0.753     .8445362    1.129918
+             |
+cancer_hae~t |
+  Last year  |   1.793013   .6530211     1.60   0.109     .8781585     3.66095
+2-5 years..  |   .8740935   .1975658    -0.60   0.552     .5612628    1.361286
+   5+ years  |    1.02088   .0705043     0.30   0.765     .8916381    1.168855
+             |
+1.~r_disease |   .9892382   .0657508    -0.16   0.871       .86841    1.126878
+1.stroke_d~a |   1.006975   .0673599     0.10   0.917     .8832407    1.148044
+1.other_ne~o |   .9772514   .0659442    -0.34   0.733     .8561854    1.115436
+             |
+reduced_ki~t |
+Stage 3a/..  |   2.105133   .8232645     1.90   0.057     .9781288    4.530676
+      1.esrd |   1.022555   .0565588     0.40   0.687     .9174991     1.13964
+1.other_tr~t |   1.008518   .0681772     0.13   0.900     .8833675      1.1514
+  1.asplenia |    1.06278   .0694985     0.93   0.352     .9349331    1.208108
+1.ra_sle_p~s |     .95347   .0667566    -0.68   0.496       .83121    1.093713
+1.other_im~o |   1.040557   .0698358     0.59   0.554     .9123013    1.186843
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_0_timeperiod0_2ndVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_0_timeperiod0_2ndVaccCensor.ster saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      0b.kids_cat4|            .            .        1             .
+      1.kids_cat4 |     -0.01069         0.17        1         0.6833
+      2.kids_cat4 |      0.02477         1.02        1         0.3121
+      3.kids_cat4 |     -0.00478         0.03        1         0.8517
+      age1        |     -0.00040         0.00        1         0.9874
+      age2        |      0.01696         0.47        1         0.4921
+      age3        |     -0.02554         1.09        1         0.2964
+      0b.male     |            .            .        1             .
+      1.male      |     -0.01636         0.39        1         0.5319
+      1b.obese4cat|            .            .        1             .
+      2.obese4cat |      0.05024         3.85        1         0.0499
+      3.obese4cat |     -0.00285         0.01        1         0.9117
+      4.obese4cat |      0.03667         2.11        1         0.1467
+      1b.smoke_n~s|            .            .        1             .
+      2.smoke_no~s|     -0.03507         1.89        1         0.1687
+      3.smoke_no~s|     -0.00406         0.03        1         0.8693
+      1b.imd      |            .            .        1             .
+      4.imd       |      0.02141         0.76        1         0.3832
+      5.imd       |     -0.00952         0.13        1         0.7152
+      1b.tot_adu~h|            .            .        1             .
+      2.tot_adul~h|      0.04293         2.65        1         0.1032
+      3.tot_adul~h|      0.02234         0.69        1         0.4046
+      1b.ethnicity|            .            .        1             .
+      3.ethnicity |      0.01166         0.19        1         0.6598
+      5.ethnicity |     -0.00111         0.00        1         0.9647
+      0b.htdiag_~p|            .            .        1             .
+      1.htdiag_o~p|     -0.00957         0.14        1         0.7087
+      0b.chronic..|            .            .        1             .
+      1.~y_disease|     -0.01872         0.57        1         0.4491
+      0b.asthma   |            .            .        1             .
+      1.asthma    |      0.00709         0.08        1         0.7829
+      0b.chronic..|            .            .        1             .
+      1.~c_disease|      0.00026         0.00        1         0.9920
+      1b.diabcat  |            .            .        1             .
+      2.diabcat   |     -0.06090         5.60        1         0.0179
+      3.diabcat   |     -0.02657         1.13        1         0.2879
+      4.diabcat   |      0.00739         0.08        1         0.7707
+      5.diabcat   |     -0.00626         0.06        1         0.8016
+      6.diabcat   |      0.03333         0.09        1         0.7705
+      1b.c~exhae~t|            .            .        1             .
+      2.cancer_e~t|      0.02304         0.79        1         0.3727
+      3.cancer_e~t|      0.03699         2.13        1         0.1444
+      4.cancer_e~t|     -0.03262         1.69        1         0.1935
+      1b.cancer_..|            .            .        1             .
+      2.cancer_h~t|     -0.02105         0.72        1         0.3963
+      3.cancer_h~t|      0.01301         0.24        1         0.6260
+      4.cancer_h~t|     -0.01366         0.26        1         0.6106
+      0b.chronic..|            .            .        1             .
+      1.~r_disease|      0.01376         0.27        1         0.6015
+      0b.stroke_~a|            .            .        1             .
+      1.stroke_d~a|      0.01512         0.33        1         0.5680
+      0b.other_n~o|            .            .        1             .
+      1.other_ne~o|     -0.00363         0.02        1         0.8927
+      1b.reduced~t|            .            .        1             .
+      2.reduced_~t|      0.00030         0.00        1         0.9901
+      0b.esrd     |            .            .        1             .
+      1.esrd      |      0.02574         1.02        1         0.3120
+      0b.other_t~t|            .            .        1             .
+      1.other_tr~t|      0.00775         0.09        1         0.7602
+      0b.asplenia |            .            .        1             .
+      1.asplenia  |     -0.03489         1.78        1         0.1818
+      0b.ra_sle_~s|            .            .        1             .
+      1.ra_sle_p~s|      0.01635         0.44        1         0.5070
+      0b.other_i~o|            .            .        1             .
+      1.other_im~o|     -0.01323         0.26        1         0.6130
+      ------------+---------------------------------------------------
+      global test |                     36.19       42         0.7232
+      ----------------------------------------------------------------
+
+note: robust variance-covariance matrix used.
+   1:      7.00 /        1 =       7.0050
+(12,894 missing values generated)
+(2,737 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+        222  observations end on or before enter()
+------------------------------------------------------------------------------
+     15,895  observations remaining, representing
+     15,895  subjects
+      1,901  failures in single-failure-per-subject data
+  1,612,928  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(17,925 observations (episodes) created)
+(cat_time: 17925 changes made)
+(covidadmission: 17925 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,895       47.00       47.00
+          1 |      8,210       24.28       71.27
+          2 |      5,108       15.10       86.38
+          3 |      4,607       13.62      100.00
+------------+-----------------------------------
+      Total |     33,820      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,540      1,355 |    15,895 
+         1 |     7,755        455 |     8,210 
+         2 |     5,048         60 |     5,108 
+         3 |     4,576         31 |     4,607 
+-----------+----------------------+----------
+     Total |    31,919      1,901 |    33,820 
+(25,832 observations deleted)
+   1:      4.20 /        1 =       4.1950
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        8,210             Number of obs    =       8,210
+No. of failures      =          455
+Time at risk         =       459432
+                                                Wald chi2(42)    =    42009.40
+Log pseudolikelihood =   -2944.6231             Prob > chi2      =      0.0000
+
+                       (Std. Err. adjusted for 1,028 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   .8052754   .2841764    -0.61   0.539     .4032376    1.608155
+ only 12-18  |   .6595242   .3003318    -0.91   0.361     .2701554    1.610081
+      mixed  |   .7924149   .2544129    -0.72   0.469     .4223434    1.486756
+             |
+        age1 |   .9719196   .0160383    -1.73   0.084     .9409881    1.003868
+        age2 |   1.087999   .0590734     1.55   0.120      .978165    1.210166
+        age3 |   .7930464   .1236627    -1.49   0.137     .5842081    1.076539
+      1.male |   .9816574   .0950541    -0.19   0.848     .8119661    1.186812
+             |
+   obese4cat |
+Obese I ..)  |   1.070754   .1469108     0.50   0.618     .8182807    1.401126
+Obese II..)  |   .9911562   .1742401    -0.05   0.960     .7022719    1.398875
+Obese II..)  |   1.125445   .2223609     0.60   0.550     .7640953    1.657682
+             |
+smoke_nomiss |
+     Former  |   .7797854   .2967976    -0.65   0.513     .3698244      1.6442
+    Current  |   1.056702   .1558551     0.37   0.708     .7914206    1.410906
+             |
+         imd |
+          4  |   .9961097   .1251287    -0.03   0.975     .7787202    1.274186
+5 most de..  |    .781831   .1370726    -1.40   0.160       .55447    1.102422
+             |
+tot_adults~h |
+          2  |   .6177765   .5975391    -0.50   0.619     .0927927    4.112908
+          3  |   1.481241   1.087172     0.54   0.592     .3514613    6.242718
+             |
+   ethnicity |
+Asian or ..  |   1.044672    .158395     0.29   0.773     .7761026    1.406179
+      Other  |   .9604718   .1551524    -0.25   0.803     .6998153    1.318214
+             |
+1.htdiag_o~p |    1.08797   .1070078     0.86   0.391     .8972151    1.319281
+1.~y_disease |   .9690919   .1184099    -0.26   0.797     .7627104    1.231318
+    1.asthma |    .942244   .1595517    -0.35   0.725     .6761266    1.313103
+1.~c_disease |   1.024739   .1191867     0.21   0.834     .8158505    1.287111
+             |
+     diabcat |
+T1DM, con..  |    .605944   .2322193    -1.31   0.191      .285905    1.284231
+T1DM, unc..  |   2.156521   1.097744     1.51   0.131      .795175    5.848504
+T2DM, con..  |   1.256285   .1487214     1.93   0.054     .9961421    1.584364
+T2DM, unc..  |   1.270866   .2938462     1.04   0.300     .8077688    1.999458
+Diabetes,..  |   4.47e-15   2.03e-15   -72.59   0.000     1.83e-15    1.09e-14
+             |
+cancer_exh~t |
+  Last year  |   .5227904   .5286347    -0.64   0.521     .0720461    3.793541
+2-5 years..  |   .7079473   .3194089    -0.77   0.444     .2923877    1.714126
+   5+ years  |   1.084682   .1316251     0.67   0.503      .855086    1.375925
+             |
+cancer_hae~t |
+  Last year  |   4.41e-15   1.08e-15  -135.24   0.000     2.73e-15    7.13e-15
+2-5 years..  |   1.050947   .3762237     0.14   0.890     .5210307    2.119818
+   5+ years  |   .8400954   .1076332    -1.36   0.174     .6535404    1.079903
+             |
+1.~r_disease |   1.087973   .1202849     0.76   0.446     .8760125    1.351219
+1.stroke_d~a |   .8583851   .1052648    -1.25   0.213     .6749915    1.091606
+1.other_ne~o |   .9817726   .1167397    -0.15   0.877      .777673    1.239438
+             |
+reduced_ki~t |
+Stage 3a/..  |   4.34e-15   1.15e-15  -124.56   0.000     2.58e-15    7.31e-15
+      1.esrd |   1.175031   .1116634     1.70   0.090     .9753475    1.415595
+1.other_tr~t |   1.096906   .1259256     0.81   0.420     .8758927    1.373688
+  1.asplenia |   1.276441   .1369611     2.27   0.023      1.03435    1.575194
+1.ra_sle_p~s |   .8712533   .1027082    -1.17   0.242     .6915125    1.097713
+1.other_im~o |   1.019975   .1155962     0.17   0.861     .8168095    1.273674
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_0_timeperiod1_2ndVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_0_timeperiod1_2ndVaccCensor.ster saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      0b.kids_cat4|            .            .        1             .
+      1.kids_cat4 |      0.05760         1.99        1         0.1584
+      2.kids_cat4 |      0.04651         1.17        1         0.2792
+      3.kids_cat4 |      0.06904         2.75        1         0.0975
+      age1        |      0.01022         0.05        1         0.8165
+      age2        |     -0.03918         0.81        1         0.3681
+      age3        |      0.05218         1.43        1         0.2325
+      0b.male     |            .            .        1             .
+      1.male      |      0.07106         3.19        1         0.0741
+      1b.obese4cat|            .            .        1             .
+      2.obese4cat |      0.03013         0.53        1         0.4684
+      3.obese4cat |      0.01953         0.21        1         0.6491
+      4.obese4cat |      0.08255         3.75        1         0.0528
+      1b.smoke_n~s|            .            .        1             .
+      2.smoke_no~s|     -0.03360         0.62        1         0.4310
+      3.smoke_no~s|     -0.03171         0.57        1         0.4492
+      1b.imd      |            .            .        1             .
+      4.imd       |      0.00313         0.01        1         0.9375
+      5.imd       |     -0.01028         0.06        1         0.8030
+      1b.tot_adu~h|            .            .        1             .
+      2.tot_adul~h|      0.03701         0.69        1         0.4056
+      3.tot_adul~h|     -0.04493         0.97        1         0.3256
+      1b.ethnicity|            .            .        1             .
+      3.ethnicity |      0.04518         1.18        1         0.2781
+      5.ethnicity |     -0.00752         0.03        1         0.8568
+      0b.htdiag_~p|            .            .        1             .
+      1.htdiag_o~p|     -0.03787         0.82        1         0.3638
+      0b.chronic..|            .            .        1             .
+      1.~y_disease|      0.00142         0.00        1         0.9705
+      0b.asthma   |            .            .        1             .
+      1.asthma    |      0.06686         2.54        1         0.1109
+      0b.chronic..|            .            .        1             .
+      1.~c_disease|      0.07738         3.20        1         0.0737
+      1b.diabcat  |            .            .        1             .
+      2.diabcat   |      0.00187         0.00        1         0.9639
+      3.diabcat   |     -0.05078         1.45        1         0.2285
+      4.diabcat   |     -0.01388         0.11        1         0.7417
+      5.diabcat   |     -0.01814         0.19        1         0.6670
+      6.diabcat   |     -0.01686         0.01        1         0.9230
+      1b.c~exhae~t|            .            .        1             .
+      2.cancer_e~t|      0.02228         0.27        1         0.6039
+      3.cancer_e~t|      0.01845         0.19        1         0.6641
+      4.cancer_e~t|     -0.05240         1.55        1         0.2136
+      1b.cancer_..|            .            .        1             .
+      2.cancer_h~t|      0.09178         0.73        1         0.3926
+      3.cancer_h~t|      0.05770         1.74        1         0.1870
+      4.cancer_h~t|      0.10415         6.21        1         0.0127
+      0b.chronic..|            .            .        1             .
+      1.~r_disease|     -0.08646         3.74        1         0.0532
+      0b.stroke_~a|            .            .        1             .
+      1.stroke_d~a|      0.00992         0.05        1         0.8149
+      0b.other_n~o|            .            .        1             .
+      1.other_ne~o|     -0.05113         1.46        1         0.2274
+      1b.reduced~t|            .            .        1             .
+      2.reduced_~t|      0.03715         0.09        1         0.7591
+      0b.esrd     |            .            .        1             .
+      1.esrd      |      0.00895         0.05        1         0.8305
+      0b.other_t~t|            .            .        1             .
+      1.other_tr~t|     -0.02999         0.55        1         0.4601
+      0b.asplenia |            .            .        1             .
+      1.asplenia  |     -0.08596         4.31        1         0.0378
+      0b.ra_sle_~s|            .            .        1             .
+      1.ra_sle_p~s|      0.01251         0.09        1         0.7685
+      0b.other_i~o|            .            .        1             .
+      1.other_im~o|     -0.02622         0.35        1         0.5552
+      ------------+---------------------------------------------------
+      global test |                     42.50       42         0.4496
+      ----------------------------------------------------------------
+
+note: robust variance-covariance matrix used.
+   1:      2.08 /        1 =       2.0840
+(12,894 missing values generated)
+(2,737 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+        222  observations end on or before enter()
+------------------------------------------------------------------------------
+     15,895  observations remaining, representing
+     15,895  subjects
+      1,901  failures in single-failure-per-subject data
+  1,612,928  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(17,925 observations (episodes) created)
+(cat_time: 17925 changes made)
+(covidadmission: 17925 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,895       47.00       47.00
+          1 |      8,210       24.28       71.27
+          2 |      5,108       15.10       86.38
+          3 |      4,607       13.62      100.00
+------------+-----------------------------------
+      Total |     33,820      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,540      1,355 |    15,895 
+         1 |     7,755        455 |     8,210 
+         2 |     5,048         60 |     5,108 
+         3 |     4,576         31 |     4,607 
+-----------+----------------------+----------
+     Total |    31,919      1,901 |    33,820 
+(28,934 observations deleted)
+   1:      2.44 /        1 =       2.4370
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        5,108             Number of obs    =       5,108
+No. of failures      =           60
+Time at risk         =        58570
+                                                Wald chi2(34)    =     2663.62
+Log pseudolikelihood =    -354.6261             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 945 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   5.05e+09   5.52e+09    20.43   0.000     5.92e+08    4.31e+10
+ only 12-18  |   3.79e+09          .        .       .            .           .
+      mixed  |   6.47e+09   6.87e+09    21.28   0.000     8.07e+08    5.18e+10
+             |
+        age1 |   .9807453   .0413803    -0.46   0.645     .9029043    1.065297
+        age2 |   1.069893   .1510647     0.48   0.632     .8112485    1.410999
+        age3 |   .8071412   .3316831    -0.52   0.602     .3607119    1.806087
+      1.male |   1.305659   .3668443     0.95   0.342      .752787    2.264579
+             |
+   obese4cat |
+Obese I ..)  |   .6649668   .2879682    -0.94   0.346      .284565    1.553883
+Obese II..)  |   .9822821   .4650839    -0.04   0.970      .388343    2.484603
+Obese II..)  |   .5850982   .4128474    -0.76   0.447     .1467634    2.332597
+             |
+smoke_nomiss |
+     Former  |    .784463   .7981075    -0.24   0.811     .1067986     5.76208
+    Current  |   1.299835   .4859318     0.70   0.483     .6247039    2.704596
+             |
+         imd |
+          4  |   .5138889   .2053105    -1.67   0.096     .2348521     1.12446
+5 most de..  |    .666119   .3220114    -0.84   0.401      .258267    1.718046
+             |
+tot_adults~h |
+          2  |   9.87e+08          .        .       .            .           .
+          3  |   1.13e+08   1.20e+08    17.32   0.000     1.38e+07    9.16e+08
+             |
+   ethnicity |
+Asian or ..  |   1.257989   .4732024     0.61   0.542     .6018535    2.629438
+      Other  |   1.451599   .5552096     0.97   0.330     .6859272    3.071959
+             |
+1.htdiag_o~p |   .5481204   .1672744    -1.97   0.049     .3013754    .9968829
+1.~y_disease |   .8993595   .2898524    -0.33   0.742     .4781912    1.691473
+    1.asthma |   .6144577   .3657835    -0.82   0.413     .1913269    1.973367
+1.~c_disease |   1.181188   .3666061     0.54   0.592      .642882    2.170237
+             |
+     diabcat |
+T1DM, con..  |   .5895918   .5989087    -0.52   0.603     .0805191    4.317217
+T1DM, unc..  |   2.01e-19          .        .       .            .           .
+T2DM, con..  |   .7930575   .3051768    -0.60   0.547     .3730383    1.685993
+T2DM, unc..  |   .4291483   .4285022    -0.85   0.397       .06063    3.037579
+Diabetes,..  |   1.20e-18          .        .       .            .           .
+             |
+cancer_exh~t |
+  Last year  |   2.75e-19          .        .       .            .           .
+2-5 years..  |   8.03e-20          .        .       .            .           .
+   5+ years  |   1.076983   .3550423     0.22   0.822     .5644146    2.055035
+             |
+cancer_hae~t |
+  Last year  |   5.87e-19          .        .       .            .           .
+2-5 years..  |   1.327932   1.373455     0.27   0.784     .1749017    10.08225
+   5+ years  |   1.194643   .3912705     0.54   0.587     .6287126    2.269993
+             |
+1.~r_disease |   .5927515   .2271121    -1.36   0.172     .2797278    1.256058
+1.stroke_d~a |   .6933513    .262047    -0.97   0.333     .3305582    1.454316
+1.other_ne~o |   .7929733   .2757024    -0.67   0.505     .4011541    1.567494
+             |
+reduced_ki~t |
+Stage 3a/..  |   2.10e-19          .        .       .            .           .
+      1.esrd |   1.195266    .318799     0.67   0.504     .7086533    2.016022
+1.other_tr~t |   .9310047   .2915746    -0.23   0.819     .5039301     1.72002
+  1.asplenia |   1.633376   .4408738     1.82   0.069     .9623508    2.772291
+1.ra_sle_p~s |   .8687601   .2798519    -0.44   0.662      .462066    1.633412
+1.other_im~o |     .81487   .2853326    -0.58   0.559     .4102362    1.618612
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_0_timeperiod2_2ndVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_0_timeperiod2_2ndVaccCensor.ster saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      0b.kids_cat4|            .            .        1             .
+      1.kids_cat4 |     -0.06708         0.63        1         0.4276
+      2.kids_cat4 |            .            .        1             .
+      3.kids_cat4 |     -0.05564         0.46        1         0.4977
+      age1        |     -0.22926         5.56        1         0.0183
+      age2        |      0.21391         6.00        1         0.0143
+      age3        |     -0.20629         5.89        1         0.0152
+      0b.male     |            .            .        1             .
+      1.male      |      0.07434         1.01        1         0.3143
+      1b.obese4cat|            .            .        1             .
+      2.obese4cat |      0.00958         0.01        1         0.9167
+      3.obese4cat |      0.05879         0.44        1         0.5092
+      4.obese4cat |     -0.13191         3.36        1         0.0669
+      1b.smoke_n~s|            .            .        1             .
+      2.smoke_no~s|      0.16261         6.15        1         0.0132
+      3.smoke_no~s|     -0.07536         1.20        1         0.2727
+      1b.imd      |            .            .        1             .
+      4.imd       |     -0.07060         0.91        1         0.3410
+      5.imd       |      0.15305         3.21        1         0.0733
+      1b.tot_adu~h|            .            .        1             .
+      2.tot_adul~h|            .            .        1             .
+      3.tot_adul~h|      0.15506         3.70        1         0.0543
+      1b.ethnicity|            .            .        1             .
+      3.ethnicity |      0.01385         0.03        1         0.8617
+      5.ethnicity |      0.02166         0.10        1         0.7520
+      0b.htdiag_~p|            .            .        1             .
+      1.htdiag_o~p|     -0.00942         0.01        1         0.9121
+      0b.chronic..|            .            .        1             .
+      1.~y_disease|     -0.00147         0.00        1         0.9859
+      0b.asthma   |            .            .        1             .
+      1.asthma    |     -0.04642         0.49        1         0.4826
+      0b.chronic..|            .            .        1             .
+      1.~c_disease|      0.02356         0.11        1         0.7364
+      1b.diabcat  |            .            .        1             .
+      2.diabcat   |     -0.11948         2.29        1         0.1300
+      3.diabcat   |            .            .        1             .
+      4.diabcat   |      0.08010         0.86        1         0.3548
+      5.diabcat   |      0.02535         0.11        1         0.7446
+      6.diabcat   |            .            .        1             .
+      1b.c~exhae~t|            .            .        1             .
+      2.cancer_e~t|            .            .        1             .
+      3.cancer_e~t|            .            .        1             .
+      4.cancer_e~t|      0.16235         4.84        1         0.0278
+      1b.cancer_..|            .            .        1             .
+      2.cancer_h~t|            .            .        1             .
+      3.cancer_h~t|      0.04209         0.18        1         0.6734
+      4.cancer_h~t|     -0.08674         1.40        1         0.2366
+      0b.chronic..|            .            .        1             .
+      1.~r_disease|      0.07079         0.69        1         0.4073
+      0b.stroke_~a|            .            .        1             .
+      1.stroke_d~a|      0.06661         1.05        1         0.3060
+      0b.other_n~o|            .            .        1             .
+      1.other_ne~o|      0.00255         0.00        1         0.9743
+      1b.reduced~t|            .            .        1             .
+      2.reduced_~t|            .            .        1             .
+      0b.esrd     |            .            .        1             .
+      1.esrd      |      0.02596         0.10        1         0.7521
+      0b.other_t~t|            .            .        1             .
+      1.other_tr~t|     -0.12931         3.17        1         0.0750
+      0b.asplenia |            .            .        1             .
+      1.asplenia  |     -0.10376         1.78        1         0.1820
+      0b.ra_sle_~s|            .            .        1             .
+      1.ra_sle_p~s|      0.17375         5.95        1         0.0148
+      0b.other_i~o|            .            .        1             .
+      1.other_im~o|      0.10588         1.81        1         0.1788
+      ------------+---------------------------------------------------
+      global test |                     31.12       34         0.6095
+      ----------------------------------------------------------------
+
+note: robust variance-covariance matrix used.
+   1:      0.70 /        1 =       0.6990
+(12,894 missing values generated)
+(2,737 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+        222  observations end on or before enter()
+------------------------------------------------------------------------------
+     15,895  observations remaining, representing
+     15,895  subjects
+      1,901  failures in single-failure-per-subject data
+  1,612,928  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(17,925 observations (episodes) created)
+(cat_time: 17925 changes made)
+(covidadmission: 17925 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,895       47.00       47.00
+          1 |      8,210       24.28       71.27
+          2 |      5,108       15.10       86.38
+          3 |      4,607       13.62      100.00
+------------+-----------------------------------
+      Total |     33,820      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,540      1,355 |    15,895 
+         1 |     7,755        455 |     8,210 
+         2 |     5,048         60 |     5,108 
+         3 |     4,576         31 |     4,607 
+-----------+----------------------+----------
+     Total |    31,919      1,901 |    33,820 
+(29,435 observations deleted)
+   1:      2.88 /        1 =       2.8820
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        4,607             Number of obs    =       4,607
+No. of failures      =           31
+Time at risk         =        22634
+                                                Wald chi2(41)    =    42532.85
+Log pseudolikelihood =   -164.23528             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 930 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   .7513449   .8621159    -0.25   0.803     .0792766    7.120882
+ only 12-18  |   9.47e-17   8.50e-17   -41.07   0.000     1.63e-17    5.51e-16
+      mixed  |   2.215542   1.269302     1.39   0.165     .7208082    6.809895
+             |
+        age1 |   .9441942   .0514251    -1.05   0.292     .8485961    1.050562
+        age2 |   1.066058   .2164258     0.32   0.753     .7161011    1.587039
+        age3 |   .9178921   .5717854    -0.14   0.891     .2707385    3.111955
+      1.male |   .9488452    .331191    -0.15   0.880     .4787255    1.880634
+             |
+   obese4cat |
+Obese I ..)  |   .2135279   .2215794    -1.49   0.137     .0279355    1.632122
+Obese II..)  |   1.183903    .701059     0.29   0.776      .370911    3.778878
+Obese II..)  |   .6126848   .6632107    -0.45   0.651     .0734243     5.11251
+             |
+smoke_nomiss |
+     Former  |   3.43e-17   1.14e-17  -113.82   0.000     1.79e-17    6.59e-17
+    Current  |    .969978   .4719271    -0.06   0.950     .3737864    2.517099
+             |
+         imd |
+          4  |   .5815309   .3098813    -1.02   0.309     .2046406    1.652547
+5 most de..  |   1.042716   .5640973     0.08   0.938       .36114    3.010622
+             |
+tot_adults~h |
+          2  |   9.20e+08          .        .       .            .           .
+          3  |   9.51e+07   6.31e+07    27.67   0.000     2.59e+07    3.49e+08
+             |
+   ethnicity |
+Asian or ..  |   1.110086   .6374685     0.18   0.856     .3602075    3.421058
+      Other  |   4.09e-17   1.20e-17  -128.33   0.000     2.30e-17    7.28e-17
+             |
+1.htdiag_o~p |   2.133834   .7304418     2.21   0.027     1.090893    4.173871
+1.~y_disease |    .769091   .3779848    -0.53   0.593     .2935203    2.015196
+    1.asthma |   1.589715   .8198098     0.90   0.369     .5785729    4.367979
+1.~c_disease |   1.388164   .5843377     0.78   0.436      .608322    3.167729
+             |
+     diabcat |
+T1DM, con..  |   .9652626    1.07076    -0.03   0.975     .1097522    8.489416
+T1DM, unc..  |   6.60e-17   3.63e-17   -67.68   0.000     2.24e-17    1.94e-16
+T2DM, con..  |   .5999019   .3675563    -0.83   0.404      .180532    1.993454
+T2DM, unc..  |   .7608072   .7882997    -0.26   0.792     .0998422    5.797425
+Diabetes,..  |   7.23e-17   9.45e-17   -28.43   0.000     5.58e-18    9.37e-16
+             |
+cancer_exh~t |
+  Last year  |   4.732713   4.690931     1.57   0.117     .6783024    33.02151
+2-5 years..  |   3.18e-17   1.09e-17  -110.64   0.000     1.62e-17    6.22e-17
+   5+ years  |   .6534676   .3494539    -0.80   0.426     .2291016    1.863888
+             |
+cancer_hae~t |
+  Last year  |   2.39e-17   1.35e-17   -67.56   0.000     7.87e-18    7.25e-17
+2-5 years..  |   4.04e-17   1.44e-17  -105.84   0.000     2.01e-17    8.14e-17
+   5+ years  |   .2901433   .2116914    -1.70   0.090     .0694333    1.212433
+             |
+1.~r_disease |   1.526302   .5845488     1.10   0.270     .7205165    3.233231
+1.stroke_d~a |   .7761819   .4179242    -0.47   0.638     .2701756    2.229877
+1.other_ne~o |   .4110834   .2348642    -1.56   0.120     .1341569    1.259641
+             |
+reduced_ki~t |
+Stage 3a/..  |   5.04e-17   3.39e-17   -55.86   0.000     1.35e-17    1.88e-16
+      1.esrd |   1.616145   .6010538     1.29   0.197     .7796747    3.350018
+1.other_tr~t |   1.014266   .4341357     0.03   0.974     .4383413    2.346882
+  1.asplenia |   .8748576   .4195786    -0.28   0.780     .3417465    2.239601
+1.ra_sle_p~s |   1.143951   .5610484     0.27   0.784     .4374591     2.99142
+1.other_im~o |   2.648028   1.031149     2.50   0.012     1.234418    5.680451
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_0_timeperiod3_2ndVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_0_timeperiod3_2ndVaccCensor.ster saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      0b.kids_cat4|            .            .        1             .
+      1.kids_cat4 |     -0.02130         0.04        1         0.8366
+      2.kids_cat4 |      0.05159         0.25        1         0.6191
+      3.kids_cat4 |     -0.00353         0.00        1         0.9802
+      age1        |     -0.17804         3.07        1         0.0800
+      age2        |      0.04538         0.25        1         0.6168
+      age3        |     -0.02117         0.06        1         0.8064
+      0b.male     |            .            .        1             .
+      1.male      |     -0.13692         3.17        1         0.0750
+      1b.obese4cat|            .            .        1             .
+      2.obese4cat |      0.30995        15.33        1         0.0001
+      3.obese4cat |      0.04225         0.27        1         0.6060
+      4.obese4cat |     -0.21053         6.86        1         0.0088
+      1b.smoke_n~s|            .            .        1             .
+      2.smoke_no~s|      0.03498         0.04        1         0.8419
+      3.smoke_no~s|      0.11252         1.34        1         0.2473
+      1b.imd      |            .            .        1             .
+      4.imd       |     -0.23637         7.36        1         0.0067
+      5.imd       |     -0.17949         4.66        1         0.0309
+      1b.tot_adu~h|            .            .        1             .
+      2.tot_adul~h|            .            .        1             .
+      3.tot_adul~h|      0.03918         0.09        1         0.7580
+      1b.ethnicity|            .            .        1             .
+      3.ethnicity |      0.13150         2.51        1         0.1134
+      5.ethnicity |     -0.22277         3.31        1         0.0687
+      0b.htdiag_~p|            .            .        1             .
+      1.htdiag_o~p|     -0.16299         2.83        1         0.0924
+      0b.chronic..|            .            .        1             .
+      1.~y_disease|     -0.07894         1.28        1         0.2575
+      0b.asthma   |            .            .        1             .
+      1.asthma    |     -0.03311         0.13        1         0.7231
+      0b.chronic..|            .            .        1             .
+      1.~c_disease|     -0.22874         8.88        1         0.0029
+      1b.diabcat  |            .            .        1             .
+      2.diabcat   |      0.15318         4.51        1         0.0336
+      3.diabcat   |     -0.11101         0.58        1         0.4447
+      4.diabcat   |     -0.07988         0.96        1         0.3274
+      5.diabcat   |      0.10145         2.02        1         0.1551
+      6.diabcat   |      0.08861         0.44        1         0.5074
+      1b.c~exhae~t|            .            .        1             .
+      2.cancer_e~t|      0.17241         1.75        1         0.1857
+      3.cancer_e~t|      0.13508         0.40        1         0.5296
+      4.cancer_e~t|      0.16466         3.42        1         0.0646
+      1b.cancer_..|            .            .        1             .
+      2.cancer_h~t|      0.26108         4.32        1         0.0376
+      3.cancer_h~t|     -0.32611         3.04        1         0.0810
+      4.cancer_h~t|      0.31687        18.81        1         0.0000
+      0b.chronic..|            .            .        1             .
+      1.~r_disease|     -0.12853         1.64        1         0.1998
+      0b.stroke_~a|            .            .        1             .
+      1.stroke_d~a|     -0.19078         5.54        1         0.0186
+      0b.other_n~o|            .            .        1             .
+      1.other_ne~o|     -0.09276         1.02        1         0.3120
+      1b.reduced~t|            .            .        1             .
+      2.reduced_~t|      0.18256         2.13        1         0.1442
+      0b.esrd     |            .            .        1             .
+      1.esrd      |      0.17984         5.17        1         0.0230
+      0b.other_t~t|            .            .        1             .
+      1.other_tr~t|     -0.33126        10.02        1         0.0015
+      0b.asplenia |            .            .        1             .
+      1.asplenia  |     -0.22413         7.25        1         0.0071
+      0b.ra_sle_~s|            .            .        1             .
+      1.ra_sle_p~s|      0.23026         6.85        1         0.0089
+      0b.other_i~o|            .            .        1             .
+      1.other_im~o|      0.16791         5.05        1         0.0246
+      ------------+---------------------------------------------------
+      global test |                     57.55       41         0.0447
+      ----------------------------------------------------------------
+
+note: robust variance-covariance matrix used.
+   1:      0.85 /        1 =       0.8530
+
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/07b_an_multivariable_cox_models_covidadmission_2nd
+> VaccCensor.log
+  log type:  text
+ closed on:  24 Aug 2021, 11:57:16
+-------------------------------------------------------------------------------
