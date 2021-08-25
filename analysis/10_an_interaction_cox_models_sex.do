@@ -78,31 +78,48 @@ end
 *************************************************************************************
 
 * Open dataset and fit specified model(s)
-forvalues x=0/1 {
-forvalues period=0/2 {
-
+foreach x in 0 {
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
-stsplit cat_time, at(0,78,147,400)
-recode cat_time 78=1 147=2 400=3
+
+forvalues period=0/2 {
+*Split data by time of study period: 
+*-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
+*-alpha variant 15th March 2021 
+*-delta variant 24th May 2021 
+
+if "`outcome'"=="covid_tpp_prob" {
+stsplit cat_time, at(0,85,154,400)
+recode cat_time 85=1 154=2 400=3
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
+}
 
-keep if cat_time==`period'
-
+*-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
+*-alpha variant 22nd March 2021 
+*-delta variant 31st May 2021 
+if "`outcome'"=="covidadmission" | "`outcome'"=="covid_death" {
+stsplit cat_time, at(0,92,161,400)
+recode cat_time 92=1 161=2 400=3
+recode `outcome' .=0 
+tab cat_time
+tab cat_time `outcome'
+}
+ 
 foreach int_type in  male  {
 
 tab male `outcome'
 *Age interaction for 3-level exposure vars
 foreach exposure_type in kids_cat4  {
 
-*Age spline model (not adj ethnicity, no interaction)
-basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")  
-
 *Age spline model (not adj ethnicity, interaction)
-basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")  ///
-interaction(1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type')
-if _rc==0{
+stcox 	i.`exposure_type' 	age1 age2 age3			///
+			$demogadjlist	 			  	///
+			$comordidadjlist		///
+			1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' ///
+			if cat_time==`period'							///
+			, strata(stp) vce(cluster household_id) 
+	if _rc==0{
 testparm 1.`int_type'#i.`exposure_type'
 di _n "`exposure_type' " _n "****************"
 lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
@@ -114,6 +131,7 @@ estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`int
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
 }
+drop cat_time
 }
 }
 }
