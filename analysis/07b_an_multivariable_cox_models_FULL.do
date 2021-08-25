@@ -58,17 +58,7 @@ log using "$logdir/07b_an_multivariable_cox_models_`outcome'", text replace
 
 
 *************************************************************************************
-*PROG TO DEFINE THE BASIC COX MODEL WITH OPTIONS FOR HANDLING OF AGE, BMI, ETHNICITY:
-cap prog drop basecoxmodel
-prog define basecoxmodel
-	syntax , exposure(string) age(string) 
 
-timer clear
-timer on 1
-	capture 
-timer off 1
-timer list
-end
 *************************************************************************************
 local outcome `1'
 
