@@ -26,6 +26,7 @@ prog define outputHRsforvar
 syntax, variable(string) min(real) max(real) outcome(string)
 file write tablecontents_int  ("exposure") _tab ("exposure level") ///
 _tab ("outcome") _tab ("int_type") _tab ("int_level") ///
+_tab ("events") _tab ("person_years") _tab ("rate") ///
 _tab ("HR")  _tab ("lci")  _tab ("uci") _tab ("pval") _n
 forvalues i=`min'/`max'{
 foreach int_type in vaccine {
@@ -36,7 +37,41 @@ local endwith "_tab"
 
 	*put the varname and condition to left so that alignment can be checked vs shell
 	file write tablecontents_int ("`variable'") _tab ("`i'") _tab ("`outcome'") _tab ("`int_type'") _tab ("`int_level'") _tab
+ 
+ use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_0.dta", clear
 
+*Censor at date of first child being vaccinated in hh
+replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
+stset stime_`outcome', fail(`outcome') 		///
+	id(patient_id) enter(enter_date) origin(enter_date)
+
+gen first_vacc_plus_7d=covid_vacc_date+7
+gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+format first_vacc_plus_7d second_vacc_plus_7d %td
+ 
+stsplit vaccine, after(first_vacc_plus_7d) at(0)
+replace vaccine = vaccine +1
+stsplit vaccine2, after(second_vacc_plus_7d) at(0)
+replace vaccine=2 if vaccine==1 &vaccine2==0 & second_vacc_plus_7d!=.
+recode `outcome' .=0 
+
+	tab vaccine
+	tab vaccine `outcome' 
+	
+	
+	keep if vaccine==`int_level'
+*put total N, PYFU and Rate in table
+	cou if `variable' == `i' & _d == 1 
+	local event = r(N)
+    bysort `variable': egen total_follow_up = total(_t)
+	su total_follow_up if `variable' == `i'
+	local person_days = r(mean)
+	local person_years=`person_days'/365.25
+	local rate = 100000*(`event'/`person_years')
+	
+	file write tablecontents_int (`event') _tab %10.0f (`person_years') _tab %3.2f (`rate') _tab
+	drop total_follow_up
+ 
 	foreach modeltype of any fulladj {
 
 		local noestimatesflag 0 /*reset*/
