@@ -110,7 +110,7 @@ do "10a_an_interaction_cox_models_vaccine_sex_shield" `outcome'
 
 
 foreach outcome of any  covid_tpp_prob      {
-	do "11_an_interaction_HR_tables_forest_vaccine_analysis.do" 	 `outcome'
+	do "11_an_interaction_HR_tables_forest_vaccine_strat_analysis.do" 	 `outcome'
 }
 
 *put results in figure
