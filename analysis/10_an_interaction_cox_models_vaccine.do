@@ -92,14 +92,10 @@ gen first_vacc_plus_7d=covid_vacc_date+7
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
 format first_vacc_plus_7d second_vacc_plus_7d %td
  
-drop if first_vacc>second_vacc
 stsplit vaccine, after(first_vacc_plus_7d) at(0)
-sort patient
 replace vaccine = vaccine +1
 stsplit vaccine2, after(second_vacc_plus_7d) at(0)
-br patient first_vacc second_vacc vaccine vaccine2 _t _t0 stime_covid_tpp_prob
 replace vaccine=2 if vaccine==1 &vaccine2==0 & second_vacc_plus_7d!=.
-sort patient 
 recode `outcome' .=0 
 
 tab vaccine
