@@ -1,0 +1,38 @@
+	exposure	exposure level	vaccine	outcome	strata	strata_level	events	person_years	rate	HR	lci	uci	pval
+	kids_cat4	1	0	covid_tpp_prob	male	0	32979	    232522	14183.14	1.24	1.23	1.26	0.00
+	kids_cat4	1	0	covid_tpp_prob	male	1	23475	    186585	12581.37	1.40	1.37	1.42	0.00
+	kids_cat4	1	0	covid_tpp_prob	shield	0	44761	    336023	13320.80	1.34	1.33	1.36	0.00
+	kids_cat4	1	0	covid_tpp_prob	shield	1	11693	     83085	14073.62	1.20	1.17	1.22	0.02
+	kids_cat4	2	0	covid_tpp_prob	male	0	17793	    107419	16564.10	1.28	1.26	1.30	0.64
+	kids_cat4	2	0	covid_tpp_prob	male	1	12991	     91907	14135.00	1.36	1.33	1.39	0.00
+	kids_cat4	2	0	covid_tpp_prob	shield	0	24007	    158913	15106.98	1.35	1.33	1.37	0.00
+	kids_cat4	2	0	covid_tpp_prob	shield	1	6777	     40412	16769.63	1.25	1.22	1.28	0.01
+	kids_cat4	3	0	covid_tpp_prob	male	0	13674	     82478	16578.93	1.35	1.33	1.38	0.00
+	kids_cat4	3	0	covid_tpp_prob	male	1	9936	     67976	14616.99	1.52	1.48	1.55	0.00
+	kids_cat4	3	0	covid_tpp_prob	shield	0	18781	    121155	15501.60	1.46	1.44	1.49	0.00
+	kids_cat4	3	0	covid_tpp_prob	shield	1	4829	     29299	16481.96	1.30	1.26	1.35	0.92
+	kids_cat4	1	1	covid_tpp_prob	male	0	23508	    471594	4984.80	1.14	1.12	1.16	
+	kids_cat4	1	1	covid_tpp_prob	male	1	14508	    366116	3962.68	1.09	1.07	1.11	
+	kids_cat4	1	1	covid_tpp_prob	shield	0	30608	    679081	4507.27	1.10	1.09	1.12	
+	kids_cat4	1	1	covid_tpp_prob	shield	1	7408	    158629	4670.02	1.24	1.21	1.27	
+	kids_cat4	2	1	covid_tpp_prob	male	0	9472	    209248	4526.68	1.27	1.25	1.30	
+	kids_cat4	2	1	covid_tpp_prob	male	1	7302	    179508	4067.79	1.15	1.13	1.18	
+	kids_cat4	2	1	covid_tpp_prob	shield	0	13294	    311378	4269.41	1.20	1.18	1.23	
+	kids_cat4	2	1	covid_tpp_prob	shield	1	3480	     77378	4497.37	1.32	1.27	1.37	
+	kids_cat4	3	1	covid_tpp_prob	male	0	9560	    173491	5510.38	1.26	1.23	1.29	
+	kids_cat4	3	1	covid_tpp_prob	male	1	5987	    141682	4225.65	1.08	1.06	1.11	
+	kids_cat4	3	1	covid_tpp_prob	shield	0	12509	    255878	4888.65	1.17	1.14	1.19	
+	kids_cat4	3	1	covid_tpp_prob	shield	1	3038	     59295	5123.57	1.31	1.26	1.36	
+	kids_cat4	1	2	covid_tpp_prob	male	0	3902	    236244	1651.68	0.80	0.78	0.83	
+	kids_cat4	1	2	covid_tpp_prob	male	1	2219	    168589	1316.22	0.68	0.65	0.71	
+	kids_cat4	1	2	covid_tpp_prob	shield	0	4512	    308036	1464.76	0.74	0.72	0.77	
+	kids_cat4	1	2	covid_tpp_prob	shield	1	1609	     96796	1662.25	0.74	0.70	0.78	
+	kids_cat4	2	2	covid_tpp_prob	male	0	3279	    157413	2083.05	1.09	1.05	1.13	
+	kids_cat4	2	2	covid_tpp_prob	male	1	2004	    115409	1736.43	0.93	0.88	0.97	
+	kids_cat4	2	2	covid_tpp_prob	shield	0	3968	    210437	1885.60	1.01	0.98	1.05	
+	kids_cat4	2	2	covid_tpp_prob	shield	1	1315	     62386	2107.85	1.02	0.96	1.08	
+	kids_cat4	3	2	covid_tpp_prob	male	0	2100	     98684	2128.00	1.05	1.01	1.10	
+	kids_cat4	3	2	covid_tpp_prob	male	1	1187	     73050	1624.92	0.85	0.80	0.90	
+	kids_cat4	3	2	covid_tpp_prob	shield	0	2467	    132111	1867.37	0.96	0.92	1.00	
+	kids_cat4	3	2	covid_tpp_prob	shield	1	820	     39623	2069.49	0.95	0.88	1.02	
+
