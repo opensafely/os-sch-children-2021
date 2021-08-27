@@ -20,6 +20,7 @@
   * output/26082021
     * [output/26082021/11_an_int_tab_contents_HRtable_covid_death.txt](output/26082021/11_an_int_tab_contents_HRtable_covid_death.txt)
     * [output/26082021/11_an_int_tab_contents_HRtable_covid_tpp_prob.txt](output/26082021/11_an_int_tab_contents_HRtable_covid_tpp_prob.txt)
+    * [output/26082021/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_main.txt](output/26082021/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_main.txt)
     * [output/26082021/11_an_int_tab_contents_HRtable_covidadmission.txt](output/26082021/11_an_int_tab_contents_HRtable_covidadmission.txt)
   * [output/an_tablecontents_HRtable_covid_death.txt](output/an_tablecontents_HRtable_covid_death.txt)
   * [output/an_tablecontents_HRtable_covid_icu.txt](output/an_tablecontents_HRtable_covid_icu.txt)
