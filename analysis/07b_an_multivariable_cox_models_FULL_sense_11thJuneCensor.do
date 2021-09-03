@@ -77,7 +77,7 @@ end
 local outcome `1'
 
 * Open dataset and fit specified model(s)
-foreach x in 0 {
+foreach x in 0 1 {
 forvalues period=0/2 {
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 *Split data by time of study period: 
