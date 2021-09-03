@@ -28,7 +28,7 @@ file write tablecontents_int ("period") _tab ("age") _tab ("exposure") _tab ("ex
 _tab ("outcome") _tab ("int_type") _tab ("int_level") ///
 _tab ("HR")  _tab ("lci")  _tab ("uci") _tab ("pval") _n
 foreach period in 0 1 2  {
-foreach x in 0 {
+foreach x in 0 1 {
 forvalues i=`min'/`max'{
 foreach int_type in male shield {
 

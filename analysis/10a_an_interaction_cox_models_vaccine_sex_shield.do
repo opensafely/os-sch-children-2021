@@ -63,7 +63,7 @@ log using "$logdir/10_an_interaction_cox_models_vaccine_`outcome'_sex_shield", t
 *************************************************************************************
 
 * Open dataset and fit specified model(s)
-foreach x in 0 {
+foreach x in 0 1 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
