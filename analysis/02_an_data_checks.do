@@ -157,7 +157,7 @@ local total_`outcome'=`r(N)'
 hist date_`outcome' if date_`outcome'<=22500 & agegp==`age', saving(output/`outcome'_age`age', replace) ///
 xlabel(22281 22340 22401 22462,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq  ///
-ylabel(0 5000,labsize(tiny))  ytitle("Number", size(vsmall)) xline(22347 22416) ///
+ylabel(0 5000,labsize(tiny))  ytitle("Number", size(vsmall)) ///
 title("N=`total_`outcome''", size(vsmall)) width(5) yline(5, lcolor(black%100)  lwidth(thick)) color(black%100)
 }
 }
