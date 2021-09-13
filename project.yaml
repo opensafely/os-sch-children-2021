@@ -147,6 +147,30 @@ actions:
         log: logs/07b_an_multivariable_cox_models_covidadmission_2ndVaccCensor.log
         data: "output/an_multivariate_cox_models_covidadmission_*_FULLYADJMODEL_ageband_*_2ndVaccCensor.ster"
 
+  07b_an_multivariable_cox_models_FULL_covid_death_1stVaccCensor:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL_sense_1stVaccCensor.do covid_death 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covid_death_1stVaccCensor.log
+        data: "output/an_multivariate_cox_models_covid_death_*_FULLYADJMODEL_ageband_*_1stVaccCensor.ster"
+
+  07b_an_multivariable_cox_models_FULL_covid_tpp_prob_1stVaccCensor:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL_sense_1stVaccCensor.do covid_tpp_prob 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covid_tpp_prob_1stVaccCensor.log
+        data: "output/an_multivariate_cox_models_covid_tpp_prob_*_FULLYADJMODEL_ageband_*_1stVaccCensor.ster"
+
+  07b_an_multivariable_cox_models_FULL_covidadmission_1stVaccCensor:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL_sense_1stVaccCensor.do covidadmission 
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covidadmission_1stVaccCensor.log
+        data: "output/an_multivariate_cox_models_covidadmission_*_FULLYADJMODEL_ageband_*_1stVaccCensor.ster"
+
   08_an_tablecontent_HRtable_covid_tpp_prob:
     needs:
       - 01_cr_analysis_dataset
@@ -317,6 +341,9 @@ actions:
       - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob_2ndVaccCensor
       - 07b_an_multivariable_cox_models_FULL_covidadmission_2ndVaccCensor
       - 07b_an_multivariable_cox_models_FULL_covid_death_2ndVaccCensor
+      - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob_1stVaccCensor
+      - 07b_an_multivariable_cox_models_FULL_covidadmission_1stVaccCensor
+      - 07b_an_multivariable_cox_models_FULL_covid_death_1stVaccCensor
     run: stata-mp:latest analysis/15_anHRfigure_all_outcomes_2021_SENSE.do
     outputs:
       moderately_sensitive:

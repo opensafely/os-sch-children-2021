@@ -54,7 +54,7 @@ local outcome `1'
 
 * Open a log file
 capture log close
-log using "$logdir/07b_an_multivariable_cox_models_`outcome'_2ndVaccCensor", text replace
+log using "$logdir/07b_an_multivariable_cox_models_`outcome'_1stVaccCensor", text replace
 
 
 *************************************************************************************
@@ -81,13 +81,20 @@ foreach x in 0 1 {
 forvalues period=0/3 {
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
-*Censor at date of second vacc_7ds
+/*Censor at date of second vacc_7ds
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+replace stime_`outcome' 	= second_vacc_plus_7d if stime_`outcome'>second_vacc_plus_7d
+stset stime_`outcome', fail(`outcome') 		///
+	id(patient_id) enter(enter_date) origin(enter_date)*/
+	
+*Censor at date of first vacc_7ds
+gen second_vacc_plus_7d=covid_vacc_date+7
 replace stime_`outcome' 	= second_vacc_plus_7d if stime_`outcome'>second_vacc_plus_7d
 stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)
 	
-
+	
+	
 *Split data by time of study period: 
 *-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
 *-alpha variant 15th March 2021 
@@ -102,7 +109,7 @@ tab cat_time `outcome'
 }
 
 *-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
-*-alpha variant 22nd March 2021 
+*-alpha variant 21st March 2021 
 *-delta variant 31st May 2021 
 if "`outcome'"=="covidadmission" | "`outcome'"=="covid_death" {
 stsplit cat_time, at(0,92,161,173)
@@ -126,7 +133,7 @@ foreach exposure_type in kids_cat4  {
 basecoxmodel, exposure("i.`exposure_type'") age("age1 age2 age3") 
 if _rc==0{
 estimates
-estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_2ndVaccCensor", replace
+estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_type'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_1stVaccCensor", replace
 	/*  Proportional Hazards test 
 	* Based on Schoenfeld residuals	
 	timer clear 
