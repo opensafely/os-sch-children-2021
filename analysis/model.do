@@ -79,12 +79,12 @@ winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "07b_an_multivariable_cox_
 *INTERACTIONS 
 *Sex
 foreach outcome of any covid_tpp_prob   {
-winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_sex" `outcome'	
+ do "10_an_interaction_cox_models_sex" `outcome'	
 }
 
 *Sheild
 foreach outcome of any covid_tpp_prob    {
-winexec "C:\Program Files\Stata16\StataMP-64.exe"  do "10_an_interaction_cox_models_shield" `outcome'
+ do "10_an_interaction_cox_models_shield" `outcome'
 }
 
 foreach outcome of any  covid_tpp_prob     {

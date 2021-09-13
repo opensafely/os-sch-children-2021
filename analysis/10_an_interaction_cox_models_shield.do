@@ -28,7 +28,7 @@
 global outdir  	  "output" 
 global logdir     "logs"
 global tempdir    "tempdata"
-global demogadjlist  age1 age2 age3 i.male i.ethnicity	i.obese4cat i.smoke_nomiss i.imd i.tot_adults_hh
+global demogadjlist  age1 age2 age3 i.male i.ethnicity	i.obese4cat i.smoke_nomiss i.imd i.tot_adults_hh i.shield
 global comordidadjlist  i.htdiag_or_highbp				///
 			i.chronic_respiratory_disease 	///
 			i.asthma						///
@@ -101,7 +101,7 @@ foreach exposure_type in kids_cat4  {
 stcox 	i.`exposure_type' 	age1 age2 age3			///
 			$demogadjlist	 			  	///
 			$comordidadjlist		///
-			1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' ///
+			1.`int_type'#0.`exposure_type' 1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' ///
 			if cat_time==`period'							///
 			, strata(stp) vce(cluster household_id) 
 if _rc==0{

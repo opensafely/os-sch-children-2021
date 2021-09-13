@@ -28,7 +28,7 @@
 global outdir  	  "output" 
 global logdir     "logs"
 global tempdir    "tempdata"
-global demogadjlist  age1 age2 age3 i.male i.ethnicity	i.obese4cat i.smoke_nomiss i.imd i.tot_adults_hh
+global demogadjlist  age1 age2 age3 i.male i.ethnicity	i.obese4cat i.smoke_nomiss i.imd i.tot_adults_hh i.vaccine
 global comordidadjlist  i.htdiag_or_highbp				///
 			i.chronic_respiratory_disease 	///
 			i.asthma						///
@@ -99,7 +99,7 @@ replace vaccine=2 if vaccine==1 &vaccine2==0 & second_vacc_plus_7d!=.
 recode `outcome' .=0 
 
 tab vaccine
-tab vaccine `outcome'
+tab vaccine `outcome' if kids_cat4==0
 
 
 foreach int_type in  vaccine  {
@@ -107,20 +107,24 @@ foreach int_type in  vaccine  {
 *Age interaction for 3-level exposure vars
 foreach exposure_type in kids_cat4  {
 
-*Age spline model (not adj ethnicity, no interaction)
-basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")  
-
 *Age spline model (not adj ethnicity, interaction)
 basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")  ///
-interaction(1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' 2.`int_type'#1.`exposure_type' 2.`int_type'#2.`exposure_type' 2.`int_type'#3.`exposure_type')
+interaction(1.`int_type'#0.`exposure_type' 1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' 2.`int_type'#0.`exposure_type' 2.`int_type'#1.`exposure_type' 2.`int_type'#2.`exposure_type' 2.`int_type'#3.`exposure_type')
 if _rc==0{
 testparm 1.`int_type'#i.`exposure_type'
 di _n "`exposure_type' " _n "****************"
+lincom 0.`exposure_type' 
+lincom 1.`exposure_type' 
+lincom 2.`exposure_type' 
+lincom 3.`exposure_type' 
+lincom 0.`exposure_type' + 1.`int_type'#0.`exposure_type', eform
 lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
-di "`exposure_type'" _n "****************"
 lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
-di "`exposure_type'" _n "****************"
 lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
+lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
+lincom 1.`exposure_type' + 2.`int_type'#1.`exposure_type', eform
+lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
+lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
 estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`int_type'_`x', replace
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
