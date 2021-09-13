@@ -23,7 +23,6 @@ global indexdate = "20/12/2020"
 
 *Censor dates
 global study_end_censor   	= "16/07/2021"
-global SUS_study_end_censor = "16/06/2021"
 
 * Open a log file
 cap log close
@@ -679,7 +678,6 @@ lab var covid_vacc_second_dose_date "Second vacc date"
 
 gen enter_date = date("$indexdate", "DMY")
 gen study_end_censor =date("$study_end_censor", "DMY")
-gen SUS_study_end_censor =date("$SUS_study_end_censor", "DMY")
 
 * Format the dates
 format 	enter_date					///
@@ -723,14 +721,14 @@ gen stime_covid_tpp_prob = min(study_end_censor   , died_date_ons, date_covid_tp
 gen stime_non_covid_death = min(study_end_censor   , died_date_ons, died_date_onsnoncovid, dereg_date)
 gen stime_covid_death = min(study_end_censor   , died_date_ons, died_date_onscovid, dereg_date)
 gen stime_covid_icu = min(study_end_censor, died_date_ons, covid_icu_date, dereg_date)
-gen stime_covidadmission 	= min(SUS_study_end_censor   , covid_admission_primary_date, died_date_ons, dereg_date)
+gen stime_covidadmission 	= min(study_end_censor   , covid_admission_primary_date, died_date_ons, dereg_date)
 
 * If outcome was after censoring occurred, set to zero
 replace covid_tpp_prob = 0 if (date_covid_tpp_prob > study_end_censor ) 
 replace non_covid_death = 0 if (died_date_onsnoncovid > study_end_censor )
 replace covid_death = 0 if (died_date_onscovid > study_end_censor )
 replace covid_icu = 0 if (covid_icu_date > study_end_censor)
-replace covidadmission 	= 0 if (covid_admission_primary_date > SUS_study_end_censor  | covid_admission_primary_date > died_date_ons) 
+replace covidadmission 	= 0 if (covid_admission_primary_date > study_end_censor  | covid_admission_primary_date > died_date_ons) 
 replace covid_death_part1 = 0 if (died_date_onscovid_part1 > study_end_censor )
 
 * If outcome was after censoring occurred, set date to missing
@@ -738,7 +736,7 @@ replace date_covid_tpp_prob = . if (date_covid_tpp_prob > study_end_censor )
 replace died_date_onsnoncovid = . if (died_date_onsnoncovid > study_end_censor )
 replace died_date_onscovid = . if (died_date_onscovid > study_end_censor )
 replace covid_icu_date = . if (covid_icu_date > study_end_censor)
-replace covid_admission_primary_date 	= . if (covid_admission_primary_date > SUS_study_end_censor  | covid_admission_primary_date > died_date_ons) 
+replace covid_admission_primary_date 	= . if (covid_admission_primary_date > study_end_censor  | covid_admission_primary_date > died_date_ons) 
 replace died_date_onscovid_part1 = . if (died_date_onscovid_part1 > study_end_censor )
 
 
@@ -839,7 +837,6 @@ lab var shield "Probable shielding"
 * Outcomes and follow-up
 label var enter_date					"Date of study entry"
 label var study_end_censor    			"Date of admin censoring for outcomes"
-lab var SUS_study_end_censor			"Date censoring for SUS"
 
 label var  covid_tpp_prob				"Failure/censoring indicator for outcome: covid prob case"
 label var  non_covid_death				"Failure/censoring indicator for outcome: non-covid death"
