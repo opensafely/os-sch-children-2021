@@ -28,7 +28,7 @@
 global outdir  	  "output" 
 global logdir     "logs"
 global tempdir    "tempdata"
-global demogadjlist  age1 age2 age3 i.male i.ethnicity	i.obese4cat i.smoke_nomiss i.imd i.tot_adults_hh i.vaccine
+global demogadjlist  age1 age2 age3 i.male i.ethnicity	i.obese4cat i.smoke_nomiss i.imd i.tot_adults_hh 
 global comordidadjlist  i.htdiag_or_highbp				///
 			i.chronic_respiratory_disease 	///
 			i.asthma						///
@@ -58,7 +58,7 @@ cap erase ./output/an_interaction_cox_models_`outcome'_`exposure_type'_male_FULL
 
 
 cap log close
-log using "$logdir/10_an_interaction_cox_models_vaccine_`outcome'", text replace
+log using "$logdir/10_an_interaction_cox_models_vaccine_`outcome'_stratified", text replace
 
 
 *PROG TO DEFINE THE BASIC COX MODEL WITH OPTIONS FOR HANDLING OF AGE, BMI, ETHNICITY:
@@ -109,7 +109,7 @@ foreach exposure_type in kids_cat4  {
 
 *Age spline model (not adj ethnicity, interaction)
 basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")  ///
-interaction(1.`int_type'#0.`exposure_type' 1.`int_type'#1.`exposure_type' 1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' 2.`int_type'#0.`exposure_type' 2.`int_type'#1.`exposure_type' 2.`int_type'#2.`exposure_type' 2.`int_type'#3.`exposure_type')
+interaction(i.`int_type'##i.`exposure_type')
 if _rc==0{
 testparm 1.`int_type'#i.`exposure_type'
 di _n "`exposure_type' " _n "****************"
@@ -125,7 +125,7 @@ lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
 lincom 1.`exposure_type' + 2.`int_type'#1.`exposure_type', eform
 lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
 lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
-estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`int_type'_`x', replace
+estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`int_type'_`x'_stratified, replace
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
 }

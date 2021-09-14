@@ -255,9 +255,9 @@ actions:
         log: logs/10_an_interaction_cox_models_shield_covidadmission.log
         data: "output/an_interaction_cox_models_covidadmission_*_shield_*.ster"
 
-  10_an_interaction_cox_models_vaccine_covid_tpp_prob:
+  10_an_interaction_cox_models_vaccine_covid_tpp_prob_main:
     needs: [01_cr_analysis_dataset]
-    run: stata-mp:latest analysis/10_an_interaction_cox_models_vaccine.do covid_tpp_prob 
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_vaccine_main_analysis.do covid_tpp_prob 
     outputs:
       moderately_sensitive:
         log: logs/10_an_interaction_cox_models_vaccine_covid_tpp_prob.log
@@ -271,6 +271,14 @@ actions:
         log: logs/10_an_interaction_cox_models_vaccine_covid_tpp_prob_sex_shield.log
         data: "output/an_interaction_cox_models_covid_tpp_prob_*_vaccine_*male*.ster"
         data2: "output/an_interaction_cox_models_covid_tpp_prob_*_vaccine_*shield*.ster"
+
+  10b_an_interaction_cox_models_vaccine_stratified_covid_tpp_prob:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10b_an_interaction_cox_models_vaccine_stratified.do covid_tpp_prob 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covid_tpp_prob_stratified.log
+        data: "output/an_interaction_cox_models_covid_tpp_prob_kids_cat4_vaccine_*_stratified.ster"
 
   11_an_interaction_HR_tables_forest_covid_tpp_prob:
     needs:
@@ -315,7 +323,7 @@ actions:
 
   11_an_interaction_HR_tables_forest_vaccine_main_analysis_covid_tpp_prob:
     needs:
-      - 10_an_interaction_cox_models_vaccine_covid_tpp_prob
+      - 10_an_interaction_cox_models_vaccine_covid_tpp_prob_main
       - 01_cr_analysis_dataset
     run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_main_analysis.do covid_tpp_prob
     outputs:
@@ -323,15 +331,26 @@ actions:
         log: logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_vaccine_main.log
         data: "output/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_main.txt"
 
-  11_an_interaction_HR_tables_forest_vaccine_strat_analysis_covid_tpp_prob:
+  11_an_interaction_HR_tables_forest_vaccine_sex_shield_analysis_covid_tpp_prob:
     needs:
       - 10a_an_interaction_cox_models_vaccine_sex_shield_covid_tpp_prob
       - 01_cr_analysis_dataset
-    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_strat_analysis.do covid_tpp_prob
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_sex_shield_analysis.do covid_tpp_prob
     outputs:
       moderately_sensitive:
-        log: logs/11_an_interaction_HR_tables_forest_vaccine_strat_covid_tpp_prob.log
-        data: "output/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_strat.txt"
+        log: logs/11_an_interaction_HR_tables_forest_vaccine_sex_shield_covid_tpp_prob.log
+        data: "output/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_sex_shield.txt"
+
+  11_an_interaction_HR_tables_forest_vaccine_strat_analysis_covid_tpp_prob:
+    needs:
+      - 10b_an_interaction_cox_models_vaccine_stratified_covid_tpp_prob
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_stratified_analysis.do covid_tpp_prob
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_vaccine_stratified.log
+        data: "output/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_stratified.txt"
+
 
   15_anHRfigure_data_all_outcomes_2021_SENSE:
     needs:  

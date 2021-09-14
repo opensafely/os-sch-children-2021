@@ -95,7 +95,7 @@ foreach outcome of any  covid_tpp_prob     {
 *Vaccine analysis
 *Vaccine
 foreach outcome of any covid_tpp_prob    {
- do "10_an_interaction_cox_models_vaccine" `outcome'
+ do "10_an_interaction_cox_models_vaccine_main_analysis" `outcome'
 }
 foreach outcome of any  covid_tpp_prob     {
 	do "11_an_interaction_HR_tables_forest_vaccine_main_analysis.do" 	 `outcome'

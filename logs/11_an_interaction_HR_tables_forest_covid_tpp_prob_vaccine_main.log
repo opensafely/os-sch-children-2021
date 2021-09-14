@@ -3,7 +3,7 @@
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_
 > vaccine_main.log
   log type:  text
- opened on:  13 Sep 2021, 10:01:18
+ opened on:  14 Sep 2021, 11:22:55
 
 . 
 . *****************************************************************************
@@ -222,14 +222,1469 @@ n interval |         0          1 |     Total
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        238       13895           0      13895      13895
-1.vaccine#0.kids_cat4 not found
-r(111);
 
-end of do-file
-r(111);
+ ( 1)  1bn.vaccine#0b.kids_cat4 = 0
 
-end of do-file
+           chi2(  1) =    0.05
+         Prob > chi2 =    0.8188
 
-r(111);
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
 
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
 
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(10,888 observations deleted)
+  202
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        287       26607           0      26607      26607
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(17,524 observations deleted)
+  46
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         55        6602           0       6602       6602
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(11,766 observations deleted)
+  354
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        610       26748           0      26748      26748
+
+ ( 1)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  1) =    0.49
+         Prob > chi2 =    0.4823
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(10,888 observations deleted)
+  504
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        700       41204           0      41204      41204
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(17,524 observations deleted)
+  71
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         98        8783           0       8783       8783
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(11,766 observations deleted)
+  82
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        167        6914           0       6914       6914
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+
+           chi2(  1) =    1.78
+         Prob > chi2 =    0.1822
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(10,888 observations deleted)
+  179
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        243       14644           0      14644      14644
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(17,524 observations deleted)
+  31
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         38        3655           0       3655       3655
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(11,766 observations deleted)
+  3,576
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      5,558      166174           0     166174     166174
+
+ ( 1)  1bn.vaccine#3.kids_cat4 = 0
+
+           chi2(  1) =    0.26
+         Prob > chi2 =    0.6080
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(10,888 observations deleted)
+  4,736
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      6,221      235266           0     235266     235266
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(11,665 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+      3,500  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,617  observations remaining, representing
+     12,617  subjects
+     10,412  failures in single-failure-per-subject data
+    515,248  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(8,073 missing values generated)
+(12,894 missing values generated)
+(1,195 observations (episodes) created)
+(13,812 real changes made)
+(1,027 observations (episodes) created)
+(815 real changes made)
+(covid_tpp_prob: 2222 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,573       44.30       44.30
+          1 |      7,451       50.21       94.51
+          2 |        815        5.49      100.00
+------------+-----------------------------------
+      Total |     14,839      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     2,439      4,134 |     6,573 
+         1 |     1,830      5,621 |     7,451 
+         2 |       158        657 |       815 
+-----------+----------------------+----------
+     Total |     4,427     10,412 |    14,839 
+(17,524 observations deleted)
+  509
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        624       39796           0      39796      39796
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    2.27
+         Prob > chi2 =    0.3218
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(3,290 observations deleted)
+  25
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         67        3893           0       3893       3893
+
+ ( 1)  1bn.vaccine#0b.kids_cat4 = 0
+
+           chi2(  1) =    3.54
+         Prob > chi2 =    0.0598
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(3,070 observations deleted)
+  60
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         81        6755           0       6755       6755
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(4,943 observations deleted)
+  12
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         15        1566           0       1566       1566
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(3,290 observations deleted)
+  103
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        164        6833           0       6833       6833
+
+ ( 1)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  1) =    0.42
+         Prob > chi2 =    0.5192
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(3,070 observations deleted)
+  142
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        184       11344           0      11344      11344
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(4,943 observations deleted)
+  16
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         24        1667           0       1667       1667
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(3,290 observations deleted)
+  28
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         52        2159           0       2159       2159
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+
+           chi2(  1) =    0.02
+         Prob > chi2 =    0.8783
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(3,070 observations deleted)
+  45
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         59        3652           0       3652       3652
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(4,943 observations deleted)
+  8
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         10        1181           0       1181       1181
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(3,290 observations deleted)
+  1,012
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,591       47612           0      47612      47612
+
+ ( 1)  1bn.vaccine#3.kids_cat4 = 0
+
+           chi2(  1) =    0.37
+         Prob > chi2 =    0.5425
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(3,070 observations deleted)
+  1,312
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,770       68268           0      68268      68268
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+(3,266 real changes made)
+
+                id:  patient_id
+     failure event:  covid_tpp_prob != 0 & covid_tpp_prob < .
+obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+        975  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,561  observations remaining, representing
+      3,561  subjects
+      2,911  failures in single-failure-per-subject data
+    144,397  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       208
+(2,260 missing values generated)
+(3,627 missing values generated)
+(350 observations (episodes) created)
+(3,911 real changes made)
+(278 observations (episodes) created)
+(221 real changes made)
+(covid_tpp_prob: 628 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,874       44.74       44.74
+          1 |      2,094       49.99       94.72
+          2 |        221        5.28      100.00
+------------+-----------------------------------
+      Total |      4,189      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid prob
+observatio |         case
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |       706      1,168 |     1,874 
+         1 |       535      1,559 |     2,094 
+         2 |        37        184 |       221 
+-----------+----------------------+----------
+     Total |     1,278      2,911 |     4,189 
+(4,943 observations deleted)
+  148
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        172       12139           0      12139      12139
+
+ ( 1)  1bn.vaccine#2.kids_cat4 = 0
+ ( 2)  1bn.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    0.44
+         Prob > chi2 =    0.8021
+
+. file write tablecontents_int _n
+
+. 
+. file close tablecontents_int
+
+. 
+. postclose HRestimates_int
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_
+> vaccine_main.log
+  log type:  text
+ closed on:  14 Sep 2021, 11:23:05
+-------------------------------------------------------------------------------
