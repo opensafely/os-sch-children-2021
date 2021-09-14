@@ -1,0 +1,1135 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/07b_an_multivariable_cox_models_covidadmission_1st
+> VaccCensor.log
+  log type:  text
+ opened on:  14 Sep 2021, 10:56:59
+
+. 
+. 
+. *****************************************************************************
+> ********
+. *PROG TO DEFINE THE BASIC COX MODEL WITH OPTIONS FOR HANDLING OF AGE, BMI, ET
+> HNICITY:
+. cap prog drop basecoxmodel
+
+. prog define basecoxmodel
+  1.         syntax , exposure(string) age(string) 
+  2. 
+. timer clear
+  3. timer on 1
+  4.         capture stcox   `exposure'                              ///
+>                         $demogadjlist                                   ///
+>                         $comordidadjlist                                ///
+>                         `if'                                                 
+>    ///
+>                         , strata(stp) vce(cluster household_id)
+  5. timer off 1
+  6. timer list
+  7. end
+
+. *****************************************************************************
+> ********
+. local outcome `1'
+
+. 
+. * Open dataset and fit specified model(s)
+. foreach x in 0 1 {
+  2. forvalues period=0/3 {
+  3. use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta",
+>  clear
+  4. 
+. /*Censor at date of second vacc_7ds
+> gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+> replace stime_`outcome'         = second_vacc_plus_7d if stime_`outcome'>seco
+> nd_vacc_plus_7d
+> stset stime_`outcome', fail(`outcome')          ///
+>         id(patient_id) enter(enter_date) origin(enter_date)*/
+.         
+. *Censor at date of first vacc_7ds
+. gen second_vacc_plus_7d=covid_vacc_date+7
+  5. replace stime_`outcome'         = second_vacc_plus_7d if stime_`outcome'>s
+> econd_vacc_plus_7d
+  6. stset stime_`outcome', fail(`outcome')          ///
+>         id(patient_id) enter(enter_date) origin(enter_date)
+  7.         
+.         
+.         
+. *Split data by time of study period: 
+. *-School closure: 20th December 2020 (previous analysis up to 19th December 2
+> 020) 
+. *-alpha variant 15th March 2021 
+. *-delta variant 24th May 2021 
+. 
+. if "`outcome'"=="covid_tpp_prob" {
+  8. stsplit cat_time, at(0,85,154,173)
+  9. recode cat_time 85=1 154=2 173=3
+ 10. recode `outcome' .=0 
+ 11. tab cat_time
+ 12. tab cat_time `outcome'
+ 13. }
+ 14. 
+. *-School closure: 20th December 2020 (previous analysis up to 19th December 2
+> 020) 
+. *-alpha variant 21st March 2021 
+. *-delta variant 31st May 2021 
+. if "`outcome'"=="covidadmission" | "`outcome'"=="covid_death" {
+ 15. stsplit cat_time, at(0,92,161,173)
+ 16. recode cat_time 92=1 161=2 173=3
+ 17. recode `outcome' .=0 
+ 18. tab cat_time
+ 19. tab cat_time `outcome'
+ 20. }
+ 21. 
+. keep if cat_time==`period'
+ 22. 
+. ******************************
+. *  Multivariable Cox models  *
+. ******************************
+. 
+. 
+. 
+. foreach exposure_type in kids_cat4  {
+ 23. 
+. *Age spline model (not adj ethnicity)
+. basecoxmodel, exposure("i.`exposure_type'") age("age1 age2 age3") 
+ 24. if _rc==0{
+ 25. estimates
+ 26. estimates save "./output/an_multivariate_cox_models_`outcome'_`exposure_ty
+> pe'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_1stVaccCensor", replace
+ 27.         /*  Proportional Hazards test 
+>         * Based on Schoenfeld residuals 
+>         timer clear 
+>         timer on 1
+>         if e(N_fail)>0 estat phtest, d
+>         timer off 1
+>         timer list */
+.         
+. }
+ 28. else di "WARNING AGE SPLINE MODEL DID NOT FIT (OUTCOME `outcome')"
+ 29. 
+. }
+ 30. }
+ 31. }
+(8,073 missing values generated)
+(4,423 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+        206  observations end on or before enter()
+------------------------------------------------------------------------------
+     15,911  observations remaining, representing
+     15,911  subjects
+      1,900  failures in single-failure-per-subject data
+  1,544,102  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(15,456 observations (episodes) created)
+(cat_time: 15456 changes made)
+(covidadmission: 15456 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,911       50.73       50.73
+          1 |      8,009       25.53       76.26
+          2 |      3,988       12.71       88.97
+          3 |      3,459       11.03      100.00
+------------+-----------------------------------
+      Total |     31,367      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,565      1,346 |    15,911 
+         1 |     7,524        485 |     8,009 
+         2 |     3,937         51 |     3,988 
+         3 |     3,441         18 |     3,459 
+-----------+----------------------+----------
+     Total |    29,467      1,900 |    31,367 
+(15,662 observations deleted)
+   1:     10.60 /        1 =      10.6010
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =       15,911             Number of obs    =      15,911
+No. of failures      =        1,346
+Time at risk         =      1074731
+                                                Wald chi2(42)    =    13711.63
+Log pseudolikelihood =   -9524.2173             Prob > chi2      =      0.0000
+
+                       (Std. Err. adjusted for 1,126 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   .9014923   .1807278    -0.52   0.605     .6085781    1.335389
+ only 12-18  |   .7242859   .1801086    -1.30   0.195     .4448783    1.179177
+      mixed  |   .9724488   .1825704    -0.15   0.882     .6730691    1.404992
+             |
+        age1 |   .9978903   .0103206    -0.20   0.838      .977866    1.018325
+        age2 |   1.005617   .0335413     0.17   0.867     .9419801    1.073553
+        age3 |   .9777062    .093439    -0.24   0.814     .8106984    1.179118
+      1.male |    1.07832   .0606415     1.34   0.180     .9657812    1.203973
+             |
+   obese4cat |
+Obese I ..)  |   .9398821   .0756981    -0.77   0.441     .8026341    1.100599
+Obese II..)  |   .9174478   .0965672    -0.82   0.413     .7464265    1.127654
+Obese II..)  |   .9768455   .1145891    -0.20   0.842     .7762034    1.229352
+             |
+smoke_nomiss |
+     Former  |   1.249421   .2309493     1.20   0.228     .8696976    1.794937
+    Current  |   1.101176   .0889844     1.19   0.233     .9398804    1.290153
+             |
+         imd |
+          4  |   1.021432   .0748446     0.29   0.772     .8847862    1.179181
+5 most de..  |   1.158659   .1005081     1.70   0.090     .9775029    1.373388
+             |
+tot_adults~h |
+          2  |   1.222732   .5135869     0.48   0.632     .5367836    2.785245
+          3  |   .9147981   .3336335    -0.24   0.807     .4475957    1.869669
+             |
+   ethnicity |
+Asian or ..  |   .8576154   .0781475    -1.69   0.092     .7173473    1.025311
+      Other  |   .9666022   .0884112    -0.37   0.710     .8079636    1.156388
+             |
+1.htdiag_o~p |   1.019778   .0590853     0.34   0.735     .9103067    1.142415
+1.~y_disease |    .987121   .0687905    -0.19   0.852     .8610964     1.13159
+    1.asthma |   1.124821   .1057676     1.25   0.211     .9355017    1.352454
+1.~c_disease |   1.027187   .0705828     0.39   0.696     .8977583    1.175275
+             |
+     diabcat |
+T1DM, con..  |   1.144584   .1831494     0.84   0.399     .8364568    1.566217
+T1DM, unc..  |   1.571619   .4876775     1.46   0.145     .8554947    2.887203
+T2DM, con..  |   .9251335   .0702606    -1.02   0.306     .7971842    1.073619
+T2DM, unc..  |   .7842843   .1305245    -1.46   0.144     .5659946    1.086763
+Diabetes,..  |   7.51e-17   2.45e-17  -113.54   0.000     3.95e-17    1.43e-16
+             |
+cancer_exh~t |
+  Last year  |   .8428331   .3659069    -0.39   0.694     .3599164    1.973702
+2-5 years..  |    .627532    .169009    -1.73   0.084     .3701583    1.063859
+   5+ years  |   .9922197   .0733094    -0.11   0.916     .8584548    1.146828
+             |
+cancer_hae~t |
+  Last year  |   1.617921   .6233566     1.25   0.212      .760334    3.442789
+2-5 years..  |   .7669797   .1829383    -1.11   0.266     .4805706    1.224082
+   5+ years  |   1.014189   .0705356     0.20   0.839     .8849503    1.162302
+             |
+1.~r_disease |   .9866216   .0664673    -0.20   0.842     .8645824    1.125887
+1.stroke_d~a |    .938579   .0636588    -0.93   0.350     .8217475    1.072021
+1.other_ne~o |   .9224448   .0630221    -1.18   0.237     .8068367    1.054618
+             |
+reduced_ki~t |
+Stage 3a/..  |   2.241851    .878623     2.06   0.039     1.039933    4.832907
+      1.esrd |   1.082948   .0596429     1.45   0.148     .9721384    1.206388
+1.other_tr~t |   .9888749   .0664926    -0.17   0.868     .8667742    1.128176
+  1.asplenia |   1.089975   .0710955     1.32   0.187     .9591697    1.238619
+1.ra_sle_p~s |   .9510276   .0657681    -0.73   0.468     .8304786    1.089075
+1.other_im~o |   1.022396   .0693224     0.33   0.744     .8951672    1.167707
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_0_timeperiod0_1stVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_0_timeperiod0_1stVaccCensor.ster saved
+(8,073 missing values generated)
+(4,423 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+        206  observations end on or before enter()
+------------------------------------------------------------------------------
+     15,911  observations remaining, representing
+     15,911  subjects
+      1,900  failures in single-failure-per-subject data
+  1,544,102  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(15,456 observations (episodes) created)
+(cat_time: 15456 changes made)
+(covidadmission: 15456 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,911       50.73       50.73
+          1 |      8,009       25.53       76.26
+          2 |      3,988       12.71       88.97
+          3 |      3,459       11.03      100.00
+------------+-----------------------------------
+      Total |     31,367      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,565      1,346 |    15,911 
+         1 |     7,524        485 |     8,009 
+         2 |     3,937         51 |     3,988 
+         3 |     3,441         18 |     3,459 
+-----------+----------------------+----------
+     Total |    29,467      1,900 |    31,367 
+(23,564 observations deleted)
+   1:      4.84 /        1 =       4.8430
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        8,009             Number of obs    =       8,009
+No. of failures      =          485
+Time at risk         =       407701
+                                                Wald chi2(42)    =    34607.56
+Log pseudolikelihood =    -3093.176             Prob > chi2      =      0.0000
+
+                       (Std. Err. adjusted for 1,023 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   .8298848   .3393617    -0.46   0.648     .3723395     1.84968
+ only 12-18  |   1.135442   .5378628     0.27   0.789     .4486915    2.873307
+      mixed  |   1.040852   .3878893     0.11   0.914     .5013904    2.160738
+             |
+        age1 |   .9666919   .0154852    -2.11   0.034      .936813    .9975239
+        age2 |   1.112752    .058608     2.03   0.043     1.003612    1.233759
+        age3 |   .7508571   .1147434    -1.88   0.061     .5565184     1.01306
+      1.male |    .870671   .0796006    -1.51   0.130     .7278359    1.041537
+             |
+   obese4cat |
+Obese I ..)  |   1.124466    .148974     0.89   0.376     .8673125    1.457865
+Obese II..)  |   1.035246   .1759224     0.20   0.838     .7419872    1.444411
+Obese II..)  |    1.00957   .2085672     0.05   0.963     .6734206    1.513513
+             |
+smoke_nomiss |
+     Former  |   .7376214   .2806465    -0.80   0.424     .3499231    1.554871
+    Current  |   .9814465   .1424697    -0.13   0.897     .7384204    1.304457
+             |
+         imd |
+          4  |   .9354488   .1134385    -0.55   0.582     .7375609     1.18643
+5 most de..  |   .8782822   .1415651    -0.81   0.421     .6403743    1.204576
+             |
+tot_adults~h |
+          2  |   2.208337   2.556556     0.68   0.494     .2283723     21.3544
+          3  |   2.915852   2.980384     1.05   0.295     .3933016    21.61749
+             |
+   ethnicity |
+Asian or ..  |    1.23083   .1764814     1.45   0.147     .9292855    1.630222
+      Other  |   1.147833   .1725964     0.92   0.359     .8548426    1.541245
+             |
+1.htdiag_o~p |   1.044501   .1043943     0.44   0.663     .8586861    1.270526
+1.~y_disease |   1.047796    .123193     0.40   0.691      .832143    1.319336
+    1.asthma |   .9317187    .153907    -0.43   0.669     .6740284    1.287928
+1.~c_disease |   .9735847    .106028    -0.25   0.806     .7864549     1.20524
+             |
+     diabcat |
+T1DM, con..  |   .6867117   .2424398    -1.06   0.287     .3437656    1.371786
+T1DM, unc..  |   1.809918   .9047681     1.19   0.235     .6794347    4.821364
+T2DM, con..  |   1.228851   .1370969     1.85   0.065     .9874943    1.529197
+T2DM, unc..  |   1.183501   .2546688     0.78   0.434     .7762556    1.804398
+Diabetes,..  |   5.46e-15   2.64e-15   -67.85   0.000     2.11e-15    1.41e-14
+             |
+cancer_exh~t |
+  Last year  |    .844711   .6062181    -0.24   0.814     .2069341    3.448135
+2-5 years..  |   .8452156   .3292802    -0.43   0.666     .3938721     1.81376
+   5+ years  |   .9959416   .1216618    -0.03   0.973     .7838865    1.265361
+             |
+cancer_hae~t |
+  Last year  |   4.70e-15   1.31e-15  -118.42   0.000     2.72e-15    8.11e-15
+2-5 years..  |   1.093484   .3689034     0.26   0.791      .564478    2.118255
+   5+ years  |   .9591077   .1153886    -0.35   0.729     .7576364    1.214154
+             |
+1.~r_disease |   1.174249    .127449     1.48   0.139     .9492351    1.452603
+1.stroke_d~a |   .9378119   .1084897    -0.56   0.579     .7475589    1.176484
+1.other_ne~o |   1.077403   .1216371     0.66   0.509     .8635331    1.344242
+             |
+reduced_ki~t |
+Stage 3a/..  |   3.88e-15   1.09e-15  -118.35   0.000     2.24e-15    6.72e-15
+      1.esrd |   1.049616   .0959286     0.53   0.596     .8774765    1.255524
+1.other_tr~t |   1.166223   .1265602     1.42   0.156     .9427748    1.442631
+  1.asplenia |   1.229798    .131627     1.93   0.053     .9970765    1.516838
+1.ra_sle_p~s |   .9529423   .1056773    -0.43   0.664      .766782    1.184299
+1.other_im~o |   1.085946   .1181874     0.76   0.449     .8773422     1.34415
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_0_timeperiod1_1stVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_0_timeperiod1_1stVaccCensor.ster saved
+(8,073 missing values generated)
+(4,423 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+        206  observations end on or before enter()
+------------------------------------------------------------------------------
+     15,911  observations remaining, representing
+     15,911  subjects
+      1,900  failures in single-failure-per-subject data
+  1,544,102  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(15,456 observations (episodes) created)
+(cat_time: 15456 changes made)
+(covidadmission: 15456 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,911       50.73       50.73
+          1 |      8,009       25.53       76.26
+          2 |      3,988       12.71       88.97
+          3 |      3,459       11.03      100.00
+------------+-----------------------------------
+      Total |     31,367      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,565      1,346 |    15,911 
+         1 |     7,524        485 |     8,009 
+         2 |     3,937         51 |     3,988 
+         3 |     3,441         18 |     3,459 
+-----------+----------------------+----------
+     Total |    29,467      1,900 |    31,367 
+(27,585 observations deleted)
+   1:      2.13 /        1 =       2.1260
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        3,988             Number of obs    =       3,988
+No. of failures      =           51
+Time at risk         =        44841
+                                                Wald chi2(41)    =    50472.08
+Log pseudolikelihood =   -285.68917             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 885 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   1.01e+09   1.05e+09    19.88   0.000     1.30e+08    7.77e+09
+ only 12-18  |   1.38e+09          .        .       .            .           .
+      mixed  |   1.70e+09   1.54e+09    23.46   0.000     2.87e+08    1.00e+10
+             |
+        age1 |   .9932507   .0502965    -0.13   0.894     .8994054    1.096888
+        age2 |   1.105778   .1776537     0.63   0.531     .8070761    1.515031
+        age3 |   .6811705   .3139302    -0.83   0.405     .2760347    1.680924
+      1.male |   1.465439   .4123889     1.36   0.174     .8441729    2.543925
+             |
+   obese4cat |
+Obese I ..)  |   1.168529   .4695817     0.39   0.698     .5315913    2.568626
+Obese II..)  |     1.0791   .5736414     0.14   0.886     .3806881     3.05882
+Obese II..)  |   1.107433   .6431063     0.18   0.861     .3548211    3.456412
+             |
+smoke_nomiss |
+     Former  |   9.94e-17   2.97e-17  -123.33   0.000     5.53e-17    1.78e-16
+    Current  |   1.286939   .5070778     0.64   0.522     .5945228    2.785782
+             |
+         imd |
+          4  |   .3944198   .1898372    -1.93   0.053     .1535568    1.013091
+5 most de..  |   .6570729   .3588806    -0.77   0.442     .2252702    1.916565
+             |
+tot_adults~h |
+          2  |   .1450908   .1845772    -1.52   0.129      .011989    1.755881
+          3  |   2.98e+14   3.74e+14    26.52   0.000     2.53e+13    3.50e+15
+             |
+   ethnicity |
+Asian or ..  |   1.394788   .6018602     0.77   0.441     .5986996    3.249431
+      Other  |   1.229939   .5421499     0.47   0.639     .5184166     2.91802
+             |
+1.htdiag_o~p |    .796606   .2391703    -0.76   0.449     .4422641    1.434846
+1.~y_disease |   1.015758   .3753818     0.04   0.966     .4922907    2.095843
+    1.asthma |   .9321192   .4953959    -0.13   0.895      .328913    2.641568
+1.~c_disease |   .9393319   .3569354    -0.16   0.869     .4460384    1.978181
+             |
+     diabcat |
+T1DM, con..  |   .9593803   .9538159    -0.04   0.967     .1366867    6.733725
+T1DM, unc..  |   3.296001   3.350921     1.17   0.241     .4493684    24.17531
+T2DM, con..  |   .7025672   .3211955    -0.77   0.440     .2867745    1.721215
+T2DM, unc..  |   .9132649   .6587714    -0.13   0.900     .2221232    3.754911
+Diabetes,..  |   8.79e-17   7.98e-17   -40.73   0.000     1.48e-17    5.20e-16
+             |
+cancer_exh~t |
+  Last year  |   1.50e-16   6.65e-17   -82.45   0.000     6.33e-17    3.58e-16
+2-5 years..  |   1.13e-16   2.86e-17  -145.77   0.000     6.92e-17    1.86e-16
+   5+ years  |   1.012012   .3565027     0.03   0.973     .5073781     2.01855
+             |
+cancer_hae~t |
+  Last year  |   9.626205    10.8137     2.02   0.044     1.064753     87.0285
+2-5 years..  |   1.584992   1.631193     0.45   0.654     .2108696    11.91352
+   5+ years  |   1.326532   .4684586     0.80   0.424      .663926    2.650425
+             |
+1.~r_disease |   .6855909   .2828653    -0.91   0.360     .3054015    1.539072
+1.stroke_d~a |   .7046977    .275654    -0.89   0.371      .327372    1.516926
+1.other_ne~o |   .6578456   .2714434    -1.01   0.310     .2930199    1.476899
+             |
+reduced_ki~t |
+Stage 3a/..  |   1.04e-16   7.08e-17   -53.95   0.000     2.72e-17    3.95e-16
+      1.esrd |   1.013618   .3106753     0.04   0.965     .5558782    1.848284
+1.other_tr~t |   .9955401   .3701447    -0.01   0.990     .4803741    2.063184
+  1.asplenia |   2.001065   .6220013     2.23   0.026     1.088123    3.679972
+1.ra_sle_p~s |    .828709   .2965474    -0.53   0.600      .410966    1.671084
+1.other_im~o |   1.071566   .3977999     0.19   0.852     .5176374     2.21826
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_0_timeperiod2_1stVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_0_timeperiod2_1stVaccCensor.ster saved
+(8,073 missing values generated)
+(4,423 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,117  total observations
+        206  observations end on or before enter()
+------------------------------------------------------------------------------
+     15,911  observations remaining, representing
+     15,911  subjects
+      1,900  failures in single-failure-per-subject data
+  1,544,102  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(15,456 observations (episodes) created)
+(cat_time: 15456 changes made)
+(covidadmission: 15456 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     15,911       50.73       50.73
+          1 |      8,009       25.53       76.26
+          2 |      3,988       12.71       88.97
+          3 |      3,459       11.03      100.00
+------------+-----------------------------------
+      Total |     31,367      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    14,565      1,346 |    15,911 
+         1 |     7,524        485 |     8,009 
+         2 |     3,937         51 |     3,988 
+         3 |     3,441         18 |     3,459 
+-----------+----------------------+----------
+     Total |    29,467      1,900 |    31,367 
+(28,114 observations deleted)
+   1:      1.58 /        1 =       1.5760
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        3,459             Number of obs    =       3,459
+No. of failures      =           18
+Time at risk         =        16829
+                                                Wald chi2(41)    =    27708.29
+Log pseudolikelihood =   -83.337062             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 857 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   .0074238   .0237605    -1.53   0.126      .000014    3.935143
+ only 12-18  |    .009106   .0262807    -1.63   0.104     .0000318     2.60595
+      mixed  |   1.07e+15   3.41e+15    10.85   0.000     2.06e+12    5.55e+17
+             |
+        age1 |   .9639751   .0839948    -0.42   0.674     .8126385    1.143495
+        age2 |   1.020912    .307758     0.07   0.945     .5654445    1.843259
+        age3 |   .8880638   .7731651    -0.14   0.892     .1612026    4.892336
+      1.male |   .5439612   .3232348    -1.02   0.306     .1697319    1.743301
+             |
+   obese4cat |
+Obese I ..)  |   .4042253   .4208996    -0.87   0.384     .0525182    3.111266
+Obese II..)  |   1.741292   1.350139     0.72   0.474     .3809596     7.95911
+Obese II..)  |   .7935806   .9399259    -0.20   0.845     .0778786    8.086562
+             |
+smoke_nomiss |
+     Former  |   7.65e-18   5.75e-18   -52.49   0.000     1.76e-18    3.33e-17
+    Current  |   .9123495   .7287161    -0.11   0.909     .1906714     4.36553
+             |
+         imd |
+          4  |   .7205971   .4267863    -0.55   0.580     .2257113     2.30055
+5 most de..  |   1.006649   .7983177     0.01   0.993     .2127341    4.763421
+             |
+tot_adults~h |
+          2  |    .040101   .1623041    -0.79   0.427     .0000144    111.7624
+          3  |   1.080564   6.292811     0.01   0.989     .0000119    97890.33
+             |
+   ethnicity |
+Asian or ..  |   3.106696   1.900879     1.85   0.064     .9364358    10.30669
+      Other  |   1.11e-17   3.94e-18  -109.55   0.000     5.50e-18    2.22e-17
+             |
+1.htdiag_o~p |   1.016793   .5524715     0.03   0.976     .3505373    2.949378
+1.~y_disease |   .3274686   .3017479    -1.21   0.226     .0538053    1.993032
+    1.asthma |   1.464019   1.115404     0.50   0.617      .328878    6.517162
+1.~c_disease |   2.117142   1.150948     1.38   0.168     .7294723    6.144565
+             |
+     diabcat |
+T1DM, con..  |   8.47e-18   3.86e-18   -86.20   0.000     3.46e-18    2.07e-17
+T1DM, unc..  |   1.91e-17   1.64e-17   -44.97   0.000     3.57e-18    1.02e-16
+T2DM, con..  |   .3010463   .3126167    -1.16   0.248     .0393293    2.304358
+T2DM, unc..  |   1.23e-17   5.47e-18   -87.23   0.000     5.11e-18    2.94e-17
+Diabetes,..  |          1  (omitted)
+             |
+cancer_exh~t |
+  Last year  |   8.92e-18   1.07e-17   -32.68   0.000     8.47e-19    9.40e-17
+2-5 years..  |   1.01e-17   8.36e-18   -47.32   0.000     2.00e-18    5.11e-17
+   5+ years  |   .4355102   .3031572    -1.19   0.232      .111296    1.704186
+             |
+cancer_hae~t |
+  Last year  |   2.85e-18   3.18e-18   -36.23   0.000     3.20e-19    2.54e-17
+2-5 years..  |   1.25e-17   5.98e-18   -81.08   0.000     4.86e-18    3.19e-17
+   5+ years  |   .2450799   .2333865    -1.48   0.140      .037907    1.584514
+             |
+1.~r_disease |   1.779122    .816768     1.25   0.210     .7234888    4.375014
+1.stroke_d~a |   1.393748   .7742834     0.60   0.550     .4691455     4.14058
+1.other_ne~o |   .2065811   .2190757    -1.49   0.137     .0258468    1.651107
+             |
+reduced_ki~t |
+Stage 3a/..  |   7.96e-17   1.73e-16   -17.10   0.000     1.14e-18    5.58e-15
+      1.esrd |   1.241176   .6799689     0.39   0.693     .4241396    3.632099
+1.other_tr~t |   1.557803   .7935939     0.87   0.384     .5739624    4.228062
+  1.asplenia |    1.43955   .7844957     0.67   0.504     .4947168    4.188868
+1.ra_sle_p~s |   .7027441   .3986644    -0.62   0.534     .2311604    2.136392
+1.other_im~o |    3.22868   1.804046     2.10   0.036     1.079967    9.652491
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_0_timeperiod3_1stVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_0_timeperiod3_1stVaccCensor.ster saved
+(2,260 missing values generated)
+(1,285 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+         57  observations end on or before enter()
+------------------------------------------------------------------------------
+      4,479  observations remaining, representing
+      4,479  subjects
+        510  failures in single-failure-per-subject data
+    431,075  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(4,256 observations (episodes) created)
+(cat_time: 4256 changes made)
+(covidadmission: 4256 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,479       51.28       51.28
+          1 |      2,239       25.63       76.91
+          2 |      1,084       12.41       89.32
+          3 |        933       10.68      100.00
+------------+-----------------------------------
+      Total |      8,735      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     4,135        344 |     4,479 
+         1 |     2,094        145 |     2,239 
+         2 |     1,068         16 |     1,084 
+         3 |       928          5 |       933 
+-----------+----------------------+----------
+     Total |     8,225        510 |     8,735 
+(4,313 observations deleted)
+   1:      0.78 /        1 =       0.7840
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        4,479             Number of obs    =       4,479
+No. of failures      =          344
+Time at risk         =       302823
+                                                Wald chi2(41)    =       26.59
+Log pseudolikelihood =    -1987.546             Prob > chi2      =      0.9602
+
+                         (Std. Err. adjusted for 918 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   1.295609   .5283185     0.64   0.525      .582605    2.881202
+ only 12-18  |   .8103501   .4916963    -0.35   0.729     .2467112    2.661684
+      mixed  |   1.071186   .4129301     0.18   0.858     .5031948    2.280307
+             |
+        age1 |   .9579965   .0497582    -0.83   0.409     .8652719    1.060658
+        age2 |   1.380375   .3894529     1.14   0.253     .7940409    2.399669
+        age3 |   .4674028   .2842548    -1.25   0.211     .1419143    1.539418
+      1.male |   1.043071   .1117673     0.39   0.694     .8454851    1.286833
+             |
+   obese4cat |
+Obese I ..)  |   .9658205    .150435    -0.22   0.823     .7117285    1.310625
+Obese II..)  |   .8690413   .1755703    -0.69   0.487     .5848901    1.291239
+Obese II..)  |   .8271554   .2062067    -0.76   0.447     .5074412    1.348306
+             |
+smoke_nomiss |
+     Former  |    1.02937   .4263129     0.07   0.944     .4571375    2.317907
+    Current  |   1.044748   .1754909     0.26   0.794     .7516769    1.452083
+             |
+         imd |
+          4  |   .9188912   .1268505    -0.61   0.540     .7010645    1.204399
+5 most de..  |   1.081639   .1984289     0.43   0.669     .7549662    1.549662
+             |
+tot_adults~h |
+          2  |   .6442139   .6199752    -0.46   0.648     .0976911      4.2482
+          3  |   .6474648    .433103    -0.65   0.516     .1745136    2.402166
+             |
+   ethnicity |
+Asian or ..  |   .8006816   .1589822    -1.12   0.263     .5425584    1.181607
+      Other  |   .7788101   .1573586    -1.24   0.216     .5241389    1.157222
+             |
+1.htdiag_o~p |   1.031728   .1204712     0.27   0.789     .8206789     1.29705
+1.~y_disease |   .8906023   .1161408    -0.89   0.374     .6897332     1.14997
+    1.asthma |   .9775331   .1977742    -0.11   0.911     .6575316     1.45327
+1.~c_disease |   1.157242    .152945     1.10   0.269     .8931543    1.499415
+             |
+     diabcat |
+T1DM, con..  |   1.225577   .3767782     0.66   0.508     .6708979    2.238849
+T1DM, unc..  |   1.405945   .8502022     0.56   0.573     .4297643    4.599455
+T2DM, con..  |   1.158705   .1677899     1.02   0.309     .8723927    1.538983
+T2DM, unc..  |   .9950915   .3065337    -0.02   0.987     .5440691    1.820003
+             |
+cancer_exh~t |
+  Last year  |   1.354512   1.006327     0.41   0.683     .3157819    5.810028
+2-5 years..  |   .8583919    .388077    -0.34   0.736     .3538827     2.08215
+   5+ years  |   1.041966   .1526516     0.28   0.779     .7818969    1.388537
+             |
+cancer_hae~t |
+  Last year  |   1.069325   1.066038     0.07   0.946     .1515393    7.545612
+2-5 years..  |   .8011698   .3643294    -0.49   0.626     .3285817    1.953465
+   5+ years  |   .9004475   .1264603    -0.75   0.455     .6837766    1.185776
+             |
+1.~r_disease |   .9421538   .1219855    -0.46   0.645     .7309915    1.214315
+1.stroke_d~a |   .9981972   .1388289    -0.01   0.990     .7600315    1.310995
+1.other_ne~o |    1.06464   .1415468     0.47   0.638     .8204139    1.381568
+             |
+reduced_ki~t |
+Stage 3a/..  |   1.120396   .3077243     0.41   0.679     .6540083    1.919375
+      1.esrd |   .9481838   .1054625    -0.48   0.632     .7624598    1.179147
+1.other_tr~t |   .9733134   .1374575    -0.19   0.848     .7379732    1.283704
+  1.asplenia |   1.008361   .1374424     0.06   0.951     .7719603    1.317156
+1.ra_sle_p~s |   1.137265   .1471451     0.99   0.320     .8825288    1.465529
+1.other_im~o |   .7502038   .1085241    -1.99   0.047     .5649953    .9961247
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_1_timeperiod0_1stVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_1_timeperiod0_1stVaccCensor.ster saved
+(2,260 missing values generated)
+(1,285 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+         57  observations end on or before enter()
+------------------------------------------------------------------------------
+      4,479  observations remaining, representing
+      4,479  subjects
+        510  failures in single-failure-per-subject data
+    431,075  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(4,256 observations (episodes) created)
+(cat_time: 4256 changes made)
+(covidadmission: 4256 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,479       51.28       51.28
+          1 |      2,239       25.63       76.91
+          2 |      1,084       12.41       89.32
+          3 |        933       10.68      100.00
+------------+-----------------------------------
+      Total |      8,735      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     4,135        344 |     4,479 
+         1 |     2,094        145 |     2,239 
+         2 |     1,068         16 |     1,084 
+         3 |       928          5 |       933 
+-----------+----------------------+----------
+     Total |     8,225        510 |     8,735 
+(6,553 observations deleted)
+   1:      0.41 /        1 =       0.4110
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        2,239             Number of obs    =       2,239
+No. of failures      =          145
+Time at risk         =       111582
+                                                Wald chi2(41)    =       34.92
+Log pseudolikelihood =   -729.37192             Prob > chi2      =      0.7369
+
+                         (Std. Err. adjusted for 765 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   1.466086   1.486014     0.38   0.706     .2010888    10.68885
+ only 12-18  |   .4451349    .621032    -0.58   0.562     .0289024    6.855663
+      mixed  |   1.695584   1.683457     0.53   0.595     .2422176    11.86951
+             |
+        age1 |   .9575981   .0686454    -0.60   0.546     .8320796    1.102051
+        age2 |   1.304564   .4855129     0.71   0.475     .6290401    2.705532
+        age3 |   .5159222    .406983    -0.84   0.401     .1099304    2.421312
+      1.male |   1.089359   .1911753     0.49   0.626     .7723084    1.536566
+             |
+   obese4cat |
+Obese I ..)  |   1.341014   .3070367     1.28   0.200     .8561369    2.100502
+Obese II..)  |   1.339536   .3802428     1.03   0.303     .7679468    2.336565
+Obese II..)  |   1.055316   .5203571     0.11   0.913     .4014858    2.773924
+             |
+smoke_nomiss |
+     Former  |   .7060712   .4985417    -0.49   0.622      .176943    2.817498
+    Current  |   1.297802   .3202236     1.06   0.291     .8001662    2.104924
+             |
+         imd |
+          4  |   1.232685   .2498672     1.03   0.302     .8285379    1.833969
+5 most de..  |   .9078363   .2793561    -0.31   0.753     .4966826    1.659343
+             |
+tot_adults~h |
+          2  |   .8090023   1.290057    -0.13   0.894     .0355304     18.4204
+          3  |   .5009547   .8383303    -0.41   0.680     .0188513    13.31235
+             |
+   ethnicity |
+Asian or ..  |   .9415764   .2688675    -0.21   0.833     .5380154    1.647845
+      Other  |   1.418066   .3596561     1.38   0.168     .8626035    2.331213
+             |
+1.htdiag_o~p |   1.094453   .1913505     0.52   0.606     .7769196    1.541766
+1.~y_disease |   1.098127    .225734     0.46   0.649     .7339683    1.642963
+    1.asthma |   1.445694   .4084308     1.30   0.192      .830996    2.515092
+1.~c_disease |   1.054284   .2333921     0.24   0.811     .6831609    1.627018
+             |
+     diabcat |
+T1DM, con..  |   1.424963   .6587317     0.77   0.444     .5758516    3.526119
+T1DM, unc..  |    3.65091   2.310274     2.05   0.041     1.056248    12.61933
+T2DM, con..  |   .9688977   .2284087    -0.13   0.893     .6104006    1.537945
+T2DM, unc..  |   1.504967   .5318624     1.16   0.247       .75285    3.008469
+             |
+cancer_exh~t |
+  Last year  |   3.422679   2.258616     1.86   0.062      .938989     12.4759
+2-5 years..  |   1.275607   .7778577     0.40   0.690     .3860637    4.214778
+   5+ years  |   1.013081   .2251513     0.06   0.953     .6553446    1.566097
+             |
+cancer_hae~t |
+  Last year  |   5.579664   6.938062     1.38   0.167     .4877274    63.83208
+2-5 years..  |   1.731692   .9402036     1.01   0.312     .5974755    5.019048
+   5+ years  |   1.183427   .2573473     0.77   0.439     .7727513    1.812355
+             |
+1.~r_disease |   1.161316   .2320157     0.75   0.454     .7850396    1.717945
+1.stroke_d~a |   1.166715   .2436174     0.74   0.460     .7748691    1.756713
+1.other_ne~o |   .6934523   .1563812    -1.62   0.105      .445719    1.078877
+             |
+reduced_ki~t |
+Stage 3a/..  |   1.815675   .7182418     1.51   0.132     .8362211    3.942349
+      1.esrd |   1.111807   .2030796     0.58   0.562     .7772332    1.590404
+1.other_tr~t |    .874381   .1797679    -0.65   0.514     .5843841    1.308287
+  1.asplenia |   .8295699   .1883668    -0.82   0.411     .5315871    1.294588
+1.ra_sle_p~s |   .8856801   .1996024    -0.54   0.590     .5694358    1.377555
+1.other_im~o |   .9919002   .2153689    -0.04   0.970     .6481098    1.518054
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_1_timeperiod1_1stVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_1_timeperiod1_1stVaccCensor.ster saved
+(2,260 missing values generated)
+(1,285 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+         57  observations end on or before enter()
+------------------------------------------------------------------------------
+      4,479  observations remaining, representing
+      4,479  subjects
+        510  failures in single-failure-per-subject data
+    431,075  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(4,256 observations (episodes) created)
+(cat_time: 4256 changes made)
+(covidadmission: 4256 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,479       51.28       51.28
+          1 |      2,239       25.63       76.91
+          2 |      1,084       12.41       89.32
+          3 |        933       10.68      100.00
+------------+-----------------------------------
+      Total |      8,735      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     4,135        344 |     4,479 
+         1 |     2,094        145 |     2,239 
+         2 |     1,068         16 |     1,084 
+         3 |       928          5 |       933 
+-----------+----------------------+----------
+     Total |     8,225        510 |     8,735 
+(7,708 observations deleted)
+   1:      0.63 /        1 =       0.6330
+
+-------------------------------------------------------------------------------
+active results
+-------------------------------------------------------------------------------
+
+Stratified Cox regr. -- no ties
+
+No. of subjects      =        1,084             Number of obs    =       1,084
+No. of failures      =           16
+Time at risk         =        12135
+                                                Wald chi2(29)    =     2109.16
+Log pseudolikelihood =   -49.049056             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 582 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   7.57e+08          .        .       .            .           .
+ only 12-18  |   4.08e-10          .        .       .            .           .
+      mixed  |   2.00e+09   3.06e+09    13.98   0.000     9.92e+07    4.03e+10
+             |
+        age1 |   1.834932   .6817695     1.63   0.102     .8858415     3.80088
+        age2 |   .0562842   .0951694    -1.70   0.089      .002047    1.547605
+        age3 |   355.1403   1231.788     1.69   0.090     .3963207    318238.9
+      1.male |   1.331722   .6729283     0.57   0.571     .4946469     3.58535
+             |
+   obese4cat |
+Obese I ..)  |   .5608874   .5874417    -0.55   0.581     .0720071    4.368939
+Obese II..)  |   1.07e-20          .        .       .            .           .
+Obese II..)  |   1.80e-20          .        .       .            .           .
+             |
+smoke_nomiss |
+     Former  |   3.183548   5.178549     0.71   0.477     .1313096    77.18386
+    Current  |   2.589175   1.633393     1.51   0.132     .7519296    8.915502
+             |
+         imd |
+          4  |   .7585598   .7657674    -0.27   0.784     .1048819    5.486296
+5 most de..  |   3.409763   2.714077     1.54   0.123     .7164588    16.22771
+             |
+tot_adults~h |
+          2  |    .001689          .        .       .            .           .
+          3  |   189391.5          .        .       .            .           .
+             |
+   ethnicity |
+Asian or ..  |   1.528267   1.438269     0.45   0.652     .2416152    9.666613
+      Other  |   1.269467   1.195486     0.25   0.800      .200459    8.039287
+             |
+1.htdiag_o~p |   .8101869    .454684    -0.38   0.708     .2697015    2.433812
+1.~y_disease |   1.44e-20          .        .       .            .           .
+    1.asthma |   1.121652   1.120008     0.11   0.908     .1584544    7.939842
+1.~c_disease |   .1743361   .2076788    -1.47   0.143     .0168806     1.80047
+             |
+     diabcat |
+T1DM, con..  |   5.350836    5.71988     1.57   0.117     .6584353    43.48406
+T1DM, unc..  |   1.57e-18          .        .       .            .           .
+T2DM, con..  |   .6186775    .661627    -0.45   0.653     .0760626    5.032197
+T2DM, unc..  |    6.03519   7.864966     1.38   0.168      .469265    77.61822
+             |
+cancer_exh~t |
+  Last year  |   4.94e-18          .        .       .            .           .
+2-5 years..  |   9.08e-20          .        .       .            .           .
+   5+ years  |   1.603215   .9501335     0.80   0.426     .5018029    5.122124
+             |
+cancer_hae~t |
+  Last year  |   5.328812          .        .       .            .           .
+2-5 years..  |   8.233488   6.334077     2.74   0.006     1.822841    37.18937
+   5+ years  |   1.507979   1.001649     0.62   0.536     .4102035    5.543591
+             |
+1.~r_disease |   3.926734   2.226168     2.41   0.016     1.292597    11.92888
+1.stroke_d~a |   .3186631   .3050827    -1.19   0.232     .0487984    2.080932
+1.other_ne~o |   .1746166   .1680238    -1.81   0.070     .0264863    1.151196
+             |
+reduced_ki~t |
+Stage 3a/..  |   3.70e-19          .        .       .            .           .
+      1.esrd |   .4391077   .2626294    -1.38   0.169     .1359782    1.417989
+1.other_tr~t |   1.437527   .9393678     0.56   0.579     .3993825    5.174197
+  1.asplenia |   .3489945   .2114197    -1.74   0.082     .1064544    1.144125
+1.ra_sle_p~s |   .6869455   .6136186    -0.42   0.674     .1192836    3.956067
+1.other_im~o |   .1148935   .2101069    -1.18   0.237     .0031893    4.139002
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYA
+> DJMODEL_ageband_1_timeperiod2_1stVaccCensor.ster not found)
+file ./output/an_multivariate_cox_models_covidadmission_kids_cat4_FULLYADJMODEL
+> _ageband_1_timeperiod2_1stVaccCensor.ster saved
+(2,260 missing values generated)
+(1,285 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,536  total observations
+         57  observations end on or before enter()
+------------------------------------------------------------------------------
+      4,479  observations remaining, representing
+      4,479  subjects
+        510  failures in single-failure-per-subject data
+    431,075  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       178
+(4,256 observations (episodes) created)
+(cat_time: 4256 changes made)
+(covidadmission: 4256 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,479       51.28       51.28
+          1 |      2,239       25.63       76.91
+          2 |      1,084       12.41       89.32
+          3 |        933       10.68      100.00
+------------+-----------------------------------
+      Total |      8,735      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     4,135        344 |     4,479 
+         1 |     2,094        145 |     2,239 
+         2 |     1,068         16 |     1,084 
+         3 |       928          5 |       933 
+-----------+----------------------+----------
+     Total |     8,225        510 |     8,735 
+(7,859 observations deleted)
+   1:      0.17 /        1 =       0.1730
+WARNING AGE SPLINE MODEL DID NOT FIT (OUTCOME covidadmission)
+
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/07b_an_multivariable_cox_models_covidadmission_1st
+> VaccCensor.log
+  log type:  text
+ closed on:  14 Sep 2021, 10:57:24
+-------------------------------------------------------------------------------
