@@ -11,6 +11,7 @@
   * output/16092021
     * [output/16092021/15_an_tablecontents_HRtable_all_outcomes_ANALYSES.txt](output/16092021/15_an_tablecontents_HRtable_all_outcomes_ANALYSES.txt)
     * [output/16092021/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_SENSE.txt](output/16092021/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_SENSE.txt)
+    * [output/16092021/an_tablecontents_HRtable_covid_tpp_prob.txt](output/16092021/an_tablecontents_HRtable_covid_tpp_prob.txt)
   * output/20210818
     * [output/20210818/01_histogram_outcomes.svg](output/20210818/01_histogram_outcomes.svg)
     * [output/20210818/01_histogram_vaccinations.svg](output/20210818/01_histogram_vaccinations.svg)
