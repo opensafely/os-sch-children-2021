@@ -3,7 +3,7 @@
        log:  /workspace/logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_
 > SENSE.log
   log type:  text
- opened on:  24 Aug 2021, 11:58:03
+ opened on:  28 Oct 2021, 13:57:30
 
 . 
 . 
@@ -15,20 +15,20 @@
 
 . prog define outputHRsforvar
   1. syntax, variable(string) min(real) max(real)
-  2. file write tablecontents_all_outcomes ("period") _tab ("age") _tab ("expos
-> ure") _tab ("exposure level") ///
+  2. file write tablecontents_all_outcomes ("sense") _tab ("period") _tab ("age
+> ") _tab ("exposure") _tab ("exposure level") ///
 > _tab ("outcome") _tab ("HR")  _tab ("lci")  _tab ("uci")  _n
-  3. foreach period in 0 1 2  {
-  4. forvalues x=0/1 {
+  3. foreach period in 0 1 2 3 4 {
+  4. foreach x in 0 1 {
   5. foreach outcome in  covid_tpp_prob covidadmission covid_death  {
   6. forvalues i=1/3 {
-  7. foreach sense in 11thJuneCensor 2ndVaccCensor {
+  7. foreach sense in 11thJuneCensor 1stVaccCensor 2ndVaccCensor {
   8. local endwith "_tab"
   9. 
 .         *put the varname and condition to left so that alignment can be check
 > ed vs shell
-.         file write tablecontents_all_outcomes ("`period'") _tab ("`x'") _tab 
-> ("`variable'") _tab ("`i'") _tab ("`outcome'") _tab
+.         file write tablecontents_all_outcomes ("`sense'") _tab ("`period'") _
+> tab ("`x'") _tab ("`variable'") _tab ("`i'") _tab ("`outcome'") _tab
  10. 
 .         foreach modeltype of any plus_ethadj {
  11.         
@@ -41,9 +41,9 @@
 .                 *1) GET THE RIGHT ESTIMATES INTO MEMORY
 .         
 .                 if "`modeltype'"=="plus_ethadj" {
- 14.                                 cap estimates use ./output/an_multivariate
-> _cox_models_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period'
-> _`sense'
+ 14.                                  estimates use ./output/an_multivariate_co
+> x_models_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period'_`s
+> ense'
  15.                                 if _rc!=0 local noestimatesflag 1
  16.                                 }
  17.                 
@@ -65,8 +65,9 @@
  24.                                 local hr = r(estimate)
  25.                                 local lb = r(lb)
  26.                                 local ub = r(ub)
- 27.                                 post HRestimates_all_outcomes ("`period'")
->  ("`x'") ("`outcome'") ("`variable'") (`i') (`hr') (`lb') (`ub') 
+ 27.                                 post HRestimates_all_outcomes  ("`sense'")
+>  ("`period'") ("`x'") ("`outcome'") ("`variable'") (`i') (`hr') (`lb') (`ub')
+>  
  28.                                 }
  29.                 }       
  30.                 } /*min adj, full adj*/
@@ -94,8 +95,8 @@
 
 . cap postutil clear
 
-. postfile HRestimates_all_outcomes str10 period str10 x str10 outcome str27 va
-> riable i hr lci uci using `HRestimates_all_outcomes'
+. postfile HRestimates_all_outcomes str10 sense str10 period str10 x str10 outc
+> ome str27 variable i hr lci uci using `HRestimates_all_outcomes'
 
 . 
 . 
@@ -123,5 +124,5 @@ file ./output/HRestimates_all_outcomes_SENSE.dta saved
        log:  /workspace/logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_
 > SENSE.log
   log type:  text
- closed on:  24 Aug 2021, 11:58:04
+ closed on:  28 Oct 2021, 13:57:40
 -------------------------------------------------------------------------------
