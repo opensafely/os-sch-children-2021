@@ -140,10 +140,10 @@ di d(01may2021)
 *22401
 di d(01july2021)
 *22462
-di d(08mar2021) /*school opening*/
-*22347
-di d(16may2021)
-*22416
+di d(01sept2021) 
+*22524
+di d(22oct2021) 
+*22575
 
 gen agegp=0 if age<=65
 replace agegp=1 if age>65
@@ -152,10 +152,10 @@ tab agegp, miss
 foreach age in 0 1 {
 foreach outcome of any covid_tpp_prob covidadmission covid_death    {
 summ  `outcome' if agegp==`age', format d 
-summ patient_id if `outcome'==1 & date_`outcome'<=22500 & agegp==`age'
+summ patient_id if `outcome'==1 & date_`outcome'<=22576 & agegp==`age'
 local total_`outcome'=`r(N)'
-hist date_`outcome' if date_`outcome'<=22500 & agegp==`age', saving(output/`outcome'_age`age', replace) ///
-xlabel(22281 22340 22401 22462,labsize(tiny))  xtitle(, size(vsmall)) ///
+hist date_`outcome' if date_`outcome'<=22576 & agegp==`age', saving(output/`outcome'_age`age', replace) ///
+xlabel(22281 22340 22401 22462 22524,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq  ///
 ylabel(0 5000,labsize(tiny))  ytitle("Number", size(vsmall)) ///
 title("N=`total_`outcome''", size(vsmall)) width(5) yline(5, lcolor(black%100)  lwidth(thick)) color(black%100)
@@ -182,10 +182,10 @@ summ has_12_m
 foreach age in 0 1 {
 foreach vacc of any covid_vacc_date covid_vacc_second_dose_date   {
 summ  `vacc'  if agegp==`age', format d 
-summ patient_id if `vacc'!=. & `vacc'<=22500 & agegp==`age'
+summ patient_id if `vacc'!=. & `vacc'<=22576 & agegp==`age'
 local total=`r(N)' 
-hist `vacc' if `vacc'<=22500  & agegp==`age', saving(output/`vacc'_age`age', replace) ///
-xlabel(22281 22340 22401 22462,labsize(tiny))  xtitle(, size(vsmall)) ///
+hist `vacc' if `vacc'<=22576  & agegp==`age', saving(output/`vacc'_age`age', replace) ///
+xlabel(22281 22340 22401 22462 22524,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq ylabel(0 500000,labsize(tiny)) ///
 ytitle("Number", size(vsmall))   ///
 title("N=`total'", size(vsmall))  yline(5, lcolor(black%100)  lwidth(thick)) color(black%100)

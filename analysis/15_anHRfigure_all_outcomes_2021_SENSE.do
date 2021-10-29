@@ -25,7 +25,7 @@ prog define outputHRsforvar
 syntax, variable(string) min(real) max(real)
 file write tablecontents_all_outcomes ("sense") _tab ("period") _tab ("age") _tab ("exposure") _tab ("exposure level") ///
 _tab ("outcome") _tab ("HR")  _tab ("lci")  _tab ("uci")  _n
-foreach period in 0 1 2  {
+foreach period in 0 1 2 3 4 {
 foreach x in 0 1 {
 foreach outcome in  covid_tpp_prob covidadmission covid_death  {
 forvalues i=1/3 {
