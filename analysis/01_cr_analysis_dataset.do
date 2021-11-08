@@ -22,7 +22,7 @@ global tempdir    "tempdata"
 global indexdate = "20/12/2020"
 
 *Censor dates
-global study_end_censor   	= "22/10/2021"
+global study_end_censor   	= "14/10/2021"
 
 * Open a log file
 cap log close
