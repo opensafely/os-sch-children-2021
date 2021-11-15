@@ -8,6 +8,7 @@
   * [output/11_an_int_tab_contents_HRtable_covid_tpp_prob.txt](output/11_an_int_tab_contents_HRtable_covid_tpp_prob.txt)
   * [output/11_an_int_tab_contents_HRtable_covidadmission.txt](output/11_an_int_tab_contents_HRtable_covidadmission.txt)
   * output/15112021
+    * [output/15112021/01_histogram_outcomes.png](output/15112021/01_histogram_outcomes.png)
     * [output/15112021/01_histogram_vaccinations.png](output/15112021/01_histogram_vaccinations.png)
   * [output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES.txt](output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES.txt)
   * output/16092021
