@@ -1,0 +1,38 @@
+	exposure	exposure level	vaccine	outcome	strata	strata_level	events	person_years	rate	HR	lci	uci	pval
+	kids_cat4	1	0	covid_tpp_prob	male	0	37522	    256392	14634.64	1.31	1.29	1.32	0.01
+	kids_cat4	1	0	covid_tpp_prob	male	1	25952	    199692	12996.04	1.45	1.43	1.47	0.00
+	kids_cat4	1	0	covid_tpp_prob	shield	0	50388	    366082	13764.12	1.41	1.39	1.42	0.00
+	kids_cat4	1	0	covid_tpp_prob	shield	1	13086	     90001	14539.86	1.24	1.21	1.26	0.00
+	kids_cat4	2	0	covid_tpp_prob	male	0	20268	    115363	17568.86	1.40	1.38	1.42	0.00
+	kids_cat4	2	0	covid_tpp_prob	male	1	15162	     99242	15277.74	1.48	1.45	1.51	0.00
+	kids_cat4	2	0	covid_tpp_prob	shield	0	27660	    171172	16159.14	1.47	1.45	1.49	0.00
+	kids_cat4	2	0	covid_tpp_prob	shield	1	7770	     43433	17889.54	1.36	1.33	1.40	0.00
+	kids_cat4	3	0	covid_tpp_prob	male	0	15608	     90259	17292.37	1.47	1.44	1.50	0.00
+	kids_cat4	3	0	covid_tpp_prob	male	1	11258	     73772	15260.60	1.61	1.58	1.65	0.00
+	kids_cat4	3	0	covid_tpp_prob	shield	0	21444	    132233	16216.79	1.58	1.56	1.61	0.00
+	kids_cat4	3	0	covid_tpp_prob	shield	1	5422	     31798	17051.50	1.38	1.34	1.42	0.00
+	kids_cat4	1	1	covid_tpp_prob	male	0	41238	    565647	7290.41	1.28	1.27	1.30	
+	kids_cat4	1	1	covid_tpp_prob	male	1	25048	    437505	5725.19	1.20	1.18	1.21	
+	kids_cat4	1	1	covid_tpp_prob	shield	0	53065	    816793	6496.75	1.23	1.21	1.24	
+	kids_cat4	1	1	covid_tpp_prob	shield	1	13221	    186360	7094.35	1.39	1.36	1.41	
+	kids_cat4	2	1	covid_tpp_prob	male	0	16290	    236611	6884.70	1.54	1.51	1.56	
+	kids_cat4	2	1	covid_tpp_prob	male	1	12653	    208325	6073.67	1.34	1.32	1.37	
+	kids_cat4	2	1	covid_tpp_prob	shield	0	22941	    357544	6416.27	1.43	1.41	1.45	
+	kids_cat4	2	1	covid_tpp_prob	shield	1	6002	     87393	6867.84	1.56	1.52	1.60	
+	kids_cat4	3	1	covid_tpp_prob	male	0	17296	    204018	8477.68	1.54	1.52	1.57	
+	kids_cat4	3	1	covid_tpp_prob	male	1	10870	    168212	6462.08	1.31	1.29	1.34	
+	kids_cat4	3	1	covid_tpp_prob	shield	0	22546	    303298	7433.61	1.42	1.40	1.44	
+	kids_cat4	3	1	covid_tpp_prob	shield	1	5620	     68932	8152.96	1.60	1.55	1.64	
+	kids_cat4	1	2	covid_tpp_prob	male	0	33388	    540406	6178.32	1.20	1.18	1.21	
+	kids_cat4	1	2	covid_tpp_prob	male	1	19910	    406257	4900.84	1.13	1.12	1.15	
+	kids_cat4	1	2	covid_tpp_prob	shield	0	39848	    741874	5371.26	1.17	1.16	1.19	
+	kids_cat4	1	2	covid_tpp_prob	shield	1	13450	    204789	6567.74	1.18	1.16	1.21	
+	kids_cat4	2	2	covid_tpp_prob	male	0	21223	    249388	8510.03	1.82	1.79	1.84	
+	kids_cat4	2	2	covid_tpp_prob	male	1	12711	    188137	6756.25	1.67	1.64	1.70	
+	kids_cat4	2	2	covid_tpp_prob	shield	0	25711	    341620	7526.20	1.77	1.74	1.80	
+	kids_cat4	2	2	covid_tpp_prob	shield	1	8223	     95905	8574.09	1.76	1.72	1.80	
+	kids_cat4	3	2	covid_tpp_prob	male	0	17794	    187073	9511.81	1.91	1.88	1.94	
+	kids_cat4	3	2	covid_tpp_prob	male	1	10236	    142733	7171.43	1.71	1.67	1.74	
+	kids_cat4	3	2	covid_tpp_prob	shield	0	21107	    259603	8130.48	1.83	1.80	1.86	
+	kids_cat4	3	2	covid_tpp_prob	shield	1	6923	     70202	9861.48	1.87	1.82	1.92	
+
