@@ -1,0 +1,26 @@
+age	exposure	exposure level	outcome	int_type	int_level	events	person_years	rate	HR	lci	uci	pval
+0	kids_cat4	0	covid_tpp_prob	vaccine	0	163585	   1322362	12370.67	1.00	   .	   .	0.00
+0	kids_cat4	0	covid_tpp_prob	vaccine	1	140232	   3049074	4599.17	0.69	0.68	0.70	
+0	kids_cat4	0	covid_tpp_prob	vaccine	2	122756	   3347474	3667.12	0.44	0.43	0.44	
+0	kids_cat4	1	covid_tpp_prob	vaccine	0	63474	    456083	13917.20	1.15	1.14	1.16	0.00
+0	kids_cat4	1	covid_tpp_prob	vaccine	1	66286	   1003152	6607.77	0.83	0.82	0.84	
+0	kids_cat4	1	covid_tpp_prob	vaccine	2	53298	    946663	5630.09	0.67	0.66	0.68	
+0	kids_cat4	2	covid_tpp_prob	vaccine	0	35430	    214606	16509.35	1.21	1.19	1.22	0.00
+0	kids_cat4	2	covid_tpp_prob	vaccine	1	28943	    444937	6504.97	0.98	0.97	0.99	
+0	kids_cat4	2	covid_tpp_prob	vaccine	2	33934	    437525	7755.90	0.99	0.98	1.01	
+0	kids_cat4	3	covid_tpp_prob	vaccine	0	26866	    164031	16378.60	1.29	1.27	1.31	0.00
+0	kids_cat4	3	covid_tpp_prob	vaccine	1	28166	    372230	7566.83	0.97	0.96	0.99	
+0	kids_cat4	3	covid_tpp_prob	vaccine	2	28030	    329806	8498.94	1.04	1.02	1.06	
+1	kids_cat4	0	covid_tpp_prob	vaccine	0	27865	    334114	8339.97	1.00	   .	   .	0.00
+1	kids_cat4	0	covid_tpp_prob	vaccine	1	19445	    922551	2107.74	1.95	1.89	2.00	
+1	kids_cat4	0	covid_tpp_prob	vaccine	2	40166	   2020484	1987.94	1.29	1.24	1.34	
+1	kids_cat4	1	covid_tpp_prob	vaccine	0	964	      5373	17942.18	1.56	1.45	1.67	0.68
+1	kids_cat4	1	covid_tpp_prob	vaccine	1	567	     18259	3105.33	1.52	1.39	1.67	
+1	kids_cat4	1	covid_tpp_prob	vaccine	2	931	     26631	3495.97	1.73	1.59	1.87	
+1	kids_cat4	2	covid_tpp_prob	vaccine	0	561	      3681	15238.38	1.42	1.30	1.56	0.00
+1	kids_cat4	2	covid_tpp_prob	vaccine	1	390	     11643	3349.56	1.83	1.65	2.04	
+1	kids_cat4	2	covid_tpp_prob	vaccine	2	688	     17340	3967.69	2.49	2.27	2.72	
+1	kids_cat4	3	covid_tpp_prob	vaccine	0	361	      1857	19438.04	1.65	1.47	1.85	0.34
+1	kids_cat4	3	covid_tpp_prob	vaccine	1	241	      6751	3569.58	1.52	1.33	1.74	
+1	kids_cat4	3	covid_tpp_prob	vaccine	2	360	      8532	4219.44	2.10	1.86	2.37	
+
