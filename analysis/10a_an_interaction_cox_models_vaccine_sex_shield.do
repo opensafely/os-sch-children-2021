@@ -92,7 +92,7 @@ foreach level in 0 1 {
 stcox 	i.kids_cat4  	age1 age2 age3					///
 			$demogadjlist							///
 			$comordidadjlist						///
-			1.vaccine#1.kids_cat4 1.vaccine#2.kids_cat4 1.vaccine#3.kids_cat4 2.vaccine#1.kids_cat4 2.vaccine#2.kids_cat4 2.vaccine#3.kids_cat4	if `strata'==`level'				///
+			1.vaccine#0.kids_cat4 1.vaccine#1.kids_cat4 1.vaccine#2.kids_cat4 1.vaccine#3.kids_cat4 2.vaccine#0.kids_cat4 2.vaccine#1.kids_cat4 2.vaccine#2.kids_cat4 2.vaccine#3.kids_cat4	if `strata'==`level'				///
 			, strata(stp) vce(cluster household_id)
 if _rc==0 	{
 di _n "kids_cat4 " _n "****************"

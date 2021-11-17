@@ -24,10 +24,11 @@ log using "$logdir/11_an_interaction_HR_tables_forest_vaccine_sex_shield_`outcom
 cap prog drop outputHRsforvar
 prog define outputHRsforvar
 syntax, variable(string) min(real) max(real) outcome(string)
-file write tablecontents_int _tab ("exposure") _tab ("exposure level") _tab ("vaccine") ///
+file write tablecontents_int _tab ("age") _tab ("exposure") _tab ("exposurelevel") _tab ("vaccine") ///
 _tab ("outcome") _tab ("strata") _tab ("strata_level") ///
 _tab ("events") _tab ("person_years") _tab ("rate") ///
 _tab ("HR")  _tab ("lci")  _tab ("uci") _tab ("pval") _n
+foreach age in 0 1 {
 foreach vaccine in 0 1 2 {
 forvalues i=`min'/`max'{
 foreach strata in male shield {
@@ -37,10 +38,10 @@ forvalues level=0/1 {
 local endwith "_tab"
 
 	*put the varname and condition to left so that alignment can be checked vs shell
-	file write tablecontents_int  _tab ("`variable'") _tab ("`i'") _tab ("`vaccine'") _tab ("`outcome'") _tab ("`strata'") _tab ("`level'") _tab
+	file write tablecontents_int  _tab ("`age'") _tab ("`variable'") _tab ("`i'") _tab ("`vaccine'") _tab ("`outcome'") _tab ("`strata'") _tab ("`level'") _tab
 
 	
-use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_0.dta", clear
+use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`age'.dta", clear
 
 *Censor at date of first child being vaccinated in hh
 replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
@@ -86,7 +87,7 @@ recode `outcome' .=0
 		*1) GET THE RIGHT ESTIMATES INTO MEMORY
 
 		if "`modeltype'"=="fulladj" {
-				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_0`strata'`level'
+				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`age'`strata'`level'
 				if _rc!=0 local noestimatesflag 1
 				}
 		***********************
@@ -134,6 +135,7 @@ recode `outcome' .=0
 
 } /*variable levels*/
 } /*agebands*/
+}
 end
 ***********************************************************************************************************************
 
@@ -146,7 +148,7 @@ cap postutil clear
 postfile HRestimates_int str10 vaccine str10 outcome str27 variable str27 strata i level events person_years rate hr lci uci pval using `HRestimates_int'
 
 *Primary exposure
-outputHRsforvar, variable("kids_cat4") min(1) max(3) outcome(`outcome')
+outputHRsforvar, variable("kids_cat4") min(0) max(3) outcome(`outcome')
 file write tablecontents_int _n
 
 file close tablecontents_int
