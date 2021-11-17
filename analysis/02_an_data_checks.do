@@ -119,7 +119,7 @@ foreach comorb in $varlist {
 }
 
 *summarise end dates for each outcome
-foreach outcome in date_covid_tpp_prob	date_non_covid_death	date_covid_death	date_covid_icu	date_covidadmission	died_date_onscovid_part1	 {
+foreach outcome in date_covid_tpp_prob	date_covid_test_ever date_non_covid_death	date_covid_death	date_covid_icu	date_covidadmission	died_date_onscovid_part1	 {
 sum `outcome', format
 }
 

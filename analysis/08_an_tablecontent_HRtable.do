@@ -51,6 +51,13 @@ recode `outcome' .=0
 tab cat_time
 tab cat_time `outcome'
 }
+if "`outcome'"=="covid_test_ever" {
+stsplit cat_time, at(0,85,154, 216, 263, 400)
+recode cat_time 85=1 154=2 216=3 263=4 
+recode `outcome' .=0 
+tab cat_time
+tab cat_time `outcome'
+}
 
 *-School closure: 20th December 2020 (previous analysis up to 19th December 2020) 
 *School opening +14 days (alpha variant): 22nd March 2021 

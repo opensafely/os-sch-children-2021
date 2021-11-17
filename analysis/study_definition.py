@@ -120,6 +120,18 @@ study = StudyDefinition(
             "rate": "exponential_increase",
         },
     ),
+    covid_test_ever=patients.with_test_result_in_sgss(
+        pathogen="SARS-CoV-2",
+        test_result="any",
+        on_or_after="index_date",
+        find_first_match_in_period=True,
+        returning="date",
+        date_format="YYYY-MM-DD",
+        return_expectations={
+            "date": {"earliest": "index_date"},
+            "rate": "exponential_increase",
+        },
+    ),
     sgtf=patients.with_test_result_in_sgss(
        pathogen="SARS-CoV-2",
        test_result="positive",
@@ -568,6 +580,7 @@ study = StudyDefinition(
         include_month=True,
         return_expectations={"date": {"latest": "2020-12-19"}},
     ),
+
     # asthma
     asthma=patients.categorised_as(
         {
@@ -597,7 +610,7 @@ study = StudyDefinition(
         },
         return_expectations={"category": {"ratios": {"0": 0.6, "1": 0.1, "2": 0.3}}},
         recent_asthma_code=patients.with_these_clinical_events(
-            asthma_codes, between=["2017-12-20", "index_date"],
+            asthma_codes, between=["2017-12-20", "index_date"], 
         ),
         asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
         copd_code_ever=patients.with_these_clinical_events(
