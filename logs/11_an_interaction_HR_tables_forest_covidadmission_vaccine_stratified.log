@@ -1,0 +1,1692 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/11_an_interaction_HR_tables_forest_covidadmission_
+> vaccine_stratified.log
+  log type:  text
+ opened on:  17 Nov 2021, 20:55:43
+
+. 
+. *****************************************************************************
+> ******************************************
+. *Generic code to ouput the HRs across outcomes for all levels of a particular
+>  variables, in the right shape for table
+. cap prog drop outputHRsforvar
+
+. prog define outputHRsforvar
+  1. syntax, variable(string) min(real) max(real) outcome(string)
+  2. file write tablecontents_int ("age") _tab ("exposure") _tab ("exposure lev
+> el") ///
+> _tab ("outcome") _tab ("int_type") _tab ("int_level") ///
+> _tab ("events") _tab ("person_years") _tab ("rate") ///
+> _tab ("HR")  _tab ("lci")  _tab ("uci") _tab ("pval") _n
+  3. foreach x in 0 1 {
+  4. forvalues i=`min'/`max'{
+  5. foreach int_type in vaccine {
+  6. 
+. foreach int_level in 0 1 2 {
+  7. 
+. local endwith "_tab"
+  8. 
+.         *put the varname and condition to left so that alignment can be check
+> ed vs shell
+.         file write tablecontents_int ("`x'") _tab ("`variable'") _tab ("`i'")
+>  _tab ("`outcome'") _tab ("`int_type'") _tab ("`int_level'") _tab
+  9.  
+.  use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", c
+> lear
+ 10. 
+. *Censor at date of first child being vaccinated in hh
+. replace stime_`outcome'         = under18vacc if stime_`outcome'>under18vacc
+ 11. stset stime_`outcome', fail(`outcome')          ///
+>         id(patient_id) enter(enter_date) origin(enter_date)
+ 12. 
+. gen first_vacc_plus_7d=covid_vacc_date+7
+ 13. gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+ 14. format first_vacc_plus_7d second_vacc_plus_7d %td
+ 15.  
+. stsplit vaccine, after(first_vacc_plus_7d) at(0)
+ 16. replace vaccine = vaccine +1
+ 17. stsplit vaccine2, after(second_vacc_plus_7d) at(0)
+ 18. replace vaccine=2 if vaccine==1 &vaccine2==0 & second_vacc_plus_7d!=.
+ 19. recode `outcome' .=0 
+ 20. 
+.         tab vaccine
+ 21.         tab vaccine `outcome' 
+ 22.         
+.         
+.         keep if vaccine==`int_level'
+ 23. *put total N, PYFU and Rate in table
+.         cou if `variable' == `i' & _d == 1 
+ 24.         local event = r(N)
+ 25.     bysort `variable': egen total_follow_up = total(_t)
+ 26.         su total_follow_up if `variable' == `i'
+ 27.         local person_days = r(mean)
+ 28.         local person_years=`person_days'/365.25
+ 29.         local rate = 100000*(`event'/`person_years')
+ 30.         
+.         file write tablecontents_int (`event') _tab %10.0f (`person_years') _
+> tab %3.2f (`rate') _tab
+ 31.         drop total_follow_up
+ 32.  
+.         foreach modeltype of any fulladj {
+ 33. 
+.                 local noestimatesflag 0 /*reset*/
+ 34. 
+. *CHANGE THE OUTCOME BELOW TO LAST IF BRINGING IN MORE COLS
+.                 if "`modeltype'"=="fulladj" local endwith "_n"
+ 35. 
+.                 ***********************
+.                 *1) GET THE RIGHT ESTIMATES INTO MEMORY
+. 
+.                 if "`modeltype'"=="fulladj" {
+ 36.                                 cap estimates use ./output/an_interaction_
+> cox_models_`outcome'_kids_cat4_`int_type'_`x'_stratified
+ 37.                                 if _rc!=0 local noestimatesflag 1
+ 38.                                 }
+ 39.                 ***********************
+.                 *2) WRITE THE HRs TO THE OUTPUT FILE
+. 
+.                 if `noestimatesflag'==0{
+ 40.                         if `int_level'==0 {
+ 41.                         test 1.`int_type'#`i'.`variable'
+ 42.                         *overall p-value for interaction: test 1.`int_type
+> '#1.`variable' test 1.`int_type'#2.`variable'
+.                         local pval=r(p)
+ 43.                         cap lincom `i'.`variable', eform
+ 44.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+> timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab %4.2f (`pval') `endwith'
+ 45. 
+.                                 else file write tablecontents_int %4.2f ("ERR
+>  IN MODEL") `endwith'
+ 46.                                 }
+ 47.                         if `int_level'==1 {
+ 48.                         cap lincom `i'.`variable'+ 1.`int_type'#`i'.`varia
+> ble', eform
+ 49.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+> timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
+ 50.                                 else file write tablecontents_int %4.2f ("
+> ERR IN MODEL") `endwith'
+ 51.                                 }
+ 52.                         
+.                         if `int_level'==2 {
+ 53.                         cap lincom `i'.`variable'+ 2.`int_type'#`i'.`varia
+> ble', eform
+ 54.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+> timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
+ 55.                                 else file write tablecontents_int %4.2f ("
+> ERR IN MODEL") `endwith'
+ 56.                                 }
+ 57.                         }
+ 58.                         
+.                         else file write tablecontents_int %4.2f ("DID NOT FIT
+> ") `endwith'
+ 59. 
+.                 *3) Save the estimates for plotting
+.                 if `noestimatesflag'==0{
+ 60.                         if "`modeltype'"=="fulladj" {
+ 61.                                 local hr = r(estimate)
+ 62.                                 local lb = r(lb)
+ 63.                                 local ub = r(ub)
+ 64.                                 cap gen `variable'=.
+ 65.                                 test 1.`int_type'#2.`variable' 1.`int_type
+> '#1.`variable'
+ 66.                                 local pval=r(p)
+ 67.                                 post HRestimates_int ("`x'") ("`outcome'")
+>  ("`variable'") ("`int_type'") (`i') (`int_level') (`hr') (`lb') (`ub') (`pva
+> l')
+ 68.                                 drop `variable'
+ 69.                                 }
+ 70.                 }
+ 71.                 }
+ 72.                 } /*int_level*/
+ 73.                 } /*full adj*/
+ 74. 
+. } /*variable levels*/
+ 75. }
+ 76. end
+
+. *****************************************************************************
+> ******************************************
+. 
+. *MAIN CODE TO PRODUCE TABLE CONTENTS
+. cap file close tablecontents_int
+
+. file open tablecontents_int using ./output/11_an_int_tab_contents_HRtable_`ou
+> tcome'_vaccine_stratified.txt, t w replace
+(note: file ./output/11_an_int_tab_contents_HRtable_covidadmission_vaccine_stra
+> tified.txt not found)
+
+. 
+. tempfile HRestimates_int
+
+. cap postutil clear
+
+. postfile HRestimates_int str10 x str10 outcome str27 variable str27 int_type 
+> level int_level hr lci uci pval using `HRestimates_int'
+
+. 
+. *Primary exposure
+. outputHRsforvar, variable("kids_cat4") min(0) max(3) outcome(`outcome')
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(11,937 observations deleted)
+  13
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        267       22712           0      22712      22712
+
+ ( 1)  1o.vaccine#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(10,912 observations deleted)
+  47
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        408       72335           0      72335      72335
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(17,783 observations deleted)
+  8
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         65       13482           0      13482      13482
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(11,937 observations deleted)
+  80
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        909       43979           0      43979      43979
+
+ ( 1)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  1) =    3.68
+         Prob > chi2 =    0.0551
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(10,912 observations deleted)
+  135
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,198      109701           0     109701     109701
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(17,783 observations deleted)
+  24
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        169       21552           0      21552      21552
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(11,937 observations deleted)
+  11
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         91        6635           0       6635       6635
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+
+           chi2(  1) =    2.81
+         Prob > chi2 =    0.0936
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(10,912 observations deleted)
+  12
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        117       14850           0      14850      14850
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(17,783 observations deleted)
+  3
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         20        2897           0       2897       2897
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(11,937 observations deleted)
+  533
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      5,461      182863           0     182863     182863
+
+ ( 1)  1.vaccine#3.kids_cat4 = 0
+
+           chi2(  1) =    1.74
+         Prob > chi2 =    0.1867
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(10,912 observations deleted)
+  716
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      6,030      265252           0     265252     265252
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(13,443 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     16,123  total observations
+      3,302  observations end on or before enter()
+------------------------------------------------------------------------------
+     12,821  observations remaining, representing
+     12,821  subjects
+      1,673  failures in single-failure-per-subject data
+    690,237  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(8,054 missing values generated)
+(12,914 missing values generated)
+(1,457 observations (episodes) created)
+(14,278 real changes made)
+(1,085 observations (episodes) created)
+(882 real changes made)
+(covidadmission: 2542 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,728       43.79       43.79
+          1 |      7,753       50.47       94.26
+          2 |        882        5.74      100.00
+------------+-----------------------------------
+      Total |     15,363      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     6,091        637 |     6,728 
+         1 |     6,843        910 |     7,753 
+         2 |       756        126 |       882 
+-----------+----------------------+----------
+     Total |    13,690      1,673 |    15,363 
+(17,783 observations deleted)
+  91
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        628       46057           0      46057      46057
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.29
+         Prob > chi2 =    0.1173
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(3,362 observations deleted)
+  1
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         75        5294           0       5294       5294
+
+ ( 1)  1o.vaccine#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(3,065 observations deleted)
+  15
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        137       21657           0      21657      21657
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(4,993 observations deleted)
+  5
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         25        4809           0       4809       4809
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(3,362 observations deleted)
+  21
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        259       12851           0      12851      12851
+
+ ( 1)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  1) =    2.80
+         Prob > chi2 =    0.0941
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(3,065 observations deleted)
+  37
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        324       25336           0      25336      25336
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(4,993 observations deleted)
+  4
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         50        6145           0       6145       6145
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(3,362 observations deleted)
+  4
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         30        2211           0       2211       2211
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+
+           chi2(  1) =    3.73
+         Prob > chi2 =    0.0535
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(3,065 observations deleted)
+  2
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         30        4338           0       4338       4338
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(4,993 observations deleted)
+  0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          6         721           0        721        721
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(3,362 observations deleted)
+  137
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,522       48516           0      48516      48516
+
+ ( 1)  1.vaccine#3.kids_cat4 = 0
+
+           chi2(  1) =    2.20
+         Prob > chi2 =    0.1383
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(3,065 observations deleted)
+  221
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      1,692       72252           0      72252      72252
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+(3,724 real changes made)
+
+                id:  patient_id
+     failure event:  covidadmission != 0 & covidadmission < .
+obs. time interval:  (stime_covidadmission[_n-1], stime_covidadmission]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+      4,508  total observations
+        924  observations end on or before enter()
+------------------------------------------------------------------------------
+      3,584  observations remaining, representing
+      3,584  subjects
+        469  failures in single-failure-per-subject data
+    186,025  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       298
+(2,281 missing values generated)
+(3,598 missing values generated)
+(420 observations (episodes) created)
+(4,004 real changes made)
+(320 observations (episodes) created)
+(255 real changes made)
+(covidadmission: 740 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,886       43.62       43.62
+          1 |      2,183       50.49       94.10
+          2 |        255        5.90      100.00
+------------+-----------------------------------
+      Total |      4,324      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |     1,723        163 |     1,886 
+         1 |     1,908        275 |     2,183 
+         2 |       224         31 |       255 
+-----------+----------------------+----------
+     Total |     3,855        469 |     4,324 
+(4,993 observations deleted)
+  22
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        174       12918           0      12918      12918
+
+ ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 2)  1.vaccine#1.kids_cat4 = 0
+
+           chi2(  2) =    4.09
+         Prob > chi2 =    0.1295
+
+. file write tablecontents_int _n
+
+. 
+. file close tablecontents_int
+
+. 
+. postclose HRestimates_int
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/11_an_interaction_HR_tables_forest_covidadmission_
+> vaccine_stratified.log
+  log type:  text
+ closed on:  17 Nov 2021, 20:56:05
+-------------------------------------------------------------------------------

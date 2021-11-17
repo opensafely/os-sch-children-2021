@@ -264,6 +264,22 @@ actions:
         log: logs/10_an_interaction_cox_models_vaccine_covid_tpp_prob_stratified.log
         data: "output/an_interaction_cox_models_covid_tpp_prob_kids_cat4_vaccine_*_stratified.ster"
 
+  10b_an_interaction_cox_models_vaccine_stratified_covidadmission:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10b_an_interaction_cox_models_vaccine_stratified.do covidadmission 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covidadmission_stratified.log
+        data: "output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine_*_stratified.ster"
+
+  10b_an_interaction_cox_models_vaccine_stratified_covid_death:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10b_an_interaction_cox_models_vaccine_stratified.do covid_death 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covid_death_stratified.log
+        data: "output/an_interaction_cox_models_covid_death_kids_cat4_vaccine_*_stratified.ster"
+
   11_an_interaction_HR_tables_forest_covid_tpp_prob:
     needs:
       - 10_an_interaction_cox_models_sex_covid_tpp_prob
@@ -335,6 +351,25 @@ actions:
         log: logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_vaccine_stratified.log
         data: "output/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_stratified.txt"
 
+  11_an_interaction_HR_tables_forest_vaccine_strat_analysis_covidadmission:
+    needs:
+      - 10b_an_interaction_cox_models_vaccine_stratified_covidadmission
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_stratified_analysis.do covidadmission
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covidadmission_vaccine_stratified.log
+        data: "output/11_an_int_tab_contents_HRtable_covidadmission_vaccine_stratified.txt"
+
+  11_an_interaction_HR_tables_forest_vaccine_strat_analysis_covid_death:
+    needs:
+      - 10b_an_interaction_cox_models_vaccine_stratified_covid_death
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_stratified_analysis.do covid_death
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covid_death_vaccine_stratified.log
+        data: "output/11_an_int_tab_contents_HRtable_covid_death_vaccine_stratified.txt"
 
   15_anHRfigure_data_all_outcomes_2021_SENSE:
     needs:  
