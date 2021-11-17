@@ -3,7 +3,7 @@
        log:  /workspace/logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_
 > SENSE.log
   log type:  text
- opened on:  28 Oct 2021, 13:57:30
+ opened on:  17 Nov 2021, 11:52:12
 
 . 
 . 
@@ -22,7 +22,7 @@
   4. foreach x in 0 1 {
   5. foreach outcome in  covid_tpp_prob covidadmission covid_death  {
   6. forvalues i=1/3 {
-  7. foreach sense in 11thJuneCensor 1stVaccCensor 2ndVaccCensor {
+  7. foreach sense in 1stVaccCensor 2ndVaccCensor {
   8. local endwith "_tab"
   9. 
 .         *put the varname and condition to left so that alignment can be check
@@ -58,26 +58,28 @@
  20.                                 else file write tablecontents_all_outcomes
 >  %4.2f ("ERR IN MODEL") `endwith'
  21.                         }
- 22.                         
+ 22.                                                 else file write tableconte
+> nts %4.2f ("DID NOT FIT") `endwith' 
+ 23. 
 .                 *3) Save the estimates for plotting
 .                 if `noestimatesflag'==0{
- 23.                         if "`modeltype'"=="plus_ethadj"   {
- 24.                                 local hr = r(estimate)
- 25.                                 local lb = r(lb)
- 26.                                 local ub = r(ub)
- 27.                                 post HRestimates_all_outcomes  ("`sense'")
+ 24.                         if "`modeltype'"=="plus_ethadj"   {
+ 25.                                 local hr = r(estimate)
+ 26.                                 local lb = r(lb)
+ 27.                                 local ub = r(ub)
+ 28.                                 post HRestimates_all_outcomes  ("`sense'")
 >  ("`period'") ("`x'") ("`outcome'") ("`variable'") (`i') (`hr') (`lb') (`ub')
 >  
- 28.                                 }
- 29.                 }       
- 30.                 } /*min adj, full adj*/
- 31.         } /*datasets*/
- 32.                 
+ 29.                                 }
+ 30.                 }       
+ 31.                 } /*min adj, full adj*/
+ 32.         } /*datasets*/
+ 33.                 
 . } /*variable levels*/
- 33. } /*age levels*/
- 34. } /*sense levels*/
- 35. }
- 36. end
+ 34. } /*age levels*/
+ 35. } /*sense levels*/
+ 36. }
+ 37. end
 
 . 
 . *MAIN CODE TO PRODUCE TABLE CONTENTS
@@ -124,5 +126,5 @@ file ./output/HRestimates_all_outcomes_SENSE.dta saved
        log:  /workspace/logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_
 > SENSE.log
   log type:  text
- closed on:  28 Oct 2021, 13:57:40
+ closed on:  17 Nov 2021, 11:52:15
 -------------------------------------------------------------------------------

@@ -58,7 +58,8 @@ local endwith "_tab"
 			if _rc==0 file write tablecontents_all_outcomes %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab (e(N))  `endwith'
 				else file write tablecontents_all_outcomes %4.2f ("ERR IN MODEL") `endwith'
 			}
-			
+						else file write tablecontents %4.2f ("DID NOT FIT") `endwith' 
+
 		*3) Save the estimates for plotting
 		if `noestimatesflag'==0{
 			if "`modeltype'"=="plus_ethadj"   {
