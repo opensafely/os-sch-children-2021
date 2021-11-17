@@ -99,6 +99,14 @@ actions:
         log: logs/07b_an_multivariable_cox_models_covidadmission.log
         data: "output/an_multivariate_cox_models_covidadmission_*_FULLYADJMODEL_ageband_*.ster"
 
+  07b_an_multivariable_cox_models_FULL_covid_test_ever:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL.do covid_test_ever
+    outputs:
+      moderately_sensitive:
+        log: logs/07b_an_multivariable_cox_models_covid_test_ever.log
+        data: "output/an_multivariate_cox_models_covid_test_ever_*_FULLYADJMODEL_ageband_*.ster"
+
   07b_an_multivariable_cox_models_FULL_covid_death_2ndVaccCensor:
     needs: [01_cr_analysis_dataset]
     run: stata-mp:latest analysis/07b_an_multivariable_cox_models_FULL_sense_2ndVaccCensor.do covid_death 
