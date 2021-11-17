@@ -29,7 +29,7 @@ foreach period in 0 1 2 3 4 {
 foreach x in 0 1 {
 foreach outcome in  covid_tpp_prob covidadmission covid_death  {
 forvalues i=1/3 {
-foreach sense in 11thJuneCensor 1stVaccCensor 2ndVaccCensor {
+foreach sense in 1stVaccCensor 2ndVaccCensor {
 local endwith "_tab"
 
 	*put the varname and condition to left so that alignment can be checked vs shell
