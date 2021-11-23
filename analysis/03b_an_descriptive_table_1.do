@@ -41,31 +41,31 @@ syntax, variable(varname) condition(string) outcome(string)
 	cou if `variable' `condition'
 	local rowdenom = r(N)
 	local colpct = 100*(r(N)/`overalldenom')
-	file write tablecontent (`rowdenom')  (" (") %3.1f (`colpct') (")") _tab
+	file write tablecontent (`rowdenom')  _tab %3.1f (`colpct') _tab
 
 	cou if kids_cat4==0 
 	local coldenom = r(N)
 	cou if kids_cat4==0 & `variable' `condition'
 	local pct = 100*(r(N)/`coldenom')
-	file write tablecontent (r(N)) (" (") %4.2f  (`pct') (")") _tab
+	file write tablecontent (r(N)) _tab %4.2f  (`pct')  _tab
 	
 	cou if kids_cat4==1 
 	local coldenom = r(N)
 	cou if kids_cat4==1 & `variable' `condition'
 	local pct = 100*(r(N)/`coldenom')
-	file write tablecontent (r(N)) (" (") %4.2f  (`pct') (")") _tab
+	file write tablecontent (r(N)) _tab %4.2f  (`pct')  _tab
 	
 	cou if kids_cat4==2 
 	local coldenom = r(N)
 	cou if kids_cat4==2 & `variable' `condition'
 	local pct = 100*(r(N)/`coldenom')
-	file write tablecontent (r(N)) (" (") %4.2f  (`pct') (")") _tab
+	file write tablecontent (r(N)) _tab %4.2f  (`pct')  _tab
 
 	cou if kids_cat4==3 
 	local coldenom = r(N)
 	cou if kids_cat4==3 & `variable' `condition'
 	local pct = 100*(r(N)/`coldenom')
-	file write tablecontent (r(N)) (" (") %4.2f  (`pct') (")") _n
+	file write tablecontent (r(N)) _tab %4.2f  (`pct')  _n
 	
 end
 
