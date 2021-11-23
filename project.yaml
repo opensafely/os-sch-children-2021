@@ -44,6 +44,16 @@ actions:
         log: logs/03b_an_descriptive_table_1.log
         data: "output/03b_an_descriptive_table_1_kids_cat4_ageband*.txt"
 
+  03c_an_descriptive_table_1:
+    needs: 
+      - 01_cr_analysis_dataset
+      - 03b_an_descriptive_table_1
+    run: stata-mp:latest analysis/03c_descriptive_stats_table_by_exposure.do 
+    outputs:
+      moderately_sensitive:
+        histogram: "output/Descriptive_table1_age*.svg"
+
+
   04a_an_descriptive_tables:
     needs: [01_cr_analysis_dataset]
     run: stata-mp:latest analysis/04a_an_descriptive_tables.do 
