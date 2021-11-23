@@ -247,6 +247,23 @@ actions:
         log: logs/10_an_interaction_cox_models_vaccine_covid_tpp_prob.log
         data: "output/an_interaction_cox_models_covid_tpp_prob_*_vaccine_*.ster"
 
+  10_an_interaction_cox_models_vaccine_covidadmission_main:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_vaccine_main_analysis.do covidadmission 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covidadmission.log
+        data: "output/an_interaction_cox_models_covidadmission_*_vaccine_*.ster"
+
+  10_an_interaction_cox_models_vaccine_covid_death_main:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10_an_interaction_cox_models_vaccine_main_analysis.do covid_death 
+    outputs:
+      moderately_sensitive:
+        log: logs/10_an_interaction_cox_models_vaccine_covid_death.log
+        data: "output/an_interaction_cox_models_covid_death_*_vaccine_*.ster"
+
+
   10a_an_interaction_cox_models_vaccine_sex_shield_covid_tpp_prob:
     needs: [01_cr_analysis_dataset]
     run: stata-mp:latest analysis/10a_an_interaction_cox_models_vaccine_sex_shield.do covid_tpp_prob 
@@ -330,6 +347,26 @@ actions:
       moderately_sensitive:
         log: logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_vaccine_main.log
         data: "output/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_main.txt"
+
+  11_an_interaction_HR_tables_forest_vaccine_main_analysis_covidadmission:
+    needs:
+      - 10_an_interaction_cox_models_vaccine_covidadmission_main
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_main_analysis.do covidadmission
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covidadmission_vaccine_main.log
+        data: "output/11_an_int_tab_contents_HRtable_covidadmission_vaccine_main.txt"
+
+  11_an_interaction_HR_tables_forest_vaccine_main_analysis_covid_death:
+    needs:
+      - 10_an_interaction_cox_models_vaccine_covid_death_main
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_main_analysis.do covid_death
+    outputs:
+      moderately_sensitive:
+        log: logs/11_an_interaction_HR_tables_forest_covid_death_vaccine_main.log
+        data: "output/11_an_int_tab_contents_HRtable_covid_death_vaccine_main.txt"
 
   11_an_interaction_HR_tables_forest_vaccine_sex_shield_analysis_covid_tpp_prob:
     needs:
