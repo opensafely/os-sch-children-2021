@@ -32,7 +32,7 @@ foreach x in 0 1 {
 forvalues i=`min'/`max'{
 foreach int_type in vaccine {
 
-foreach int_level in 0 1 2 {
+foreach int_level in  1 2 3 {
 
 local endwith "_tab"
 
@@ -91,7 +91,7 @@ recode `outcome' .=0
 		*2) WRITE THE HRs TO THE OUTPUT FILE
 
 		if `noestimatesflag'==0{
-			if `int_level'==0 {
+			if `int_level'==1 {
 			test 1.`int_type'#`i'.`variable'
 			*overall p-value for interaction: test 1.`int_type'#1.`variable' test 1.`int_type'#2.`variable'
 			local pval=r(p)
@@ -100,14 +100,14 @@ recode `outcome' .=0
 
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
-			if `int_level'==1 {
-			cap lincom `i'.`variable'+ 1.`int_type'#`i'.`variable', eform
+			if `int_level'==2 {
+			cap lincom `i'.`variable'+ 2.`int_type'#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
 			
-			if `int_level'==2 {
-			cap lincom `i'.`variable'+ 2.`int_type'#`i'.`variable', eform
+			if `int_level'==3 {
+			cap lincom `i'.`variable'+ 3.`int_type'#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}

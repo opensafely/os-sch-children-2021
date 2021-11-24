@@ -82,23 +82,38 @@ foreach x in 0 1 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
+
+replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
+replace covid_vacc_second_dose_date=. if covid_vacc_date==. 
+drop if covid_vacc_date<d(20dec2020)
+drop if covid_vacc_second_dose_date<d(20dec2020)
+
 *Censor at date of first child being vaccinated in hh
 replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
+replace `outcome'=0 if stime_`outcome'<date_`outcome'
 stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)
+
+*Drop those without any eligible follow-up
+drop if enter_date>=stime_`outcome'
 	
-	
+*Generate first and second vacc dates	
 gen first_vacc_plus_7d=covid_vacc_date+7
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
 format first_vacc_plus_7d second_vacc_plus_7d %td
- 
-stsplit vaccine, after(first_vacc_plus_7d) at(0)
-replace vaccine = vaccine +1
-stsplit vaccine2, after(second_vacc_plus_7d) at(0)
-replace vaccine=2 if vaccine==1 &vaccine2==0 & second_vacc_plus_7d!=.
-recode `outcome' .=0 
 
-tab vaccine
+*Replace vacc date with missing if occur after end follow-up
+replace first_vacc_plus_7d=. if first_vacc_plus_7d> stime_`outcome'
+replace second_vacc_plus_7d=. if second_vacc_plus_7d> stime_`outcome'
+
+stsplit split1, after(first_vacc_plus_7d) at(0)
+recode `outcome' .=0 
+stsplit split2, after(second_vacc_plus_7d) at(0)
+recode `outcome' .=0 
+bysort patient_id: gen vaccine=_n
+tab vaccine, miss
+
+tab vaccine, miss
 tab vaccine `outcome' if kids_cat4==0
 
 foreach int_type in  vaccine  {
@@ -110,10 +125,10 @@ foreach exposure_type in kids_cat4  {
 stcox 	i.`exposure_type' 	age1 age2 age3			///
 			$demogadjlist	 			  	///
 			$comordidadjlist		///
-			1.`int_type'#0.`exposure_type' 1.`int_type'#1.`exposure_type' ///
-			1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' ///
 			2.`int_type'#0.`exposure_type' 2.`int_type'#1.`exposure_type' ///
-			2.`int_type'#2.`exposure_type' 2.`int_type'#3.`exposure_type'	///
+			2.`int_type'#2.`exposure_type' 2.`int_type'#3.`exposure_type' ///
+			3.`int_type'#0.`exposure_type' 3.`int_type'#1.`exposure_type' ///
+			3.`int_type'#2.`exposure_type' 3.`int_type'#3.`exposure_type'	///
 			, strata(stp) vce(cluster household_id) 
 if _rc==0 {
 *testparm 1.`int_type'#i.`exposure_type'
@@ -122,14 +137,14 @@ lincom 0.`exposure_type'
 lincom 1.`exposure_type' 
 lincom 2.`exposure_type' 
 lincom 3.`exposure_type' 
-lincom 0.`exposure_type' + 1.`int_type'#0.`exposure_type', eform
-lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
-lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
-lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
 lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
 lincom 1.`exposure_type' + 2.`int_type'#1.`exposure_type', eform
 lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
 lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
+lincom 0.`exposure_type' + 3.`int_type'#0.`exposure_type', eform
+lincom 1.`exposure_type' + 3.`int_type'#1.`exposure_type', eform
+lincom 2.`exposure_type' + 3.`int_type'#2.`exposure_type', eform
+lincom 3.`exposure_type' + 3.`int_type'#3.`exposure_type', eform
 estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`int_type'_`x', replace
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
