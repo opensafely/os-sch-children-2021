@@ -125,6 +125,8 @@ foreach exposure_type in kids_cat4  {
 stcox 	i.`exposure_type' 	age1 age2 age3			///
 			$demogadjlist	 			  	///
 			$comordidadjlist		///
+			1.`int_type'#0.`exposure_type' 1.`int_type'#1.`exposure_type' ///
+			1.`int_type'#2.`exposure_type' 1.`int_type'#3.`exposure_type' ///
 			2.`int_type'#0.`exposure_type' 2.`int_type'#1.`exposure_type' ///
 			2.`int_type'#2.`exposure_type' 2.`int_type'#3.`exposure_type' ///
 			3.`int_type'#0.`exposure_type' 3.`int_type'#1.`exposure_type' ///
