@@ -3,7 +3,7 @@
        log:  /workspace/logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_
 > SENSE.log
   log type:  text
- opened on:  17 Nov 2021, 11:52:12
+ opened on:  24 Nov 2021, 12:38:55
 
 . 
 . 
@@ -126,5 +126,5 @@ file ./output/HRestimates_all_outcomes_SENSE.dta saved
        log:  /workspace/logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_
 > SENSE.log
   log type:  text
- closed on:  17 Nov 2021, 11:52:15
+ closed on:  24 Nov 2021, 12:38:57
 -------------------------------------------------------------------------------

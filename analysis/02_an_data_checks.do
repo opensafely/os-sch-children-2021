@@ -178,6 +178,7 @@ graph export "output/01_histogram_outcomes.svg", as(svg) replace
 summ dereg_date, format
 summ has_12_m
 
+count if covid_vacc_date>=covid_vacc_second_dose_date
 *Vacc data
 foreach age in 0 1 {
 foreach vacc of any covid_vacc_date covid_vacc_second_dose_date   {
@@ -191,6 +192,7 @@ ytitle("Number", size(vsmall))   ///
 title("N=`total'", size(vsmall))  yline(5, lcolor(black%100)  lwidth(thick)) color(black%100)
 }
 }
+
 *Combine histograms
 graph combine output/covid_vacc_date_age0.gph output/covid_vacc_date_age1.gph  output/covid_vacc_second_dose_date_age0.gph output/covid_vacc_second_dose_date_age1.gph, ///
  graphregion(color(white)) col(2)
