@@ -329,9 +329,7 @@ foreach var of varlist  asthma						///
 
 /* SENSE CHECK OUTCOMES=======================================================*/
 
-safetab covid_death covid_icu  , row col
 
-safecount if covid_icu==1 & covid_death==1
 safecount if covidadmission==1 & covid_death==1
 
 sum positive_SGSS
