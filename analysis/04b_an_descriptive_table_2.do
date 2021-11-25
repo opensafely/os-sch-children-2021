@@ -45,7 +45,7 @@ syntax, variable(varname) condition(string)
 	local colpct = 100*(r(N)/`overalldenom')
 	file write tablecontent (`rowdenom')  (" (") %3.1f (`colpct') (")") _tab
 	
-	foreach outcome in covid_tpp_prob  covidadmission  covid_icu covid_death non_covid_death {
+	foreach outcome in covid_tpp_prob  covidadmission  covid_death non_covid_death {
 	cou if `outcome'==1 & `variable' `condition'
 	local pct = 100*(r(N)/`rowdenom')
 	file write tablecontent (r(N)) (" (") %4.2f  (`pct') (")") _tab 

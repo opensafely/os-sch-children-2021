@@ -119,11 +119,11 @@ foreach comorb in $varlist {
 }
 
 *summarise end dates for each outcome
-foreach outcome in date_covid_tpp_prob	date_covid_test_ever date_non_covid_death	date_covid_death	date_covid_icu	date_covidadmission	died_date_onscovid_part1	 {
+foreach outcome in date_covid_tpp_prob	date_covid_test_ever date_non_covid_death	date_covid_death	date_covidadmission	died_date_onscovid_part1	 {
 sum `outcome', format
 }
 
-foreach outcome in date_covid_tpp_prob	date_non_covid_death	date_covid_death	date_covid_icu	date_covidadmission	died_date_onscovid_part1	 {
+foreach outcome in date_covid_tpp_prob	date_non_covid_death	date_covid_death	date_covidadmission	died_date_onscovid_part1	 {
 gen `outcome'_month=mofd(`outcome') 
  lab define `outcome'_month 731 "Dec 2020" 734 "March 2020"  738 "July 2020"
 lab val `outcome'_month `outcome'_month
@@ -197,6 +197,10 @@ title("N=`total'", size(vsmall))  yline(5, lcolor(black%100)  lwidth(thick)) col
 graph combine output/covid_vacc_date_age0.gph output/covid_vacc_date_age1.gph  output/covid_vacc_second_dose_date_age0.gph output/covid_vacc_second_dose_date_age1.gph, ///
  graphregion(color(white)) col(2)
 graph export "output/01_histogram_vaccinations.svg", as(svg) replace 
+
+tab lft_pcr
+tab lft_pcr if date_covid_tpp_prob!=.
+tab kids_cat4 lft_pcr if date_covid_tpp_prob!=., col chi
 
 
 
@@ -325,9 +329,7 @@ foreach var of varlist  asthma						///
 
 /* SENSE CHECK OUTCOMES=======================================================*/
 
-safetab covid_death covid_icu  , row col
 
-safecount if covid_icu==1 & covid_death==1
 safecount if covidadmission==1 & covid_death==1
 
 sum positive_SGSS

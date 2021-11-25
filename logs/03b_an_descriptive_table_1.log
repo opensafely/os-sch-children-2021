@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /workspace/logs/03b_an_descriptive_table_1.log
   log type:  text
- opened on:  23 Nov 2021, 15:41:26
+ opened on:  25 Nov 2021, 16:02:37
 
 . 
 . program define generaterow
@@ -1532,5 +1532,5 @@
       name:  <unnamed>
        log:  /workspace/logs/03b_an_descriptive_table_1.log
   log type:  text
- closed on:  23 Nov 2021, 15:41:28
+ closed on:  25 Nov 2021, 16:02:38
 -------------------------------------------------------------------------------
