@@ -1,7 +1,7 @@
 *Descriptive stats table
 
 foreach age in 0 1 {
-import delimited "./output/03b_an_descriptive_table_1_kids_cat4_ageband`age'.txt", encoding(ISO-8859-2) clear 
+import delimited "./output/03b_an_descriptive_table_1_kids_cat4_ageband`age'.txt", encoding(ISO-8859-2) stringcols(1 2 3 4 5 6 7 8 9 10 11 12) clear  
 
 gen varcat = v1 + v2 
 drop if varcat=="cons==1"
@@ -88,11 +88,11 @@ drop smalln
 gen littlen=_n
 di "*****3"
 bysort v1 (littlen): gen smalln=_n
-
+desc
 foreach var in v3 v4 v5 v6 v7 v8 v9 v10 v11 v12  {
-	cap destring `var', replace 
+	destring `var', replace 
 }
-
+desc
 foreach var in v3 v4 v5 v6 v7 v8 v9 v10 v11 v12  {
 	replace `var'=. if smalln==1
 }
