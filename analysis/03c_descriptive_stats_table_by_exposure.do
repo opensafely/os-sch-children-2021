@@ -60,6 +60,7 @@ replace variable="3" if varcat=="tot_adults_hh==3"
 replace variable="Any comorbidity" if varcat=="anycomorb==1"
 
 drop if variable==""
+di "*****1"
 
 if `age'==0 {
 drop if varcat=="agegroup==6"
@@ -74,16 +75,18 @@ drop if varcat=="agegroup==3"
 drop if varcat=="agegroup==4"
 drop if varcat=="agegroup==5"
 }
-
+di "*****2"
 gen littlen=_n
 bysort v1 (littlen): gen smalln=_n
 
 sort littlen
-expand 2 if smalln==1
+expand 2 if smalln==1 /*works to here*/
+desc
 sort littlen
-
-drop littlen smalln
+drop littlen 
+drop smalln
 gen littlen=_n
+di "*****3"
 bysort v1 (littlen): gen smalln=_n
 
 foreach var in v3 v4 v5 v6 v7 v8 v9 v10 v11 v12  {
