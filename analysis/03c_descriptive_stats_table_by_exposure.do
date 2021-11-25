@@ -90,6 +90,10 @@ di "*****3"
 bysort v1 (littlen): gen smalln=_n
 
 foreach var in v3 v4 v5 v6 v7 v8 v9 v10 v11 v12  {
+	cap destring `var', replace 
+}
+
+foreach var in v3 v4 v5 v6 v7 v8 v9 v10 v11 v12  {
 	replace `var'=. if smalln==1
 }
 foreach var in v1 v2 variable {
