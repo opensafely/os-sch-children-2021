@@ -51,13 +51,6 @@ study = StudyDefinition(
         include_day=True,
         return_expectations={"date": {"earliest": "index_date"}, "incidence" : 0.8}
     ),
-    covid_icu_date=patients.admitted_to_icu(
-        on_or_after="index_date",
-        include_day=True,
-        returning="date_admitted",
-        find_first_match_in_period=True,
-        return_expectations={"date": {"earliest": "index_date"}, "incidence" : 0.8},
-    ),
     covid_tpp_probable=patients.with_these_clinical_events(
         combine_codelists(
             covid_identification_in_primary_care_case_codes_clinical,

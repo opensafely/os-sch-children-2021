@@ -86,7 +86,7 @@ foreach var of varlist 	chronic_respiratory_disease ///
 }
 
 * Recode to dates from the strings 
-foreach var of varlist covid_icu_date positive_covid_test covid_test_ever	///
+foreach var of varlist  positive_covid_test covid_test_ever	///
 covid_tpp_codes_clinical covid_tpp_codes_test covid_tpp_codes_seq ///
 died_date_ons covid_admission_date covid_tpp_probable ///
 covid_vacc_date  covid_vacc_second_dose_date	{
@@ -701,7 +701,6 @@ rename covid_test_ever date_covid_test_ever
 format died_date_ons %td
 format died_date_onscovid %td 
 format died_date_onsnoncovid %td
-format covid_icu_date %td 
 format died_date_onscovid_part1 %td
 format covid_admission_primary_date %td
 format date_covid_test_ever %td
@@ -710,7 +709,6 @@ format date_covid_test_ever %td
 gen covid_tpp_prob = (date_covid_tpp_prob < .)
 gen non_covid_death = (died_date_onsnoncovid < .)
 gen covid_death = (died_date_onscovid < .)
-gen covid_icu = (covid_icu_date < .)
 gen covidadmission = (covid_admission_primary_date < .)
 gen covid_death_part1 = (died_date_onscovid_part1 < .)
 gen covid_test_ever = (date_covid_test_ever < .)
@@ -724,7 +722,6 @@ gen stime_covid_death_part1 	= min(study_end_censor   , died_date_onscovid_part1
 gen stime_covid_tpp_prob = min(study_end_censor   , died_date_ons, date_covid_tpp_prob, dereg_date)
 gen stime_non_covid_death = min(study_end_censor   , died_date_ons, died_date_onsnoncovid, dereg_date)
 gen stime_covid_death = min(study_end_censor   , died_date_ons, died_date_onscovid, dereg_date)
-gen stime_covid_icu = min(study_end_censor, died_date_ons, covid_icu_date, dereg_date)
 gen stime_covidadmission 	= min(study_end_censor   , covid_admission_primary_date, died_date_ons, dereg_date)
 gen stime_covid_test_ever = min(study_end_censor, died_date_ons, date_covid_test_ever, dereg_date)
 
@@ -733,7 +730,6 @@ gen stime_covid_test_ever = min(study_end_censor, died_date_ons, date_covid_test
 replace covid_tpp_prob = 0 if (date_covid_tpp_prob > study_end_censor ) 
 replace non_covid_death = 0 if (died_date_onsnoncovid > study_end_censor )
 replace covid_death = 0 if (died_date_onscovid > study_end_censor )
-replace covid_icu = 0 if (covid_icu_date > study_end_censor)
 replace covidadmission 	= 0 if (covid_admission_primary_date > study_end_censor  | covid_admission_primary_date > died_date_ons) 
 replace covid_death_part1 = 0 if (died_date_onscovid_part1 > study_end_censor )
 replace covid_test_ever = 0 if (date_covid_test_ever > study_end_censor )
@@ -743,7 +739,6 @@ replace covid_test_ever = 0 if (date_covid_test_ever > study_end_censor )
 replace date_covid_tpp_prob = . if (date_covid_tpp_prob > study_end_censor ) 
 replace died_date_onsnoncovid = . if (died_date_onsnoncovid > study_end_censor )
 replace died_date_onscovid = . if (died_date_onscovid > study_end_censor )
-replace covid_icu_date = . if (covid_icu_date > study_end_censor)
 replace covid_admission_primary_date 	= . if (covid_admission_primary_date > study_end_censor  | covid_admission_primary_date > died_date_ons) 
 replace died_date_onscovid_part1 = . if (died_date_onscovid_part1 > study_end_censor )
 replace date_covid_test_ever = . if (date_covid_test_ever > study_end_censor ) 
@@ -850,7 +845,6 @@ label var study_end_censor    			"Date of admin censoring for outcomes"
 label var  covid_tpp_prob				"Failure/censoring indicator for outcome: covid prob case"
 label var  non_covid_death				"Failure/censoring indicator for outcome: non-covid death"
 label var  covid_death				    "Failure/censoring indicator for outcome: covid death"
-label var  covid_icu				    "Failure/censoring indicator for outcome: covid icu"
 label var  covid_test_ever				    "Failure/censoring indicator for outcome: covid test ever"
 lab var covidadmission 					"Failure/censoring indicator for outcome: covid SUS admission"
 lab var covid_death_part1				"Failure/censoring indicator for outcome: covid death part1"
@@ -861,12 +855,10 @@ lab var lft_pcr "Type of test taken"
 
 rename died_date_onsnoncovid date_non_covid_death
 rename died_date_onscovid date_covid_death
-rename covid_icu_date date_covid_icu
 rename covid_admission_primary_date date_covidadmission
 label var date_covid_tpp_prob			"Date of probable COVID-19 clinical infection"
 label var date_non_covid_death	 		"Date of ONS non-COVID-19 Death"
 label var  date_covid_death			"Date of ONS COVID-19 Death"
-lab var date_covid_icu					"Date of admission to ICU for COVID-19" 
 lab var date_covidadmission			"Date of admission to hospital for COVID-19" 
 label var  died_date_onscovid_part1			"Date of ONS COVID Death part1"
 lab var  date_positive_SGSS		"Date of positive SGSS test"
@@ -877,7 +869,6 @@ lab var   date_covid_test_ever  "Date of COVID-19 test"
 label var  stime_covid_tpp_prob				"Survival tme (date); outcome "
 label var  stime_non_covid_death			"Survival tme (date); outcome non_covid_death	"
 label var  stime_covid_death				"Survival time (date); outcome covid death"
-label var  stime_covid_icu					"Survival time (date); outcome covid icu"
 label var  stime_covidadmission				"Survival time (date); outcome covid hosp admission"
 label var  stime_covid_death_part1				"Survival time (date); outcome covid death part1"
 label var  stime_covid_test_ever				"Survival time (date); outcome covid test"
