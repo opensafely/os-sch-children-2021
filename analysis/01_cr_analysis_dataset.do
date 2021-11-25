@@ -857,6 +857,7 @@ lab var covid_death_part1				"Failure/censoring indicator for outcome: covid dea
 lab var  positive_SGSS		"Indicator positive covid test"
 lab var  covid_primary_care_codes		"Indicator positive primary care code COVID infection"
 lab var reported_infection_source 		"Reported Infection Source"
+lab var lft_pcr "Type of test taken"
 
 rename died_date_onsnoncovid date_non_covid_death
 rename died_date_onscovid date_covid_death

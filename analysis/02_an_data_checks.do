@@ -198,6 +198,10 @@ graph combine output/covid_vacc_date_age0.gph output/covid_vacc_date_age1.gph  o
  graphregion(color(white)) col(2)
 graph export "output/01_histogram_vaccinations.svg", as(svg) replace 
 
+tab lft_pcr
+tab lft_pcr if date_covid_tpp_prob!=.
+tab kids_cat4 lft_pcr if date_covid_tpp_prob!=., col chi
+
 
 
 /* LOGICAL RELATIONSHIPS======================================================*/ 
