@@ -77,7 +77,8 @@ tab vaccine, miss
 *put total N, PYFU and Rate in table
 	cou if `variable' == `i' & _d == 1 
 	local event = r(N)
-    bysort `variable': egen total_follow_up = total(_t)
+	gen fup=_t-_t0
+    bysort `variable': egen total_follow_up = total(fup)
 	su total_follow_up if `variable' == `i'
 	local person_days = r(mean)
 	local person_years=`person_days'/365.25
