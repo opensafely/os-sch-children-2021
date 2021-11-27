@@ -82,7 +82,6 @@ foreach x in 0 1 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
-
 replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
 replace covid_vacc_second_dose_date=. if covid_vacc_date==. 
 drop if covid_vacc_date<d(20dec2020)
@@ -110,7 +109,7 @@ stsplit split1, after(first_vacc_plus_7d) at(0)
 recode `outcome' .=0 
 stsplit split2, after(second_vacc_plus_7d) at(0)
 recode `outcome' .=0 
-bysort patient_id: gen vaccine=_n
+bysort patient_id (_t): gen vaccine=_n
 tab vaccine, miss
 
 tab vaccine, miss
