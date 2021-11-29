@@ -109,7 +109,7 @@ tab vaccine, miss
 			test 1.`int_type'#`i'.`variable'
 			*overall p-value for interaction: test 1.`int_type'#1.`variable' test 1.`int_type'#2.`variable'
 			local pval=r(p)
-			cap lincom `i'.`variable' + 1.`int_type'#`i'.`variable', eform
+			cap lincom `i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab %4.2f (`pval') `endwith'
 
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
