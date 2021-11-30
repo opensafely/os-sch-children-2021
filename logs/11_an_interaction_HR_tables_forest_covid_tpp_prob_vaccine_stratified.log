@@ -3,7 +3,7 @@
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_
 > vaccine_stratified.log
   log type:  text
- opened on:  30 Nov 2021, 11:14:25
+ opened on:  30 Nov 2021, 14:00:46
 
 . 
 . *****************************************************************************
@@ -249,17 +249,19 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |        508       50740           0      50740      50740
 
- ( 1)  1o.vaccine#0b.kids_cat4 = 0
+ ( 1)  1b.vaccine#0b.kids_cat4 = 0
        Constraint 1 dropped
 
            chi2(  0) =       .
          Prob > chi2 =         .
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -324,11 +326,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |        116       10860           0      10860      10860
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -393,11 +397,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |          2          52           0         52         52
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -462,16 +468,19 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |      1,739      101512           0     101512     101512
 
- ( 1)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
 
-           chi2(  1) =    3.35
-         Prob > chi2 =    0.0671
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -536,11 +545,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |        236       14157           0      14157      14157
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -605,11 +616,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |         12         875           0        875        875
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -674,16 +687,19 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |        169       14226           0      14226      14226
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+       Constraint 1 dropped
 
-           chi2(  1) =    1.84
-         Prob > chi2 =    0.1746
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -748,11 +764,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |         31        2092           0       2092       2092
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -817,11 +835,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |          2         213           0        213        213
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -886,16 +906,19 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |     10,112      348561           0     348561     348561
 
- ( 1)  1.vaccine#3.kids_cat4 = 0
+ ( 1)  1b.vaccine#3o.kids_cat4 = 0
+       Constraint 1 dropped
 
-           chi2(  1) =    5.53
-         Prob > chi2 =    0.0187
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -960,11 +983,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |        753       28031           0      28031      28031
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -1029,11 +1054,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |         44        1608           0       1608       1608
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    3.50
-         Prob > chi2 =    0.1735
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1098,17 +1125,19 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |        155       15056           0      15056      15056
 
- ( 1)  1o.vaccine#0b.kids_cat4 = 0
+ ( 1)  1b.vaccine#0b.kids_cat4 = 0
        Constraint 1 dropped
 
            chi2(  0) =       .
          Prob > chi2 =         .
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1173,11 +1202,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |         35        3220           0       3220       3220
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1242,11 +1273,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |          1         145           .        145        145
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1311,16 +1344,19 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |        470       25651           0      25651      25651
 
- ( 1)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
 
-           chi2(  1) =    0.68
-         Prob > chi2 =    0.4108
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1385,11 +1421,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |         62        3219           0       3219       3219
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1454,11 +1492,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |          4         259           0        259        259
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1523,16 +1563,19 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |         45        3755           0       3755       3755
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+       Constraint 1 dropped
 
-           chi2(  1) =    0.02
-         Prob > chi2 =    0.8758
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1597,11 +1640,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |         12         754           0        754        754
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1666,11 +1711,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |          0
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1735,16 +1782,19 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |      2,819       94859           0      94859      94859
 
- ( 1)  1.vaccine#3.kids_cat4 = 0
+ ( 1)  1b.vaccine#3o.kids_cat4 = 0
+       Constraint 1 dropped
 
-           chi2(  1) =    1.59
-         Prob > chi2 =    0.2079
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1809,11 +1859,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |        205        7914           0       7914       7914
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1878,11 +1930,13 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |          6         244           0        244        244
 
- ( 1)  1.vaccine#2.kids_cat4 = 0
- ( 2)  1.vaccine#1.kids_cat4 = 0
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
 
-           chi2(  2) =    0.80
-         Prob > chi2 =    0.6691
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
 . file write tablecontents_int _n
 
@@ -1898,5 +1952,5 @@ total_foll~p |          6         244           0        244        244
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_
 > vaccine_stratified.log
   log type:  text
- closed on:  30 Nov 2021, 11:14:36
+ closed on:  30 Nov 2021, 14:00:59
 -------------------------------------------------------------------------------

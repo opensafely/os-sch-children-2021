@@ -3,7 +3,7 @@
        log:  /workspace/logs/10_an_interaction_cox_models_vaccine_covid_death_s
 > tratified.log
   log type:  text
- opened on:  30 Nov 2021, 10:55:59
+ opened on:  30 Nov 2021, 13:58:16
 
 . 
 . 
@@ -80,35 +80,69 @@
 . *Age interaction for 3-level exposure vars
 . foreach exposure_type in kids_cat4  {
  26. 
-. *Age spline model (not adj ethnicity, interaction)
-. basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")  ///
-> interaction(i.`int_type'##i.`exposure_type')
- 27. if _rc==0{
+. 
+. *Unadjusted  model (interaction)
+. stcox   i.`exposure_type'       ///
+>                         i.`int_type'##i.`exposure_type' ///
+>                         , strata(stp) vce(cluster household_id) 
+ 27. 
+. if _rc==0 {
  28. *testparm 1.`int_type'#i.`exposure_type'
-. di _n "`exposure_type' " _n "****************"
- 29. 
-. lincom 0.`exposure_type' + 1.`int_type'#0.`exposure_type', eform
- 30. lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
- 31. lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
- 32. lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
- 33. 
-. lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
+. di _n "kids_cat4=0 " _n "****************"
+ 29. lincom 0.`exposure_type' + 1.`int_type'#0.`exposure_type', eform
+ 30. lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
+ 31. lincom 0.`exposure_type' + 3.`int_type'#0.`exposure_type', eform
+ 32. 
+. di _n "kids_cat4=1 " _n "****************"
+ 33. lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
  34. lincom 1.`exposure_type' + 2.`int_type'#1.`exposure_type', eform
- 35. lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
- 36. lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
- 37. 
-. lincom 0.`exposure_type' + 3.`int_type'#0.`exposure_type', eform
- 38. lincom 1.`exposure_type' + 3.`int_type'#1.`exposure_type', eform
+ 35. lincom 1.`exposure_type' + 3.`int_type'#1.`exposure_type', eform
+ 36. 
+. di _n "kids_cat4=2 " _n "****************"
+ 37. lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
+ 38. lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
  39. lincom 2.`exposure_type' + 3.`int_type'#2.`exposure_type', eform
- 40. lincom 3.`exposure_type' + 3.`int_type'#3.`exposure_type', eform
- 41. 
+ 40. 
+. di _n "kids_cat4=3 " _n "****************"
+ 41. lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
+ 42. lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
+ 43. lincom 3.`exposure_type' + 3.`int_type'#3.`exposure_type', eform
+ 44. }
+ 45. else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"             
+>       
+ 46. 
+. *Age spline model (not adj ethnicity, interaction)
+. stcox   i.`exposure_type'       age1 age2 age3                  ///
+>                         $demogadjlist                                   ///
+>                         $comordidadjlist                ///
+>                         i.`int_type'##i.`exposure_type' ///
+>                         , strata(stp) vce(cluster household_id) 
+ 47. if _rc==0{
+ 48. *testparm 1.`int_type'#i.`exposure_type'
+. di _n "`exposure_type' " _n "****************"
+ 49. 
+. lincom 0.`exposure_type' + 1.`int_type'#0.`exposure_type', eform
+ 50. lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
+ 51. lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
+ 52. lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
+ 53. 
+. lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
+ 54. lincom 1.`exposure_type' + 2.`int_type'#1.`exposure_type', eform
+ 55. lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
+ 56. lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
+ 57. 
+. lincom 0.`exposure_type' + 3.`int_type'#0.`exposure_type', eform
+ 58. lincom 1.`exposure_type' + 3.`int_type'#1.`exposure_type', eform
+ 59. lincom 2.`exposure_type' + 3.`int_type'#2.`exposure_type', eform
+ 60. lincom 3.`exposure_type' + 3.`int_type'#3.`exposure_type', eform
+ 61. 
 . estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`
 > int_type'_`x'_stratified, replace
- 42. }
- 43. else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
- 44. }
- 45. }
- 46. }
+ 62. }
+ 63. else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
+ 64. }
+ 65. }
+ 66. }
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -210,6 +244,204 @@ Estimated rates (per 100000) and lower/upper bounds of 95% confidence intervals
                  id:  patient_id
 
 Iteration 0:   log pseudolikelihood = -6957.2226
+Iteration 1:   log pseudolikelihood = -6951.8414
+Iteration 2:   log pseudolikelihood = -6950.3779
+Iteration 3:   log pseudolikelihood = -6950.3015
+Iteration 4:   log pseudolikelihood = -6950.2748
+Iteration 5:   log pseudolikelihood =  -6950.265
+Iteration 6:   log pseudolikelihood = -6950.2614
+Iteration 7:   log pseudolikelihood = -6950.2601
+Iteration 8:   log pseudolikelihood = -6950.2596
+Iteration 9:   log pseudolikelihood = -6950.2594
+Iteration 10:  log pseudolikelihood = -6950.2593
+Iteration 11:  log pseudolikelihood = -6950.2593
+Iteration 12:  log pseudolikelihood = -6950.2593
+Iteration 13:  log pseudolikelihood = -6950.2593
+Iteration 14:  log pseudolikelihood = -6950.2593
+Iteration 15:  log pseudolikelihood = -6950.2593
+Iteration 16:  log pseudolikelihood = -6950.2593
+Iteration 17:  log pseudolikelihood = -6950.2593
+Iteration 18:  log pseudolikelihood = -6950.2593
+Iteration 19:  log pseudolikelihood = -6950.2593
+Iteration 20:  log pseudolikelihood = -6950.2593
+Iteration 21:  log pseudolikelihood = -6950.2593
+Iteration 22:  log pseudolikelihood = -6950.2593
+Iteration 23:  log pseudolikelihood = -6950.2593
+Iteration 24:  log pseudolikelihood = -6950.2593
+Iteration 25:  log pseudolikelihood = -6950.2593
+Iteration 26:  log pseudolikelihood = -6950.2593
+Iteration 27:  log pseudolikelihood = -6950.2593
+Iteration 28:  log pseudolikelihood = -6950.2593
+Iteration 29:  log pseudolikelihood = -6950.2593
+Iteration 30:  log pseudolikelihood = -6950.2593
+Iteration 31:  log pseudolikelihood = -6950.2593
+Iteration 32:  log pseudolikelihood = -6950.2593
+Iteration 33:  log pseudolikelihood = -6950.2593
+Iteration 34:  log pseudolikelihood = -6950.2593
+Iteration 35:  log pseudolikelihood = -6950.2593
+Iteration 36:  log pseudolikelihood = -6950.2593
+Iteration 37:  log pseudolikelihood = -6950.2593
+Iteration 38:  log pseudolikelihood = -6950.2593
+Refining estimates:
+Iteration 0:   log pseudolikelihood = -6950.2593
+Iteration 1:   log pseudolikelihood = -6950.2593
+Iteration 2:   log pseudolikelihood = -6950.2593
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =       12,528             Number of obs    =      13,980
+No. of failures      =        1,199
+Time at risk         =       705195
+                                                Wald chi2(11)    =     2596.34
+Log pseudolikelihood =   -6950.2593             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 988 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   .9156562   .1019381    -0.79   0.429     .7361562    1.138924
+ only 12-18  |   1.054732   .2519703     0.22   0.823     .6603808    1.684574
+      mixed  |    .889725   .0931098    -1.12   0.264     .7247322     1.09228
+             |
+     vaccine |
+          2  |   .8219271   .1339137    -1.20   0.229     .5972415    1.131141
+          3  |   4.496136   .9642191     7.01   0.000     2.953214    6.845165
+             |
+     vaccine#|
+   kids_cat4 |
+          2 #|
+only <12 ..  |   1.596377    .354536     2.11   0.035     1.032985    2.467045
+          2 #|
+ only 12-18  |   .7367952   .3732362    -0.60   0.547     .2729959    1.988554
+    2#mixed  |   1.508962   .3070621     2.02   0.043     1.012664    2.248492
+          3 #|
+only <12 ..  |   .1693482   .1252601    -2.40   0.016     .0397357     .721739
+          3 #|
+ only 12-18  |   1.39e-18   1.16e-18   -49.43   0.000     2.72e-19    7.10e-18
+    3#mixed  |   .1566243    .112031    -2.59   0.010     .0385485     .636372
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+
+kids_cat4=0 
+****************
+
+ ( 1)  0b.kids_cat4 + 1b.vaccine#0b.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |          1  (omitted)
+------------------------------------------------------------------------------
+
+ ( 1)  0b.kids_cat4 + 2o.vaccine#0b.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |          1  (omitted)
+------------------------------------------------------------------------------
+
+ ( 1)  0b.kids_cat4 + 3o.vaccine#0b.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |          1  (omitted)
+------------------------------------------------------------------------------
+
+kids_cat4=1 
+****************
+
+ ( 1)  1.kids_cat4 + 1b.vaccine#1o.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .9156562   .1019381    -0.79   0.429     .7361562    1.138924
+------------------------------------------------------------------------------
+
+ ( 1)  1.kids_cat4 + 2.vaccine#1.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.461733   .2879954     1.93   0.054     .9934854    2.150674
+------------------------------------------------------------------------------
+
+ ( 1)  1.kids_cat4 + 3.vaccine#1.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .1550647   .1149124    -2.52   0.012     .0362845    .6626817
+------------------------------------------------------------------------------
+
+kids_cat4=2 
+****************
+
+ ( 1)  2.kids_cat4 + 1b.vaccine#2o.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.054732   .2519703     0.22   0.823     .6603808    1.684574
+------------------------------------------------------------------------------
+
+ ( 1)  2.kids_cat4 + 2.vaccine#2.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .7771218   .3375911    -0.58   0.562     .3316781    1.820796
+------------------------------------------------------------------------------
+
+ ( 1)  2.kids_cat4 + 3.vaccine#2.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.47e-18   1.20e-18   -50.34   0.000     2.96e-19    7.25e-18
+------------------------------------------------------------------------------
+
+kids_cat4=3 
+****************
+
+ ( 1)  3.kids_cat4 + 1b.vaccine#3o.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |    .889725   .0931098    -1.12   0.264     .7247322     1.09228
+------------------------------------------------------------------------------
+
+ ( 1)  3.kids_cat4 + 2.vaccine#3.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.342561   .2536612     1.56   0.119     .9270638     1.94428
+------------------------------------------------------------------------------
+
+ ( 1)  3.kids_cat4 + 3.vaccine#3.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .1393526   .0990495    -2.77   0.006     .0346015    .5612221
+------------------------------------------------------------------------------
+
+         failure _d:  covid_death
+   analysis time _t:  (stime_covid_death-origin)
+             origin:  time enter_date
+  enter on or after:  time enter_date
+                 id:  patient_id
+
+note: age1 omitted because of collinearity
+note: age2 omitted because of collinearity
+note: age3 omitted because of collinearity
+Iteration 0:   log pseudolikelihood = -6957.2226
 Iteration 1:   log pseudolikelihood = -6943.8224
 Iteration 2:   log pseudolikelihood = -6931.2059
 Iteration 3:   log pseudolikelihood = -6928.7952
@@ -278,6 +510,9 @@ only <12 ..  |   .9213642   .1130905    -0.67   0.505     .7243571    1.171952
         age1 |   .9941807   .0102631    -0.57   0.572     .9742675    1.014501
         age2 |   1.017745   .0329864     0.54   0.587     .9551034    1.084495
         age3 |   .9527216   .0862366    -0.54   0.593      .797845    1.137662
+        age1 |          1  (omitted)
+        age2 |          1  (omitted)
+        age3 |          1  (omitted)
       1.male |   1.024543   .0608441     0.41   0.683     .9119697    1.151013
              |
    ethnicity |
@@ -353,7 +588,6 @@ only <12 ..  |   .1760215    .127856    -2.39   0.017     .0423918    .7308858
     3#mixed  |   .1695818   .1220165    -2.47   0.014     .0413931    .6947535
 ------------------------------------------------------------------------------
                                                              Stratified by stp
-   1:      9.38 /        1 =       9.3820
 
 kids_cat4 
 ****************
@@ -559,6 +793,196 @@ Estimated rates (per 100000) and lower/upper bounds of 95% confidence intervals
 
 note: 3.vaccine#2.kids_cat4 identifies no observations in the sample
 Iteration 0:   log pseudolikelihood = -1569.0534
+Iteration 1:   log pseudolikelihood = -1565.7304
+Iteration 2:   log pseudolikelihood = -1565.4894
+Iteration 3:   log pseudolikelihood = -1565.4305
+Iteration 4:   log pseudolikelihood = -1565.4091
+Iteration 5:   log pseudolikelihood = -1565.4012
+Iteration 6:   log pseudolikelihood = -1565.3983
+Iteration 7:   log pseudolikelihood = -1565.3973
+Iteration 8:   log pseudolikelihood = -1565.3969
+Iteration 9:   log pseudolikelihood = -1565.3967
+Iteration 10:  log pseudolikelihood = -1565.3967
+Iteration 11:  log pseudolikelihood = -1565.3967
+Iteration 12:  log pseudolikelihood = -1565.3967
+Iteration 13:  log pseudolikelihood = -1565.3967
+Iteration 14:  log pseudolikelihood = -1565.3967
+Iteration 15:  log pseudolikelihood = -1565.3967
+Iteration 16:  log pseudolikelihood = -1565.3967
+Iteration 17:  log pseudolikelihood = -1565.3967
+Iteration 18:  log pseudolikelihood = -1565.3967
+Iteration 19:  log pseudolikelihood = -1565.3967
+Iteration 20:  log pseudolikelihood = -1565.3967
+Iteration 21:  log pseudolikelihood = -1565.3967
+Iteration 22:  log pseudolikelihood = -1565.3967
+Iteration 23:  log pseudolikelihood = -1565.3967
+Iteration 24:  log pseudolikelihood = -1565.3967
+Iteration 25:  log pseudolikelihood = -1565.3967
+Iteration 26:  log pseudolikelihood = -1565.3967
+Iteration 27:  log pseudolikelihood = -1565.3967
+Iteration 28:  log pseudolikelihood = -1565.3967
+Iteration 29:  log pseudolikelihood = -1565.3967
+Refining estimates:
+Iteration 0:   log pseudolikelihood = -1565.3967
+Iteration 1:   log pseudolikelihood = -1565.3967
+Iteration 2:   log pseudolikelihood = -1565.3967
+
+Stratified Cox regr. -- Breslow method for ties
+
+No. of subjects      =        3,489             Number of obs    =       3,890
+No. of failures      =          352
+Time at risk         =       190711
+                                                Wald chi2(10)    =     2574.31
+Log pseudolikelihood =   -1565.3967             Prob > chi2      =      0.0000
+
+                         (Std. Err. adjusted for 777 clusters in household_id)
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   kids_cat4 |
+only <12 ..  |   1.038869   .1893658     0.21   0.834     .7267798    1.484972
+ only 12-18  |   .6283204   .2878612    -1.01   0.310     .2559813    1.542247
+      mixed  |   .8728566   .1456509    -0.81   0.415     .6293692    1.210543
+             |
+     vaccine |
+          2  |   .9419098   .2552266    -0.22   0.825     .5538112     1.60198
+          3  |   1.556706   .4251493     1.62   0.105     .9114573    2.658745
+             |
+     vaccine#|
+   kids_cat4 |
+          2 #|
+only <12 ..  |   1.199961   .4199788     0.52   0.602     .6042994    2.382771
+          2 #|
+ only 12-18  |    .760448    .667325    -0.31   0.755     .1361772    4.246534
+    2#mixed  |    .942934   .3406048    -0.16   0.871      .464528    1.914038
+          3 #|
+only <12 ..  |   1.86e-14   1.29e-14   -45.49   0.000     4.76e-15    7.26e-14
+          3 #|
+ only 12-18  |          1  (empty)
+    3#mixed  |    1.19048   .9076358     0.23   0.819     .2671507    5.305032
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+
+kids_cat4=0 
+****************
+
+ ( 1)  0b.kids_cat4 + 1b.vaccine#0b.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |          1  (omitted)
+------------------------------------------------------------------------------
+
+ ( 1)  0b.kids_cat4 + 2o.vaccine#0b.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |          1  (omitted)
+------------------------------------------------------------------------------
+
+ ( 1)  0b.kids_cat4 + 3o.vaccine#0b.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |          1  (omitted)
+------------------------------------------------------------------------------
+
+kids_cat4=1 
+****************
+
+ ( 1)  1.kids_cat4 + 1b.vaccine#1o.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.038869   .1893658     0.21   0.834     .7267798    1.484972
+------------------------------------------------------------------------------
+
+ ( 1)  1.kids_cat4 + 2.vaccine#1.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.246602   .3863199     0.71   0.477     .6791128    2.288305
+------------------------------------------------------------------------------
+
+ ( 1)  1.kids_cat4 + 3.vaccine#1.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.93e-14   1.33e-14   -46.02   0.000     5.03e-15    7.41e-14
+------------------------------------------------------------------------------
+
+kids_cat4=2 
+****************
+
+ ( 1)  2.kids_cat4 + 1b.vaccine#2o.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .6283204   .2878612    -1.01   0.310     .2559813    1.542247
+------------------------------------------------------------------------------
+
+ ( 1)  2.kids_cat4 + 2.vaccine#2.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .4778049   .3677608    -0.96   0.337     .1057039    2.159785
+------------------------------------------------------------------------------
+
+ ( 1)  2.kids_cat4 + 3o.vaccine#2o.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .6283204   .2878612    -1.01   0.310     .2559813    1.542247
+------------------------------------------------------------------------------
+
+kids_cat4=3 
+****************
+
+ ( 1)  3.kids_cat4 + 1b.vaccine#3o.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .8728566   .1456509    -0.81   0.415     .6293692    1.210543
+------------------------------------------------------------------------------
+
+ ( 1)  3.kids_cat4 + 2.vaccine#3.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .8230462   .2745803    -0.58   0.559      .428007    1.582696
+------------------------------------------------------------------------------
+
+ ( 1)  3.kids_cat4 + 3.vaccine#3.kids_cat4 = 0
+
+------------------------------------------------------------------------------
+          _t |     exp(b)   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.039119   .7722322     0.05   0.959     .2421506    4.459074
+------------------------------------------------------------------------------
+
+         failure _d:  covid_death
+   analysis time _t:  (stime_covid_death-origin)
+             origin:  time enter_date
+  enter on or after:  time enter_date
+                 id:  patient_id
+
+note: age1 omitted because of collinearity
+note: age2 omitted because of collinearity
+note: age3 omitted because of collinearity
+note: 3.vaccine#2.kids_cat4 identifies no observations in the sample
+Iteration 0:   log pseudolikelihood = -1569.0534
 Iteration 1:   log pseudolikelihood = -1551.6817
 Iteration 2:   log pseudolikelihood = -1544.4089
 Iteration 3:   log pseudolikelihood =  -1543.504
@@ -627,6 +1051,9 @@ only <12 ..  |    1.14413   .2279925     0.68   0.499     .7742035    1.690813
         age1 |   .9911679   .0458887    -0.19   0.848     .9051876    1.085315
         age2 |   1.034645   .2213641     0.16   0.874     .6802601    1.573647
         age3 |   .8916617   .4662595    -0.22   0.826     .3199614    2.484864
+        age1 |          1  (omitted)
+        age2 |          1  (omitted)
+        age3 |          1  (omitted)
       1.male |   .9389654   .1095363    -0.54   0.589     .7470532    1.180178
              |
    ethnicity |
@@ -702,7 +1129,6 @@ only <12 ..  |   3.39e-20          .        .       .            .           .
     3#mixed  |   1.103211   .8662295     0.13   0.900     .2367578     5.14059
 ------------------------------------------------------------------------------
                                                              Stratified by stp
-   1:      2.42 /        1 =       2.4230
 
 kids_cat4 
 ****************
@@ -812,5 +1238,5 @@ file ./output/an_interaction_cox_models_covid_death_kids_cat4_vaccine_1_stratif
        log:  /workspace/logs/10_an_interaction_cox_models_vaccine_covid_death_s
 > tratified.log
   log type:  text
- closed on:  30 Nov 2021, 10:56:13
+ closed on:  30 Nov 2021, 13:58:31
 -------------------------------------------------------------------------------

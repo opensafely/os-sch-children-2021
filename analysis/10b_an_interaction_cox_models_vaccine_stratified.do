@@ -124,9 +124,42 @@ foreach int_type in  vaccine  {
 *Age interaction for 3-level exposure vars
 foreach exposure_type in kids_cat4  {
 
+
+*Unadjusted  model (interaction)
+stcox 	i.`exposure_type' 	///
+			i.`int_type'##i.`exposure_type' ///
+			, strata(stp) vce(cluster household_id) 
+
+if _rc==0 {
+*testparm 1.`int_type'#i.`exposure_type'
+di _n "kids_cat4=0 " _n "****************"
+lincom 0.`exposure_type' + 1.`int_type'#0.`exposure_type', eform
+lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
+lincom 0.`exposure_type' + 3.`int_type'#0.`exposure_type', eform
+
+di _n "kids_cat4=1 " _n "****************"
+lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
+lincom 1.`exposure_type' + 2.`int_type'#1.`exposure_type', eform
+lincom 1.`exposure_type' + 3.`int_type'#1.`exposure_type', eform
+
+di _n "kids_cat4=2 " _n "****************"
+lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
+lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
+lincom 2.`exposure_type' + 3.`int_type'#2.`exposure_type', eform
+
+di _n "kids_cat4=3 " _n "****************"
+lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
+lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
+lincom 3.`exposure_type' + 3.`int_type'#3.`exposure_type', eform
+}
+else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"			
+
 *Age spline model (not adj ethnicity, interaction)
-basemodel, exposure("i.`exposure_type'") age("age1 age2 age3")  ///
-interaction(i.`int_type'##i.`exposure_type')
+stcox 	i.`exposure_type' 	age1 age2 age3			///
+			$demogadjlist	 			  	///
+			$comordidadjlist		///
+			i.`int_type'##i.`exposure_type' ///
+			, strata(stp) vce(cluster household_id) 
 if _rc==0{
 *testparm 1.`int_type'#i.`exposure_type'
 di _n "`exposure_type' " _n "****************"
