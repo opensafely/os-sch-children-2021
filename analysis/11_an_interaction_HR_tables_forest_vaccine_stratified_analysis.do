@@ -101,7 +101,7 @@ bysort patient_id (_t): gen vaccine=_n
 		*1) GET THE RIGHT ESTIMATES INTO MEMORY
 
 		if "`modeltype'"=="fulladj" {
-				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_`int_type'_`x'_stratified
+				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_`int_type'_`x'
 				if _rc!=0 local noestimatesflag 1
 				}
 		***********************
@@ -109,22 +109,21 @@ bysort patient_id (_t): gen vaccine=_n
 
 		if `noestimatesflag'==0{
 			if `int_level'==1 {
-			test 1.`int_type'#`i'.`variable'
-			*overall p-value for interaction: test 1.`int_type'#1.`variable' test 1.`int_type'#2.`variable'
+			    
 			local pval=r(p)
-			cap lincom `i'.`variable', eform
+			cap lincom 1.vaccine +1.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab %4.2f (`pval') `endwith'
 
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
 			if `int_level'==2 {
-			cap lincom `i'.`variable'+ 1.`int_type'#`i'.`variable', eform
+			cap lincom 2.vaccine +2.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
 			
 			if `int_level'==3 {
-			cap lincom `i'.`variable'+ 2.`int_type'#`i'.`variable', eform
+			cap lincom 2.vaccine +2.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}

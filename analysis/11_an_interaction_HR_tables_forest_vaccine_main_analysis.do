@@ -106,22 +106,19 @@ tab vaccine, miss
 
 		if `noestimatesflag'==0{
 			if `int_level'==1 {
-			test 1.`int_type'#`i'.`variable'
-			*overall p-value for interaction: test 1.`int_type'#1.`variable' test 1.`int_type'#2.`variable'
-			local pval=r(p)
-			cap lincom `i'.`variable', eform
+			cap lincom 1.vaccine+`i'.`variable'+ 1.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab %4.2f (`pval') `endwith'
 
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
 			if `int_level'==2 {
-			cap lincom `i'.`variable'+ 2.`int_type'#`i'.`variable', eform
+			cap lincom 2.vaccine+`i'.`variable'+ 2.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
 			
 			if `int_level'==3 {
-			cap lincom `i'.`variable'+ 3.`int_type'#`i'.`variable', eform
+			cap lincom 3.vaccine+`i'.`variable'+ 3.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
