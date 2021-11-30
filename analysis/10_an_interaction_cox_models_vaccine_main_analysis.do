@@ -15,7 +15,8 @@
 ********************************************************************************
 *
 *	Purpose:		This do-file performs multivariable (fully adjusted) 
-*					Cox models, with an interaction by sex.
+*					Cox models, with an interaction by vaccine
+*					b/l group is unvacc without kids.
 *  
 ********************************************************************************
 *	

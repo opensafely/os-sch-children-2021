@@ -32,39 +32,56 @@ foreach x in 0 1 {
 forvalues i=`min'/`max'{
 foreach int_type in vaccine {
 
-foreach int_level in 0 1 2 {
+foreach int_level in  1 2 3 {
 
 local endwith "_tab"
 
 	*put the varname and condition to left so that alignment can be checked vs shell
 	file write tablecontents_int ("`x'") _tab ("`variable'") _tab ("`i'") _tab ("`outcome'") _tab ("`int_type'") _tab ("`int_level'") _tab
  
- use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
+use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
+
+replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
+replace covid_vacc_second_dose_date=. if covid_vacc_date==. 
+drop if covid_vacc_date<d(20dec2020)
+drop if covid_vacc_second_dose_date<d(20dec2020)
 
 *Censor at date of first child being vaccinated in hh
 replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
-stset stime_`outcome', fail(`outcome') 		///
-	id(patient_id) enter(enter_date) origin(enter_date)
-
+replace `outcome'=0 if stime_`outcome'<date_`outcome'
+*Drop those without any eligible follow-up
+drop if enter_date>=stime_`outcome'
+*Generate first and second vacc dates	
 gen first_vacc_plus_7d=covid_vacc_date+7
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
 format first_vacc_plus_7d second_vacc_plus_7d %td
- 
-stsplit vaccine, after(first_vacc_plus_7d) at(0)
-replace vaccine = vaccine +1
-stsplit vaccine2, after(second_vacc_plus_7d) at(0)
-replace vaccine=2 if vaccine==1 &vaccine2==0 & second_vacc_plus_7d!=.
+
+*Replace vacc date with missing if occur after end follow-up
+replace first_vacc_plus_7d=. if first_vacc_plus_7d> stime_`outcome'
+replace second_vacc_plus_7d=. if second_vacc_plus_7d> stime_`outcome'
+
+stset stime_`outcome', fail(`outcome') 		///
+	id(patient_id) enter(enter_date) origin(enter_date)
+
+
+stsplit split1, after(first_vacc_plus_7d) at(0)
+recode `outcome' .=0 
+stsplit split2, after(second_vacc_plus_7d) at(0)
 recode `outcome' .=0 
 
-	tab vaccine
-	tab vaccine `outcome' 
+stset
+bysort patient_id (_t): gen vaccine=_n
+
+
+
 	
 	
 	keep if vaccine==`int_level'
 *put total N, PYFU and Rate in table
 	cou if `variable' == `i' & _d == 1 
 	local event = r(N)
-    bysort `variable': egen total_follow_up = total(_t)
+	gen fup=_t-_t0
+    bysort `variable': egen total_follow_up = total(fup)
 	su total_follow_up if `variable' == `i'
 	local person_days = r(mean)
 	local person_years=`person_days'/365.25
@@ -91,7 +108,7 @@ recode `outcome' .=0
 		*2) WRITE THE HRs TO THE OUTPUT FILE
 
 		if `noestimatesflag'==0{
-			if `int_level'==0 {
+			if `int_level'==1 {
 			test 1.`int_type'#`i'.`variable'
 			*overall p-value for interaction: test 1.`int_type'#1.`variable' test 1.`int_type'#2.`variable'
 			local pval=r(p)
@@ -100,13 +117,13 @@ recode `outcome' .=0
 
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
-			if `int_level'==1 {
+			if `int_level'==2 {
 			cap lincom `i'.`variable'+ 1.`int_type'#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
 			
-			if `int_level'==2 {
+			if `int_level'==3 {
 			cap lincom `i'.`variable'+ 2.`int_type'#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
