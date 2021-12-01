@@ -79,9 +79,10 @@ end
 *************************************************************************************
 
 * Open dataset and fit specified model(s)
-foreach x in 0 1 {
+foreach x in 0 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
+
 
 replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
 replace covid_vacc_second_dose_date=. if covid_vacc_date==. 
@@ -152,24 +153,24 @@ lincom 3.vaccine+3.kids_cat4+ 3.vaccine#3.kids_cat4, eform
 *effect of vaccination among kids_cat4=3 
 
 di _n "kids_cat4=0 " _n "****************"
-lincom 1.vaccine +1.vaccine#0.kids_cat4
-lincom 2.vaccine +2.vaccine#0.kids_cat4
-lincom 3.vaccine +3.vaccine#0.kids_cat4
+lincom 1.vaccine +1.vaccine#0.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#0.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#0.kids_cat4, eform
 
 di _n "kids_cat4=1 " _n "****************"
-lincom 1.vaccine +1.vaccine#1.kids_cat4
-lincom 2.vaccine +2.vaccine#1.kids_cat4
-lincom 3.vaccine +3.vaccine#1.kids_cat4
+lincom 1.vaccine +1.vaccine#1.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#1.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#1.kids_cat4, eform
 
 di _n "kids_cat4=2 " _n "****************"
-lincom 1.vaccine +1.vaccine#2.kids_cat4
-lincom 2.vaccine +2.vaccine#2.kids_cat4
-lincom 3.vaccine +3.vaccine#2.kids_cat4
+lincom 1.vaccine +1.vaccine#2.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#2.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#2.kids_cat4, eform
 
 di _n "kids_cat4=3 " _n "****************"
-lincom 1.vaccine +1.vaccine#3.kids_cat4
-lincom 2.vaccine +2.vaccine#3.kids_cat4
-lincom 3.vaccine +3.vaccine#3.kids_cat4
+lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"			
 
@@ -206,24 +207,24 @@ lincom 3.vaccine+3.kids_cat4+ 3.vaccine#3.kids_cat4, eform
 *effect of vaccination among kids_cat4=3 
 
 di _n "kids_cat4=0 " _n "****************"
-lincom 1.vaccine +1.vaccine#0.kids_cat4
-lincom 2.vaccine +2.vaccine#0.kids_cat4
-lincom 3.vaccine +3.vaccine#0.kids_cat4
+lincom 1.vaccine +1.vaccine#0.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#0.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#0.kids_cat4, eform
 
 di _n "kids_cat4=1 " _n "****************"
-lincom 1.vaccine +1.vaccine#1.kids_cat4
-lincom 2.vaccine +2.vaccine#1.kids_cat4
-lincom 3.vaccine +3.vaccine#1.kids_cat4
+lincom 1.vaccine +1.vaccine#1.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#1.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#1.kids_cat4, eform
 
 di _n "kids_cat4=2 " _n "****************"
-lincom 1.vaccine +1.vaccine#2.kids_cat4
-lincom 2.vaccine +2.vaccine#2.kids_cat4
-lincom 3.vaccine +3.vaccine#2.kids_cat4
+lincom 1.vaccine +1.vaccine#2.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#2.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#2.kids_cat4, eform
 
 di _n "kids_cat4=3 " _n "****************"
-lincom 1.vaccine +1.vaccine#3.kids_cat4
-lincom 2.vaccine +2.vaccine#3.kids_cat4
-lincom 3.vaccine +3.vaccine#3.kids_cat4
+lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
 }
 estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x', replace
 }

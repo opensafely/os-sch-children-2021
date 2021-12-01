@@ -72,10 +72,6 @@ recode `outcome' .=0
 stset
 bysort patient_id (_t): gen vaccine=_n
 
-
-
-	
-	
 	keep if vaccine==`int_level'
 *put total N, PYFU and Rate in table
 	cou if `variable' == `i' & _d == 1 
@@ -104,6 +100,7 @@ bysort patient_id (_t): gen vaccine=_n
 				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_`int_type'_`x'
 				if _rc!=0 local noestimatesflag 1
 				}
+				di "`noestimatesflag'"
 		***********************
 		*2) WRITE THE HRs TO THE OUTPUT FILE
 
@@ -123,7 +120,7 @@ bysort patient_id (_t): gen vaccine=_n
 				}
 			
 			if `int_level'==3 {
-			cap lincom 2.vaccine +2.vaccine#`i'.`variable', eform
+			cap lincom 3.vaccine +3.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
