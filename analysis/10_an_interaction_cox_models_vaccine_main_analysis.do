@@ -79,9 +79,10 @@ end
 *************************************************************************************
 
 * Open dataset and fit specified model(s)
-foreach x in 0 1 {
+foreach x in 0 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
+
 
 replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
 replace covid_vacc_second_dose_date=. if covid_vacc_date==. 
@@ -117,73 +118,117 @@ strate vaccine if kids_cat4==0, per(100000)
 strate vaccine if kids_cat4==1, per(100000)
 
 
-foreach int_type in  vaccine  {
-
-foreach exposure_type in kids_cat4  {
-
-
 *Unadjusted  model (interaction)
-stcox 	i.`exposure_type' 	///
-			i.`int_type'#i.`exposure_type' ///
+stcox i.vaccine##i.kids_cat4 ///
 			, strata(stp) vce(cluster household_id) 
 
 if _rc==0 {
 *testparm 1.`int_type'#i.`exposure_type'
-di _n "kids_cat4=0 " _n "****************"
-lincom 0.`exposure_type' + 1.`int_type'#0.`exposure_type', eform
-lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
-lincom 0.`exposure_type' + 3.`int_type'#0.`exposure_type', eform
+di _n "kids_cat4=0 " _n "****************" 
+*Must put terms in same order as appear in model
+*make sure estimates are as expected in dummy data 
+*group kids_cat4 and vaccine variable using egen to cross-check it's doing what expect 
+
+lincom 1.vaccine+0.kids_cat4+ 1.vaccine#0.kids_cat4, eform
+lincom 2.vaccine+0.kids_cat4+ 2.vaccine#0.kids_cat4, eform
+lincom 3.vaccine+0.kids_cat4+ 3.vaccine#0.kids_cat4, eform
+
 
 di _n "kids_cat4=1 " _n "****************"
-lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
-lincom 1.`exposure_type' + 2.`int_type'#1.`exposure_type', eform
-lincom 1.`exposure_type' + 3.`int_type'#1.`exposure_type', eform
+lincom 1.vaccine+1.kids_cat4+ 1.vaccine#1.kids_cat4, eform
+lincom 2.vaccine+1.kids_cat4+ 2.vaccine#1.kids_cat4, eform
+lincom 3.vaccine+1.kids_cat4+ 3.vaccine#1.kids_cat4, eform
+
 
 di _n "kids_cat4=2 " _n "****************"
-lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
-lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
-lincom 2.`exposure_type' + 3.`int_type'#2.`exposure_type', eform
+lincom 1.vaccine+2.kids_cat4+ 1.vaccine#2.kids_cat4, eform
+lincom 2.vaccine+2.kids_cat4+ 2.vaccine#2.kids_cat4, eform
+lincom 3.vaccine+2.kids_cat4+ 3.vaccine#2.kids_cat4, eform
 
 di _n "kids_cat4=3 " _n "****************"
-lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
-lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
-lincom 3.`exposure_type' + 3.`int_type'#3.`exposure_type', eform
+lincom 1.vaccine+3.kids_cat4+ 1.vaccine#3.kids_cat4, eform
+lincom 2.vaccine+3.kids_cat4+ 2.vaccine#3.kids_cat4, eform
+lincom 3.vaccine+3.kids_cat4+ 3.vaccine#3.kids_cat4, eform
+
+*effect of vaccination among kids_cat4=3 
+
+di _n "kids_cat4=0 " _n "****************"
+lincom 1.vaccine +1.vaccine#0.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#0.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#0.kids_cat4, eform
+
+di _n "kids_cat4=1 " _n "****************"
+lincom 1.vaccine +1.vaccine#1.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#1.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#1.kids_cat4, eform
+
+di _n "kids_cat4=2 " _n "****************"
+lincom 1.vaccine +1.vaccine#2.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#2.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#2.kids_cat4, eform
+
+di _n "kids_cat4=3 " _n "****************"
+lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"			
 
 *Age spline model (not adj ethnicity, interaction)
-stcox 	i.`exposure_type' 	age1 age2 age3			///
+stcox 	age1 age2 age3			///
 			$demogadjlist	 			  	///
 			$comordidadjlist		///
-			i.`int_type'#i.`exposure_type' ///
+			i.vaccine##i.kids_cat4 ///
 			, strata(stp) vce(cluster household_id) 
 if _rc==0 {
 *testparm 1.`int_type'#i.`exposure_type'
 di _n "kids_cat4=0 " _n "****************"
-lincom 0.`exposure_type' + 1.`int_type'#0.`exposure_type', eform
-lincom 0.`exposure_type' + 2.`int_type'#0.`exposure_type', eform
-lincom 0.`exposure_type' + 3.`int_type'#0.`exposure_type', eform
+lincom 1.vaccine+0.kids_cat4+ 1.vaccine#0.kids_cat4, eform
+lincom 2.vaccine+0.kids_cat4+ 2.vaccine#0.kids_cat4, eform
+lincom 3.vaccine+0.kids_cat4+ 3.vaccine#0.kids_cat4, eform
+
 
 di _n "kids_cat4=1 " _n "****************"
-lincom 1.`exposure_type' + 1.`int_type'#1.`exposure_type', eform
-lincom 1.`exposure_type' + 2.`int_type'#1.`exposure_type', eform
-lincom 1.`exposure_type' + 3.`int_type'#1.`exposure_type', eform
+lincom 1.vaccine+1.kids_cat4+ 1.vaccine#1.kids_cat4, eform
+lincom 2.vaccine+1.kids_cat4+ 2.vaccine#1.kids_cat4, eform
+lincom 3.vaccine+1.kids_cat4+ 3.vaccine#1.kids_cat4, eform
+
 
 di _n "kids_cat4=2 " _n "****************"
-lincom 2.`exposure_type' + 1.`int_type'#2.`exposure_type', eform
-lincom 2.`exposure_type' + 2.`int_type'#2.`exposure_type', eform
-lincom 2.`exposure_type' + 3.`int_type'#2.`exposure_type', eform
+lincom 1.vaccine+2.kids_cat4+ 1.vaccine#2.kids_cat4, eform
+lincom 2.vaccine+2.kids_cat4+ 2.vaccine#2.kids_cat4, eform
+lincom 3.vaccine+2.kids_cat4+ 3.vaccine#2.kids_cat4, eform
 
 di _n "kids_cat4=3 " _n "****************"
-lincom 3.`exposure_type' + 1.`int_type'#3.`exposure_type', eform
-lincom 3.`exposure_type' + 2.`int_type'#3.`exposure_type', eform
-lincom 3.`exposure_type' + 3.`int_type'#3.`exposure_type', eform
-estimates save ./output/an_interaction_cox_models_`outcome'_`exposure_type'_`int_type'_`x', replace
+lincom 1.vaccine+3.kids_cat4+ 1.vaccine#3.kids_cat4, eform
+lincom 2.vaccine+3.kids_cat4+ 2.vaccine#3.kids_cat4, eform
+lincom 3.vaccine+3.kids_cat4+ 3.vaccine#3.kids_cat4, eform
+
+*effect of vaccination among kids_cat4=3 
+
+di _n "kids_cat4=0 " _n "****************"
+lincom 1.vaccine +1.vaccine#0.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#0.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#0.kids_cat4, eform
+
+di _n "kids_cat4=1 " _n "****************"
+lincom 1.vaccine +1.vaccine#1.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#1.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#1.kids_cat4, eform
+
+di _n "kids_cat4=2 " _n "****************"
+lincom 1.vaccine +1.vaccine#2.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#2.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#2.kids_cat4, eform
+
+di _n "kids_cat4=3 " _n "****************"
+lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
+lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
+lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
+}
+estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x', replace
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
-}
-}
-}
 log close
 
 exit, clear 

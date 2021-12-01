@@ -3,7 +3,7 @@
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_
 > vaccine_stratified.log
   log type:  text
- opened on:  30 Nov 2021, 14:00:46
+ opened on:  30 Nov 2021, 19:10:26
 
 . 
 . *****************************************************************************
@@ -98,7 +98,7 @@
 . 
 .                 if "`modeltype'"=="fulladj" {
  44.                                 cap estimates use ./output/an_interaction_
-> cox_models_`outcome'_kids_cat4_`int_type'_`x'_stratified
+> cox_models_`outcome'_kids_cat4_`int_type'_`x'
  45.                                 if _rc!=0 local noestimatesflag 1
  46.                                 }
  47.                 ***********************
@@ -106,62 +106,61 @@
 . 
 .                 if `noestimatesflag'==0{
  48.                         if `int_level'==1 {
- 49.                         test 1.`int_type'#`i'.`variable'
- 50.                         *overall p-value for interaction: test 1.`int_type
-> '#1.`variable' test 1.`int_type'#2.`variable'
+ 49.                             
 .                         local pval=r(p)
- 51.                         cap lincom `i'.`variable', eform
- 52.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+ 50.                         cap lincom 1.vaccine +1.vaccine#`i'.`variable', ef
+> orm
+ 51.                         if _rc==0 file write tablecontents_int %4.2f (r(es
 > timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab %4.2f (`pval') `endwith'
- 53. 
+ 52. 
 .                                 else file write tablecontents_int %4.2f ("ERR
 >  IN MODEL") `endwith'
- 54.                                 }
- 55.                         if `int_level'==2 {
- 56.                         cap lincom `i'.`variable'+ 1.`int_type'#`i'.`varia
-> ble', eform
- 57.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+ 53.                                 }
+ 54.                         if `int_level'==2 {
+ 55.                         cap lincom 2.vaccine +2.vaccine#`i'.`variable', ef
+> orm
+ 56.                         if _rc==0 file write tablecontents_int %4.2f (r(es
 > timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
- 58.                                 else file write tablecontents_int %4.2f ("
+ 57.                                 else file write tablecontents_int %4.2f ("
 > ERR IN MODEL") `endwith'
- 59.                                 }
- 60.                         
+ 58.                                 }
+ 59.                         
 .                         if `int_level'==3 {
- 61.                         cap lincom `i'.`variable'+ 2.`int_type'#`i'.`varia
-> ble', eform
- 62.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+ 60.                         cap lincom 2.vaccine +2.vaccine#`i'.`variable', ef
+> orm
+ 61.                         if _rc==0 file write tablecontents_int %4.2f (r(es
 > timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
- 63.                                 else file write tablecontents_int %4.2f ("
+ 62.                                 else file write tablecontents_int %4.2f ("
 > ERR IN MODEL") `endwith'
- 64.                                 }
- 65.                         }
- 66.                         
+ 63.                                 }
+ 64.                         }
+ 65.                         
 .                         else file write tablecontents_int %4.2f ("DID NOT FIT
 > ") `endwith'
- 67. 
+ 66. 
 .                 *3) Save the estimates for plotting
 .                 if `noestimatesflag'==0{
- 68.                         if "`modeltype'"=="fulladj" {
- 69.                                 local hr = r(estimate)
- 70.                                 local lb = r(lb)
- 71.                                 local ub = r(ub)
- 72.                                 cap gen `variable'=.
- 73.                                 test 1.`int_type'#2.`variable' 1.`int_type
+ 67.                         if "`modeltype'"=="fulladj" {
+ 68.                                 local hr = r(estimate)
+ 69.                                 local lb = r(lb)
+ 70.                                 local ub = r(ub)
+ 71.                                 cap gen `variable'=.
+ 72.                                 test 1.`int_type'#2.`variable' 1.`int_type
 > '#1.`variable'
- 74.                                 local pval=r(p)
- 75.                                 post HRestimates_int ("`x'") ("`outcome'")
+ 73.                                 local pval=r(p)
+ 74.                                 post HRestimates_int ("`x'") ("`outcome'")
 >  ("`variable'") ("`int_type'") (`i') (`int_level') (`hr') (`lb') (`ub') (`pva
 > l')
- 76.                                 drop `variable'
- 77.                                 }
+ 75.                                 drop `variable'
+ 76.                                 }
+ 77.                 }
  78.                 }
- 79.                 }
- 80.                 } /*int_level*/
- 81.                 } /*full adj*/
- 82. 
+ 79.                 } /*int_level*/
+ 80.                 } /*full adj*/
+ 81. 
 . } /*variable levels*/
- 83. }
- 84. end
+ 82. }
+ 83. end
 
 . *****************************************************************************
 > ******************************************
@@ -248,20 +247,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        508       50740           0      50740      50740
-
- ( 1)  1b.vaccine#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -325,14 +310,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        116       10860           0      10860      10860
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -396,14 +373,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          2          52           0         52         52
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -467,20 +436,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |      1,739      101512           0     101512     101512
-
- ( 1)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -544,14 +499,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        236       14157           0      14157      14157
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -615,14 +562,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |         12         875           0        875        875
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -686,20 +625,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        169       14226           0      14226      14226
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -763,14 +688,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |         31        2092           0       2092       2092
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -834,14 +751,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          2         213           0        213        213
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -905,20 +814,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |     10,112      348561           0     348561     348561
-
- ( 1)  1b.vaccine#3o.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -982,14 +877,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        753       28031           0      28031      28031
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (2,911 real changes made, 2,911 to missing)
 (0 real changes made)
 (373 observations deleted)
@@ -1053,14 +940,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |         44        1608           0       1608       1608
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1124,20 +1003,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        155       15056           0      15056      15056
-
- ( 1)  1b.vaccine#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1201,14 +1066,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |         35        3220           0       3220       3220
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1272,14 +1129,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          1         145           .        145        145
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1343,20 +1192,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        470       25651           0      25651      25651
-
- ( 1)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1420,14 +1255,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |         62        3219           0       3219       3219
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1491,14 +1318,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          4         259           0        259        259
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1562,20 +1381,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |         45        3755           0       3755       3755
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1639,14 +1444,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |         12         754           0        754        754
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1710,14 +1507,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |          0
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1781,20 +1570,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |      2,819       94859           0      94859      94859
-
- ( 1)  1b.vaccine#3o.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1858,14 +1633,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        205        7914           0       7914       7914
-
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
 (830 real changes made, 830 to missing)
 (0 real changes made)
 (121 observations deleted)
@@ -1930,14 +1697,6 @@ obs. time interval:  (stime_covid_tpp_prob[_n-1], stime_covid_tpp_prob]
 -------------+---------------------------------------------------------
 total_foll~p |          6         244           0        244        244
 
- ( 1)  1b.vaccine#2o.kids_cat4 = 0
- ( 2)  1b.vaccine#1o.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
 . file write tablecontents_int _n
 
 . 
@@ -1952,5 +1711,5 @@ total_foll~p |          6         244           0        244        244
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_tpp_prob_
 > vaccine_stratified.log
   log type:  text
- closed on:  30 Nov 2021, 14:00:59
+ closed on:  30 Nov 2021, 19:10:48
 -------------------------------------------------------------------------------

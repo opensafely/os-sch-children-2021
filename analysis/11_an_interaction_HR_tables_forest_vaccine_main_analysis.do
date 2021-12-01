@@ -83,10 +83,10 @@ tab vaccine, miss
 	local person_days = r(mean)
 	local person_years=`person_days'/365.25
 	local rate = 100000*(`event'/`person_years')
-	
+
 	file write tablecontents_int (`event') _tab %10.0f (`person_years') _tab %3.2f (`rate') _tab
+	
 	drop total_follow_up
- 
 	foreach modeltype of any fulladj {
 
 		local noestimatesflag 0 /*reset*/
@@ -106,22 +106,19 @@ tab vaccine, miss
 
 		if `noestimatesflag'==0{
 			if `int_level'==1 {
-			test 1.`int_type'#`i'.`variable'
-			*overall p-value for interaction: test 1.`int_type'#1.`variable' test 1.`int_type'#2.`variable'
+			cap lincom 1.vaccine+`i'.`variable'+ 1.vaccine#`i'.`variable', eform			
 			local pval=r(p)
-			cap lincom `i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab %4.2f (`pval') `endwith'
-
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
 			if `int_level'==2 {
-			cap lincom `i'.`variable'+ 2.`int_type'#`i'.`variable', eform
+			cap lincom 2.vaccine+`i'.`variable'+ 2.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
-			
+		
 			if `int_level'==3 {
-			cap lincom `i'.`variable'+ 3.`int_type'#`i'.`variable', eform
+			cap lincom 3.vaccine+`i'.`variable'+ 3.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}
@@ -147,6 +144,8 @@ tab vaccine, miss
 		} /*full adj*/
 
 } /*variable levels*/
+di "*****"
+
 }
 end
 ***********************************************************************************************************************
@@ -154,10 +153,13 @@ end
 *MAIN CODE TO PRODUCE TABLE CONTENTS
 cap file close tablecontents_int
 file open tablecontents_int using ./output/11_an_int_tab_contents_HRtable_`outcome'_vaccine_main.txt, t w replace
+di "****"
+
 
 tempfile HRestimates_int
 cap postutil clear
 postfile HRestimates_int str10 x str10 outcome str27 variable str27 int_type level int_level hr lci uci pval using `HRestimates_int'
+di "*****"
 
 *Primary exposure
 outputHRsforvar, variable("kids_cat4") min(0) max(3) outcome(`outcome')

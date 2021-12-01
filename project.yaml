@@ -389,7 +389,7 @@ actions:
 
   11_an_interaction_HR_tables_forest_vaccine_strat_analysis_covid_tpp_prob:
     needs:
-      - 10b_an_interaction_cox_models_vaccine_stratified_covid_tpp_prob
+      - 10_an_interaction_cox_models_vaccine_covid_tpp_prob_main
       - 01_cr_analysis_dataset
     run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_stratified_analysis.do covid_tpp_prob
     outputs:
@@ -399,7 +399,7 @@ actions:
 
   11_an_interaction_HR_tables_forest_vaccine_strat_analysis_covidadmission:
     needs:
-      - 10b_an_interaction_cox_models_vaccine_stratified_covidadmission
+      - 10_an_interaction_cox_models_vaccine_covidadmission_main
       - 01_cr_analysis_dataset
     run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_stratified_analysis.do covidadmission
     outputs:
@@ -409,7 +409,7 @@ actions:
 
   11_an_interaction_HR_tables_forest_vaccine_strat_analysis_covid_death:
     needs:
-      - 10b_an_interaction_cox_models_vaccine_stratified_covid_death
+      - 10_an_interaction_cox_models_vaccine_covid_death_main
       - 01_cr_analysis_dataset
     run: stata-mp:latest analysis/11_an_interaction_HR_tables_forest_vaccine_stratified_analysis.do covid_death
     outputs:

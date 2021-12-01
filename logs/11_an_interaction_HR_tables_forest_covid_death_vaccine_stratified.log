@@ -3,7 +3,7 @@
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_death_vac
 > cine_stratified.log
   log type:  text
- opened on:  30 Nov 2021, 11:08:10
+ opened on:  30 Nov 2021, 15:58:29
 
 . 
 . *****************************************************************************
@@ -105,7 +105,7 @@
 .                 *2) WRITE THE HRs TO THE OUTPUT FILE
 . 
 .                 if `noestimatesflag'==0{
- 48.                         if `int_level'==0 {
+ 48.                         if `int_level'==1 {
  49.                         test 1.`int_type'#`i'.`variable'
  50.                         *overall p-value for interaction: test 1.`int_type
 > '#1.`variable' test 1.`int_type'#2.`variable'
@@ -117,7 +117,7 @@
 .                                 else file write tablecontents_int %4.2f ("ERR
 >  IN MODEL") `endwith'
  54.                                 }
- 55.                         if `int_level'==1 {
+ 55.                         if `int_level'==2 {
  56.                         cap lincom `i'.`variable'+ 1.`int_type'#`i'.`varia
 > ble', eform
  57.                         if _rc==0 file write tablecontents_int %4.2f (r(es
@@ -126,7 +126,7 @@
 > ERR IN MODEL") `endwith'
  59.                                 }
  60.                         
-.                         if `int_level'==2 {
+.                         if `int_level'==3 {
  61.                         cap lincom `i'.`variable'+ 2.`int_type'#`i'.`varia
 > ble', eform
  62.                         if _rc==0 file write tablecontents_int %4.2f (r(es
@@ -248,6 +248,12 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        508       74077           0      74077      74077
+
+ ( 1)  1b.vaccine#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
  ( 1)  1b.vaccine#2o.kids_cat4 = 0
  ( 2)  1b.vaccine#1o.kids_cat4 = 0
@@ -461,6 +467,12 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |      1,739      130078           0     130078     130078
+
+ ( 1)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
  ( 1)  1b.vaccine#2o.kids_cat4 = 0
  ( 2)  1b.vaccine#1o.kids_cat4 = 0
@@ -676,6 +688,12 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
 total_foll~p |        169       18087           0      18087      18087
 
  ( 1)  1b.vaccine#2o.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
  ( 2)  1b.vaccine#1o.kids_cat4 = 0
        Constraint 1 dropped
        Constraint 2 dropped
@@ -887,6 +905,12 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |     10,112      393465           0     393465     393465
+
+ ( 1)  1b.vaccine#3o.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
  ( 1)  1b.vaccine#2o.kids_cat4 = 0
  ( 2)  1b.vaccine#1o.kids_cat4 = 0
@@ -1101,6 +1125,12 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
 -------------+---------------------------------------------------------
 total_foll~p |        155       20930           0      20930      20930
 
+ ( 1)  1b.vaccine#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
  ( 1)  1b.vaccine#2o.kids_cat4 = 0
  ( 2)  1b.vaccine#1o.kids_cat4 = 0
        Constraint 1 dropped
@@ -1313,6 +1343,12 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
 total_foll~p |        470       32355           0      32355      32355
+
+ ( 1)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
 
  ( 1)  1b.vaccine#2o.kids_cat4 = 0
  ( 2)  1b.vaccine#1o.kids_cat4 = 0
@@ -1528,6 +1564,12 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
 total_foll~p |         45        4352           0       4352       4352
 
  ( 1)  1b.vaccine#2o.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
  ( 2)  1b.vaccine#1o.kids_cat4 = 0
        Constraint 1 dropped
        Constraint 2 dropped
@@ -1740,6 +1782,12 @@ obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
 -------------+---------------------------------------------------------
 total_foll~p |      2,819      107059           0     107059     107059
 
+ ( 1)  1b.vaccine#3o.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
  ( 1)  1b.vaccine#2o.kids_cat4 = 0
  ( 2)  1b.vaccine#1o.kids_cat4 = 0
        Constraint 1 dropped
@@ -1904,5 +1952,5 @@ total_foll~p |          7         264           0        264        264
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_death_vac
 > cine_stratified.log
   log type:  text
- closed on:  30 Nov 2021, 11:08:21
+ closed on:  30 Nov 2021, 15:58:42
 -------------------------------------------------------------------------------
