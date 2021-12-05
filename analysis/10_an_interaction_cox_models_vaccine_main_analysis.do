@@ -82,26 +82,36 @@ end
 foreach x in 0 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
+*use "C:\Users\qc18278\OneDrive - University of *Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dat
+*aset_STSET_covid_death_ageband_0.dta", clear
+sample 20
+local outcome covid_tpp_prob
 
-
+*Tidy vaccination data
+*set second vaccination date to missing if on/before first vacc date
 replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
+*set second vacc to missing if no first vacc
 replace covid_vacc_second_dose_date=. if covid_vacc_date==. 
-drop if covid_vacc_date<d(20dec2020)
-drop if covid_vacc_second_dose_date<d(20dec2020)
+*drop if vacc date occur prior to study start
+drop if covid_vacc_date<=d(20dec2020)
+drop if covid_vacc_second_dose_date<=d(20dec2020)
 
-*Censor at date of first child being vaccinated in hh
-replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
-replace `outcome'=0 if stime_`outcome'<date_`outcome'
-*Drop those without any eligible follow-up
-drop if enter_date>=stime_`outcome'
 *Generate first and second vacc dates	
 gen first_vacc_plus_7d=covid_vacc_date+7
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
 format first_vacc_plus_7d second_vacc_plus_7d %td
 
+*Censor at date of first child being vaccinated in hh
+replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
+replace `outcome'=0 if stime_`outcome'<date_`outcome'
+replace date_`outcome' = . if (date_`outcome' > stime_`outcome' ) 
+
+*Drop those without any eligible follow-up
+drop if enter_date>=stime_`outcome'
+
 *Replace vacc date with missing if occur after end follow-up
-replace first_vacc_plus_7d=. if first_vacc_plus_7d> stime_`outcome'
-replace second_vacc_plus_7d=. if second_vacc_plus_7d> stime_`outcome'
+replace first_vacc_plus_7d=. if first_vacc_plus_7d>=stime_`outcome'
+replace second_vacc_plus_7d=. if second_vacc_plus_7d>=stime_`outcome'
 
 stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)
@@ -111,16 +121,23 @@ stsplit split1, after(first_vacc_plus_7d) at(0)
 recode `outcome' .=0 
 stsplit split2, after(second_vacc_plus_7d) at(0)
 recode `outcome' .=0 
+tab `outcome'
 
 stset
 bysort patient_id (_t): gen vaccine=_n
+strate kids_cat4 if vaccine==1, per(100000)
+strate kids_cat4 if vaccine==2, per(100000)
+strate kids_cat4 if vaccine==2, per(100000)
+
 strate vaccine if kids_cat4==0, per(100000)
 strate vaccine if kids_cat4==1, per(100000)
-
+strate vaccine if kids_cat4==2, per(100000)
+strate vaccine if kids_cat4==2, per(100000)
 
 *Unadjusted  model (interaction)
-stcox i.vaccine##i.kids_cat4 ///
-			, strata(stp) vce(cluster household_id) 
+stcox i.vaccine##i.kids_cat4 
+ereturn list
+matrix list e(b)
 
 if _rc==0 {
 *testparm 1.`int_type'#i.`exposure_type'
@@ -132,7 +149,6 @@ di _n "kids_cat4=0 " _n "****************"
 lincom 1.vaccine+0.kids_cat4+ 1.vaccine#0.kids_cat4, eform
 lincom 2.vaccine+0.kids_cat4+ 2.vaccine#0.kids_cat4, eform
 lincom 3.vaccine+0.kids_cat4+ 3.vaccine#0.kids_cat4, eform
-
 
 di _n "kids_cat4=1 " _n "****************"
 lincom 1.vaccine+1.kids_cat4+ 1.vaccine#1.kids_cat4, eform
