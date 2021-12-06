@@ -85,7 +85,6 @@ use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 *use "C:\Users\qc18278\OneDrive - University of *Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dat
 *aset_STSET_covid_death_ageband_0.dta", clear
 sample 20
-local outcome covid_tpp_prob
 
 *Tidy vaccination data
 *set second vaccination date to missing if on/before first vacc date
