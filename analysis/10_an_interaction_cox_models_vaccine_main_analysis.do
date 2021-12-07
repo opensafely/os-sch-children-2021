@@ -82,9 +82,9 @@ end
 foreach x in 0 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
-*use "C:\Users\qc18278\OneDrive - University of *Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dat
-*aset_STSET_covid_death_ageband_0.dta", clear
-sample 20
+use "C:\Users\qc18278\OneDrive - University of Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dataset_STSET_covid_death_ageband_0.dta", clear
+*sample 20
+local outcome covid_death
 
 *Tidy vaccination data
 *set second vaccination date to missing if on/before first vacc date
@@ -124,17 +124,19 @@ tab `outcome'
 
 stset
 bysort patient_id (_t): gen vaccine=_n
+
+
 strate kids_cat4 if vaccine==1, per(100000)
 strate kids_cat4 if vaccine==2, per(100000)
 strate kids_cat4 if vaccine==2, per(100000)
 
-strate vaccine if kids_cat4==0, per(100000)
-strate vaccine if kids_cat4==1, per(100000)
-strate vaccine if kids_cat4==2, per(100000)
-strate vaccine if kids_cat4==2, per(100000)
 
 *Unadjusted  model (interaction)
-stcox i.vaccine##i.kids_cat4 
+stcox i.vaccine##i.kids_cats
+streg i.vaccine if kids_cat4==0, dist(exp)
+*streg i.vaccine i.month if kids_cat4==0, dist(exp)
+
+ *if different - add in calendar month variable to streg model, whch will explain how strate is changing over time. 
 ereturn list
 matrix list e(b)
 
@@ -189,7 +191,7 @@ lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"			
 
-*Age spline model (not adj ethnicity, interaction)
+/**Age spline model (not adj ethnicity, interaction)
 stcox 	age1 age2 age3			///
 			$demogadjlist	 			  	///
 			$comordidadjlist		///
@@ -242,6 +244,7 @@ lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
 }
 estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x', replace
+*/
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
 log close
