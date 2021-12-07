@@ -82,9 +82,9 @@ end
 foreach x in 0 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
-*use "C:\Users\qc18278\OneDrive - University of *Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dat
-*aset_STSET_covid_death_ageband_0.dta", clear
-sample 20
+/*use "C:\Users\qc18278\OneDrive - University of Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dataset_STSET_covid_death_ageband_0.dta", clear
+*sample 20
+local outcome covid_death*/
 
 *Tidy vaccination data
 *set second vaccination date to missing if on/before first vacc date
@@ -124,17 +124,29 @@ tab `outcome'
 
 stset
 bysort patient_id (_t): gen vaccine=_n
+
+
 strate kids_cat4 if vaccine==1, per(100000)
 strate kids_cat4 if vaccine==2, per(100000)
 strate kids_cat4 if vaccine==2, per(100000)
 
-strate vaccine if kids_cat4==0, per(100000)
-strate vaccine if kids_cat4==1, per(100000)
-strate vaccine if kids_cat4==2, per(100000)
-strate vaccine if kids_cat4==2, per(100000)
+
+*1st month dates
+foreach month in jan feb mar apr may jun jul aug sep oct {
+	di d(1`month'2021) 
+
+}
+stsplit month_time, at(0(30)300)
+recode `outcome' .=0 
+
 
 *Unadjusted  model (interaction)
-stcox i.vaccine##i.kids_cat4 
+streg i.vaccine if kids_cat4==0, dist(exp)
+streg i.vaccine i.month_time if kids_cat4==0, dist(exp)
+
+ *if different - add in calendar month variable to streg model, whch will explain how strate is changing over time. 
+ stcox i.vaccine##i.kids_cat4
+
 ereturn list
 matrix list e(b)
 
@@ -189,7 +201,7 @@ lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"			
 
-*Age spline model (not adj ethnicity, interaction)
+/**Age spline model (not adj ethnicity, interaction)
 stcox 	age1 age2 age3			///
 			$demogadjlist	 			  	///
 			$comordidadjlist		///
@@ -240,8 +252,9 @@ di _n "kids_cat4=3 " _n "****************"
 lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
 lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
-}
+}*/
 estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x', replace
+
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
 log close
