@@ -252,9 +252,9 @@ di _n "kids_cat4=3 " _n "****************"
 lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
 lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
-}
+}*/
 estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x', replace
-*/
+
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
 log close
