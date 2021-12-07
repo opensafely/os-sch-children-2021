@@ -82,9 +82,9 @@ end
 foreach x in 0 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
-/*use "C:\Users\qc18278\OneDrive - University of Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dataset_STSET_covid_death_ageband_0.dta", clear
+use "C:\Users\qc18278\OneDrive - University of Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dataset_STSET_covid_death_ageband_0.dta", clear
 *sample 20
-local outcome covid_death*/
+local outcome covid_death
 
 *Tidy vaccination data
 *set second vaccination date to missing if on/before first vacc date
@@ -131,10 +131,19 @@ strate kids_cat4 if vaccine==2, per(100000)
 strate kids_cat4 if vaccine==2, per(100000)
 
 
+*1st month dates
+foreach month in jan feb mar apr may jun jul aug sep oct {
+	di d(1`month'2021) 
+
+}
+stsplit month_time, at(0(30)300)
+recode `outcome' .=0 
+
+
 *Unadjusted  model (interaction)
-stcox i.vaccine##i.kids_cats
+stcox i.vaccine##i.kids_cat4
 streg i.vaccine if kids_cat4==0, dist(exp)
-*streg i.vaccine i.month if kids_cat4==0, dist(exp)
+streg i.vaccine i.month_time if kids_cat4==0, dist(exp)
 
  *if different - add in calendar month variable to streg model, whch will explain how strate is changing over time. 
 ereturn list
