@@ -141,11 +141,12 @@ recode `outcome' .=0
 
 
 *Unadjusted  model (interaction)
-stcox i.vaccine##i.kids_cat4
 streg i.vaccine if kids_cat4==0, dist(exp)
 streg i.vaccine i.month_time if kids_cat4==0, dist(exp)
 
  *if different - add in calendar month variable to streg model, whch will explain how strate is changing over time. 
+ stcox i.vaccine##i.kids_cat4
+
 ereturn list
 matrix list e(b)
 
