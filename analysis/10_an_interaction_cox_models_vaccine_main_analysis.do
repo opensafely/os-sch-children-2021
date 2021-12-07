@@ -82,9 +82,9 @@ end
 foreach x in 0 {
 
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
-use "C:\Users\qc18278\OneDrive - University of Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dataset_STSET_covid_death_ageband_0.dta", clear
+/*use "C:\Users\qc18278\OneDrive - University of Bristol\Documents\GitHub\os-sch-children-2021\tempdata\cr_create_analysis_dataset_STSET_covid_death_ageband_0.dta", clear
 *sample 20
-local outcome covid_death
+local outcome covid_death*/
 
 *Tidy vaccination data
 *set second vaccination date to missing if on/before first vacc date
