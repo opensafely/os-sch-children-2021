@@ -131,7 +131,7 @@ strate kids_cat4 if vaccine==2, per(100000)
 strate kids_cat4 if vaccine==2, per(100000)
 
 
-*1st month dates
+/*1st month dates
 foreach month in jan feb mar apr may jun jul aug sep oct {
 	di d(1`month'2021) 
 
@@ -200,8 +200,8 @@ lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"			
-
-/**Age spline model (not adj ethnicity, interaction)
+*/
+**Age spline model (not adj ethnicity, interaction)
 stcox 	age1 age2 age3			///
 			$demogadjlist	 			  	///
 			$comordidadjlist		///
@@ -252,7 +252,7 @@ di _n "kids_cat4=3 " _n "****************"
 lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
 lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
-}*/
+}
 estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x', replace
 
 }
