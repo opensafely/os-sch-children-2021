@@ -27,7 +27,7 @@ file write tablecontents_all_outcomes ("period") _tab ("age") _tab ("exposure") 
 _tab ("outcome") _tab ("HR")  _tab ("lci")  _tab ("uci")  _n
 foreach period in 0 1 2 3 4 {
 forvalues x=0/1 {
-foreach outcome in  covid_tpp_prob covidadmission covid_death  {
+foreach outcome in covid_test_ever covid_tpp_prob covidadmission covid_death  {
 forvalues i=1/3 {
 local endwith "_tab"
 
