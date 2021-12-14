@@ -1,0 +1,26 @@
+age	exposure	exposure level	outcome	int_type	int_level	events	person_years	rate	HR	lci	uci	pval
+0	kids_cat4	0	covid_death	vaccine	1	1213	   2303648	52.66	1.00	   .	   .	   .
+0	kids_cat4	0	covid_death	vaccine	2	97	    924204	10.50	0.23	0.18	0.30	
+0	kids_cat4	0	covid_death	vaccine	3	123	   1543940	7.97	0.07	0.05	0.08	
+0	kids_cat4	1	covid_death	vaccine	1	133	    811900	16.38	0.78	0.65	0.95	0.01
+0	kids_cat4	1	covid_death	vaccine	2	8	    265048	3.02	0.18	0.09	0.37	
+0	kids_cat4	1	covid_death	vaccine	3	15	    389702	3.85	0.09	0.05	0.14	
+0	kids_cat4	2	covid_death	vaccine	1	111	    345996	32.08	0.81	0.67	1.00	0.05
+0	kids_cat4	2	covid_death	vaccine	2	9	    139597	6.45	0.24	0.12	0.46	
+0	kids_cat4	2	covid_death	vaccine	3	11	    176091	6.25	0.09	0.05	0.17	
+0	kids_cat4	3	covid_death	vaccine	1	64	    302051	21.19	0.75	0.57	0.97	0.03
+0	kids_cat4	3	covid_death	vaccine	2	REDACTED	    REDACTED	1.96	0.09	0.02	0.37	
+0	kids_cat4	3	covid_death	vaccine	3	6	    135072	4.44	0.08	0.04	0.19	
+1	kids_cat4	0	covid_death	vaccine	1	4916	    408424	1203.65	1.00	   .	   .	   .
+1	kids_cat4	0	covid_death	vaccine	2	1119	    527928	211.96	0.13	0.12	0.14	
+1	kids_cat4	0	covid_death	vaccine	3	844	   1198759	70.41	0.10	0.09	0.11	
+1	kids_cat4	1	covid_death	vaccine	1	113	     11480	984.29	0.98	0.80	1.19	0.81
+1	kids_cat4	1	covid_death	vaccine	2	15	      7481	200.50	0.15	0.09	0.26	
+1	kids_cat4	1	covid_death	vaccine	3	21	     15865	132.36	0.22	0.14	0.34	
+1	kids_cat4	2	covid_death	vaccine	1	74	      6842	1081.54	0.91	0.71	1.15	0.41
+1	kids_cat4	2	covid_death	vaccine	2	16	      5223	306.32	0.20	0.12	0.34	
+1	kids_cat4	2	covid_death	vaccine	3	12	      9463	126.81	0.19	0.10	0.34	
+1	kids_cat4	3	covid_death	vaccine	1	44	      4466	985.13	0.82	0.60	1.13	0.23
+1	kids_cat4	3	covid_death	vaccine	2	8	      2562	312.30	0.20	0.10	0.41	
+1	kids_cat4	3	covid_death	vaccine	3	10	      4854	206.00	0.27	0.14	0.54	
+
