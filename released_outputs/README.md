@@ -12,6 +12,7 @@
     * [output/14122021/01_histogram_vaccinations.svg](output/14122021/01_histogram_vaccinations.svg)
     * [output/14122021/11_an_int_tab_contents_HRtable_covid_death_vaccine_main.txt](output/14122021/11_an_int_tab_contents_HRtable_covid_death_vaccine_main.txt)
     * [output/14122021/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_main.txt](output/14122021/11_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_main.txt)
+    * [output/14122021/11_an_int_tab_contents_HRtable_covidadmission_vaccine_main.txt](output/14122021/11_an_int_tab_contents_HRtable_covidadmission_vaccine_main.txt)
   * output/15112021
     * [output/15112021/01_histogram_outcomes.png](output/15112021/01_histogram_outcomes.png)
     * [output/15112021/01_histogram_vaccinations.png](output/15112021/01_histogram_vaccinations.png)

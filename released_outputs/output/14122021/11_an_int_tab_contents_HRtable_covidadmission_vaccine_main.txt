@@ -1,0 +1,26 @@
+age	exposure	exposure level	outcome	int_type	int_level	events	person_years	rate	HR	lci	uci	pval
+0	kids_cat4	0	covidadmission	vaccine	1	9517	   2301675	413.48	1.00	   .	   .	   .
+0	kids_cat4	0	covidadmission	vaccine	2	821	    922864	88.96	0.33	0.30	0.35	
+0	kids_cat4	0	covidadmission	vaccine	3	1472	   1541508	95.49	0.08	0.08	0.09	
+0	kids_cat4	1	covidadmission	vaccine	1	3056	    811118	376.76	1.33	1.27	1.39	0.00
+0	kids_cat4	1	covidadmission	vaccine	2	250	    264709	94.44	0.37	0.32	0.42	
+0	kids_cat4	1	covidadmission	vaccine	3	316	    389201	81.19	0.11	0.10	0.13	
+0	kids_cat4	2	covidadmission	vaccine	1	1790	    345604	517.93	1.28	1.22	1.35	0.00
+0	kids_cat4	2	covidadmission	vaccine	2	131	    139361	94.00	0.37	0.31	0.44	
+0	kids_cat4	2	covidadmission	vaccine	3	198	    175775	112.64	0.12	0.10	0.14	
+0	kids_cat4	3	covidadmission	vaccine	1	1504	    301683	498.54	1.37	1.29	1.45	0.00
+0	kids_cat4	3	covidadmission	vaccine	2	124	    101692	121.94	0.42	0.35	0.50	
+0	kids_cat4	3	covidadmission	vaccine	3	164	    134840	121.63	0.14	0.12	0.17	
+1	kids_cat4	0	covidadmission	vaccine	1	8968	    407315	2201.73	1.00	   .	   .	   .
+1	kids_cat4	0	covidadmission	vaccine	2	1904	    526704	361.49	0.45	0.42	0.48	
+1	kids_cat4	0	covidadmission	vaccine	3	3333	   1196081	278.66	0.17	0.16	0.19	
+1	kids_cat4	1	covidadmission	vaccine	1	293	     11439	2561.32	1.05	0.93	1.20	0.43
+1	kids_cat4	1	covidadmission	vaccine	2	63	      7438	847.05	0.85	0.65	1.10	
+1	kids_cat4	1	covidadmission	vaccine	3	87	     15775	551.52	0.26	0.21	0.33	
+1	kids_cat4	2	covidadmission	vaccine	1	210	      6811	3083.31	1.19	1.03	1.37	0.02
+1	kids_cat4	2	covidadmission	vaccine	2	40	      5196	769.80	0.75	0.54	1.03	
+1	kids_cat4	2	covidadmission	vaccine	3	62	      9413	658.65	0.32	0.25	0.43	
+1	kids_cat4	3	covidadmission	vaccine	1	127	      4448	2855.12	1.07	0.89	1.29	0.46
+1	kids_cat4	3	covidadmission	vaccine	2	20	      2543	786.41	0.61	0.39	0.95	
+1	kids_cat4	3	covidadmission	vaccine	3	39	      4822	808.76	0.32	0.23	0.44	
+
