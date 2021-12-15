@@ -107,16 +107,16 @@ replace v1="IMD" if v1=="imd"
 replace v1="Sex" if v1=="male"
 replace v1="Smoking" if v1=="smoke"
 replace v1="Adults in HH" if v1=="tot_adults_hh"
+drop if v1=="Smoking" | v1=="BMI"
+
 
 graph hbar v4 v6 v8 v10 v12, nofill ///
 over(variable, label(labsize(tiny)) sort(littlen))  ///
 over(v1, label(labsize(vsmall)) gap(400))  ///
 ysize(15) xsize(10) ///
-legend( label(1 "Total cohort, n (%)") label(2 "No children")  label(3 "Only children 0-11 years")  label(4 "Only children 12-18 years") label(5 "Children 0-11 and 12-18 years")) legend(size(tiny) rows(2) symysize(2) symxsize(2) ) saving(output/Descriptive_table1_age`age', replace)
+legend( label(1 "Total cohort, n (%)") label(2 "No children")  label(3 "Only children 0-11 years")  label(4 "Only children 12-18 years") label(5 "Children 0-11 and 12-18 years")) legend(size(tiny) rows(2) symysize(2) symxsize(2) ) saving(output/Descriptive_figure_age`age', replace)
+graph export "output/Descriptive_figure_age`age'.svg", as(svg) replace 
 }
-graph combine output/Descriptive_table1_age0.gph output/Descriptive_table1_age1.gph,  ///
- graphregion(color(white)) col(2)
-graph export "output/Descriptive_figure1.svg", as(svg) replace 
 
 /*
 rename v3 ""	
