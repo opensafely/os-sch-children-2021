@@ -51,7 +51,7 @@ actions:
     run: stata-mp:latest analysis/03c_descriptive_stats_table_by_exposure.do 
     outputs:
       moderately_sensitive:
-        histogram: "output/Descriptive_figure1.svg"
+        histogram: "output/Descriptive_figure_age*.svg"
 
   04a_an_descriptive_tables:
     needs: [01_cr_analysis_dataset]
