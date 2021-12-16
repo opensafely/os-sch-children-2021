@@ -30,6 +30,7 @@
     * [output/15112021/an_tablecontents_HRtable_covid_tpp_prob.txt](output/15112021/an_tablecontents_HRtable_covid_tpp_prob.txt)
     * [output/15112021/an_tablecontents_HRtable_covidadmission.txt](output/15112021/an_tablecontents_HRtable_covidadmission.txt)
   * output/15122021
+    * [output/15122021/03b_an_descriptive_table_1_kids_cat4_ageband0.txt](output/15122021/03b_an_descriptive_table_1_kids_cat4_ageband0.txt)
     * [output/15122021/an_tablecontents_HRtable_covid_death.txt](output/15122021/an_tablecontents_HRtable_covid_death.txt)
     * [output/15122021/an_tablecontents_HRtable_covid_tpp_prob.txt](output/15122021/an_tablecontents_HRtable_covid_tpp_prob.txt)
     * [output/15122021/an_tablecontents_HRtable_covidadmission.txt](output/15122021/an_tablecontents_HRtable_covidadmission.txt)
