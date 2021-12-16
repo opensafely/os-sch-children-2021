@@ -29,6 +29,8 @@
     * [output/15112021/an_tablecontents_HRtable_covid_death.txt](output/15112021/an_tablecontents_HRtable_covid_death.txt)
     * [output/15112021/an_tablecontents_HRtable_covid_tpp_prob.txt](output/15112021/an_tablecontents_HRtable_covid_tpp_prob.txt)
     * [output/15112021/an_tablecontents_HRtable_covidadmission.txt](output/15112021/an_tablecontents_HRtable_covidadmission.txt)
+  * output/15122021
+    * [output/15122021/Descriptive_figure_age1.png](output/15122021/Descriptive_figure_age1.png)
   * [output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES.txt](output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES.txt)
   * output/16092021
     * [output/16092021/01_histogram_outcomes.png](output/16092021/01_histogram_outcomes.png)
