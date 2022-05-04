@@ -1,22 +1,24 @@
 ********************************************************************************
 *
-*	Do-file:		10_an_interaction_cox_models_sex.do
+*	Do-file:		10d_an_interaction_cox_models_vaccine_child_postvacc.do
 *
 *	Project:		Exposure children and COVID risk
 *
-*	Programmed by:	Hforbes, based on files from Fizz & Krishnan
+*	Programmed by:	TCowling, based on Harriet's files
 *
 *	Data used:		analysis_dataset.dta
 *
 *	Data created:	None
 *
-*	Other output:	Log file:  10_an_interaction_cox_models.log
+*	Other output:	Log file: 10d_an_interaction_cox_models_vaccine_`outcome'_child_postvacc.log
 *
 ********************************************************************************
 *
 *	Purpose:		This do-file performs multivariable (fully adjusted) 
-*					Cox models, with an interaction by vaccine
-*					b/l group is unvacc without kids.
+*					Cox models, with an interaction by vaccine, with time zero as
+*                   when all children aged 12-17 in the household have had
+*                   a vaccine (and excluding other households)
+*					b/l group is unvacc without kids (using arbitrary time zero)
 *  
 ********************************************************************************
 *	
@@ -59,7 +61,7 @@ cap erase ./output/an_interaction_cox_models_`outcome'_`exposure_type'_male_FULL
 
 
 cap log close
-log using "$logdir/10_an_interaction_cox_models_vaccine_`outcome'", text replace
+log using "$logdir/10d_an_interaction_cox_models_vaccine_`outcome'_child_postvacc", text replace
 
 
 *PROG TO DEFINE THE BASIC COX MODEL WITH OPTIONS FOR HANDLING OF AGE, BMI, ETHNICITY:
@@ -86,6 +88,13 @@ use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 *sample 20
 local outcome covid_death*/
 
+*create artificial start of follow-up for households in which not all children had been double-vaccinated
+gen all_under18vacc_postvacc_an = all_under18vacc
+replace all_under18vacc_postvacc_an = d(20sept2021) if all_child_vacc == 0 // may edit this date later on
+
+*remove households with children not all of whom get double-vaccinated
+drop if all_child_vacc == 0 & num_child_eligible != 0
+
 *Tidy vaccination data
 replace covid_vacc_third_dose_date=. if covid_vacc_second_dose_date == . | covid_vacc_date == . 
 replace covid_vacc_third_dose_date=. if covid_vacc_third_dose_date <= covid_vacc_second_dose_date | covid_vacc_third_dose_date <= covid_vacc_date
@@ -101,16 +110,14 @@ drop if covid_vacc_third_dose_date<=d(20dec2020)
 *Generate first and second vacc dates	
 gen first_vacc_plus_7d=covid_vacc_date+7
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
-gen third_vacc_plus_7d = covid_vacc_third_dose_date+7
+gen third_vacc_plus_7d=covid_vacc_third_dose_date+7
 format first_vacc_plus_7d second_vacc_plus_7d third_vacc_plus_7d %td
 
-/*Censor at date of first child being vaccinated in hh - removed from analysis
-replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
-replace `outcome'=0 if stime_`outcome'<date_`outcome'
-replace date_`outcome' = . if (date_`outcome' > stime_`outcome' )*/
+*Drop individuals who died before date by which all children aged 12-17 were vaccinated
+drop if died_date_ons <= all_under18vacc_postvacc_an
 
 *Drop those without any eligible follow-up
-drop if enter_date>=stime_`outcome'
+drop if stime_`outcome' <= all_under18vacc_postvacc_an
 
 *Replace vacc date with missing if occur after end follow-up
 replace first_vacc_plus_7d=. if first_vacc_plus_7d>=stime_`outcome'
@@ -118,7 +125,7 @@ replace second_vacc_plus_7d=. if second_vacc_plus_7d>=stime_`outcome'
 replace third_vacc_plus_7d=. if third_vacc_plus_7d>=stime_`outcome'
 
 stset stime_`outcome', fail(`outcome') 		///
-	id(patient_id) enter(enter_date) origin(enter_date)
+	id(patient_id) enter(all_under18vacc_postvacc_an) origin(all_under18vacc_postvacc_an)
 
 
 stsplit split1, after(first_vacc_plus_7d) at(0)
@@ -260,7 +267,7 @@ lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
 lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
 }
-estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x', replace
+estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x'_child_postvacc, replace
 
 }
 else di "WARNING GROUP MODEL DID NOT FIT (OUTCOME `outcome')"
