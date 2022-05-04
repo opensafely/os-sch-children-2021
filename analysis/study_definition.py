@@ -162,7 +162,7 @@ study = StudyDefinition(
         return_expectations={
             "date": {
                 "earliest": "2020-12-08",  # first vaccine administered on the 8/12
-                "latest": "2021-07-16",
+                "latest": "2022-04-01",
             },
             "incidence": 0.5,
         },
@@ -177,7 +177,21 @@ study = StudyDefinition(
         return_expectations={
             "date": {
                 "earliest": "2020-12-08",  # first vaccine administered on the 8/12
-                "latest": "2021-03-01",
+                "latest": "2022-04-01",
+            }
+        },
+    ),
+    # THIRD DOSE COVID VACCINATION
+    covid_vacc_third_dose_date=patients.with_tpp_vaccination_record(
+        target_disease_matches="SARS-2 CORONAVIRUS",
+        on_or_after="covid_vacc_second_dose_date + 21 days",  
+        find_first_match_in_period=True,
+        returning="date",
+        date_format="YYYY-MM-DD",
+        return_expectations={
+            "date": {
+                "earliest": "2021-09-01",  # date JCVI recommended 3rd dose for immunosuppressed
+                "latest": "2022-04-01",
             }
         },
     ),

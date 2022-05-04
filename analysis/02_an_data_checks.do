@@ -142,8 +142,14 @@ di d(01july2021)
 *22462
 di d(01sept2021) 
 *22524
-di d(22oct2021) 
-*22575
+di d(01nov2021) 
+*22585
+di d(01jan2022)
+*22646
+di d(01mar2022)
+*22705
+di d(21feb2022)
+*22697
 
 gen agegp=0 if age<=65
 replace agegp=1 if age>65
@@ -152,10 +158,10 @@ tab agegp, miss
 foreach age in 0 1 {
 foreach outcome of any covid_tpp_prob covidadmission covid_death    {
 summ  `outcome' if agegp==`age', format d 
-summ patient_id if `outcome'==1 & date_`outcome'<=22576 & agegp==`age'
+summ patient_id if `outcome'==1 & date_`outcome'<=22697 & agegp==`age'
 local total_`outcome'=`r(N)'
-hist date_`outcome' if date_`outcome'<=22576 & agegp==`age', saving(output/`outcome'_age`age', replace) ///
-xlabel(22281 22340 22401 22462 22524,labsize(tiny))  xtitle(, size(vsmall)) ///
+hist date_`outcome' if date_`outcome'<=22697 & agegp==`age', saving(output/`outcome'_age`age', replace) ///
+xlabel(22281 22340 22401 22462 22524 22585 22646 22705,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq  ///
 ylabel(0 5000,labsize(tiny))  ytitle("Number", size(vsmall)) ///
 title("N=`total_`outcome''", size(vsmall)) width(5) yline(5, lcolor(black%100)  lwidth(thick)) color(black%100)
@@ -179,14 +185,17 @@ summ dereg_date, format
 summ has_12_m
 
 count if covid_vacc_date>=covid_vacc_second_dose_date
+count if covid_vacc_second_dose_date >= covid_vacc_third_dose_date
+count if covid_vacc_date >= covid_vacc_third_dose_date
+
 *Vacc data
 foreach age in 0 1 {
-foreach vacc of any covid_vacc_date covid_vacc_second_dose_date   {
+foreach vacc of any covid_vacc_date covid_vacc_second_dose_date  covid_vacc_third_dose_date {
 summ  `vacc'  if agegp==`age', format d 
-summ patient_id if `vacc'!=. & `vacc'<=22576 & agegp==`age'
+summ patient_id if `vacc'!=. & `vacc'<=22697 & agegp==`age'
 local total=`r(N)' 
-hist `vacc' if `vacc'<=22576  & agegp==`age', saving(output/`vacc'_age`age', replace) ///
-xlabel(22281 22340 22401 22462 22524,labsize(tiny))  xtitle(, size(vsmall)) ///
+hist `vacc' if `vacc'<=22697  & agegp==`age', saving(output/`vacc'_age`age', replace) ///
+xlabel(22281 22340 22401 22462 22524 22585 22646 22705,labsize(tiny))  xtitle(, size(vsmall)) ///
 graphregion(color(white))  legend(off) freq ylabel(0 500000,labsize(tiny)) ///
 ytitle("Number", size(vsmall))   ///
 title("N=`total'", size(vsmall))  yline(5, lcolor(black%100)  lwidth(thick)) color(black%100)
@@ -194,7 +203,9 @@ title("N=`total'", size(vsmall))  yline(5, lcolor(black%100)  lwidth(thick)) col
 }
 
 *Combine histograms
-graph combine output/covid_vacc_date_age0.gph output/covid_vacc_date_age1.gph  output/covid_vacc_second_dose_date_age0.gph output/covid_vacc_second_dose_date_age1.gph, ///
+graph combine output/covid_vacc_date_age0.gph output/covid_vacc_date_age1.gph  ///
+output/covid_vacc_second_dose_date_age0.gph output/covid_vacc_second_dose_date_age1.gph ///
+output/covid_vacc_third_dose_date_age0.gph output/covid_vacc_third_dose_date_age1.gph, ///
  graphregion(color(white)) col(2)
 graph export "output/01_histogram_vaccinations.svg", as(svg) replace 
 
