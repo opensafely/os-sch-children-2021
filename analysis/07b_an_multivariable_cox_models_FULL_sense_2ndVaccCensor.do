@@ -78,12 +78,12 @@ local outcome `1'
 
 * Open dataset and fit specified model(s)
 foreach x in 0 1 {
-forvalues period=0/4 {
+forvalues period=0/5 {
 use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
 *Censor at date of second vacc_7ds
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
-replace stime_`outcome' 	= second_vacc_plus_7d if stime_`outcome'>second_vacc_plus_7d
+*replace stime_`outcome' 	= second_vacc_plus_7d if stime_`outcome'>second_vacc_plus_7d // remove censoring from analysis
 stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)
 	
@@ -94,10 +94,11 @@ stset stime_`outcome', fail(`outcome') 		///
 *-Schools open delta variant (+7 days): 24th May 2021 
 *Summer holidays +7 days: 24th July 2021
 *Winter term +7 days: 9th September 2021
+*Omicron period +7 days: 27th December 2021
 
 if "`outcome'"=="covid_tpp_prob" {
-stsplit cat_time, at(0,85,154, 216, 263, 400)
-recode cat_time 85=1 154=2 216=3 263=4 
+stsplit cat_time, at(0,85,154, 216, 263, 372, 500)
+recode cat_time 85=1 154=2 216=3 263=4 372=5
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
@@ -108,10 +109,11 @@ tab cat_time `outcome'
 *Schools open delta variant (+14 days): 31st May 2021 
 *Summer holidays +14 days: 30th July 2021
 *Winter term +14 days: 16th September 2021
+*Omicron period +14 days: 3rd January 2022
 
 if "`outcome'"=="covidadmission" | "`outcome'"=="covid_death" {
-stsplit cat_time, at(0,92,161,222,270, 400)
-recode cat_time 92=1 161=2 222=3 270=4
+stsplit cat_time, at(0,92,161,222,270, 379, 500)
+recode cat_time 92=1 161=2 222=3 270=4 379=5
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
