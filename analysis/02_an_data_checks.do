@@ -344,10 +344,10 @@ foreach var of varlist  asthma						///
 safecount if covidadmission==1 & covid_death==1
 
 sum positive_SGSS
-sum positive_SGSS if date_positive_SGSS<=22267
+sum positive_SGSS if date_positive_SGSS<=22697
 
 safetab positive_SGSS covid_primary_care_codes, row col miss
-safetab positive_SGSS covid_primary_care_codes if date_positive_SGSS<=22267 & date_covid_primary_care_codes<=22267, row col miss
+safetab positive_SGSS covid_primary_care_codes if date_positive_SGSS<=22697 & date_covid_primary_care_codes<=22697, row col miss
 gen diff=date_positive_SGSS-date_covid_primary_care_codes 
 sum diff, d
 

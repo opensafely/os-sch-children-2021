@@ -164,7 +164,7 @@ study = StudyDefinition(
                 "earliest": "2020-12-08",  # first vaccine administered on the 8/12
                 "latest": "2022-04-01",
             },
-            "incidence": 0.5,
+            "incidence": 0.99,
         },
     ),
     # SECOND DOSE COVID VACCINATION
@@ -178,7 +178,8 @@ study = StudyDefinition(
             "date": {
                 "earliest": "2020-12-08",  # first vaccine administered on the 8/12
                 "latest": "2022-04-01",
-            }
+            },
+            "incidence": 0.98,
         },
     ),
     # THIRD DOSE COVID VACCINATION
@@ -192,7 +193,8 @@ study = StudyDefinition(
             "date": {
                 "earliest": "2021-09-01",  # date JCVI recommended 3rd dose for immunosuppressed
                 "latest": "2022-04-01",
-            }
+            },
+            "incidence": 0.95,  # too high but useful for dummy data
         },
     ),
     ## DEMOGRAPHIC COVARIATES

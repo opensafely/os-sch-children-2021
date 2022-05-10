@@ -99,11 +99,15 @@ covid_vacc_date  covid_vacc_second_dose_date  covid_vacc_third_dose_date	{
 }
 
 *Amend vaccine dates
-replace covid_vacc_third_dose_date=. if covid_vacc_second_dose_date == . | covid_vacc_date == . 
-replace covid_vacc_third_dose_date=. if covid_vacc_third_dose_date <= covid_vacc_second_dose_date | covid_vacc_third_dose_date <= covid_vacc_date
-replace covid_vacc_second_dose_date=. if covid_vacc_date==.
-replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
- 
+replace covid_vacc_second_dose_date = . if ///
+	covid_vacc_date == . | ///
+	covid_vacc_date >= covid_vacc_second_dose_date
+replace covid_vacc_third_dose_date = . if ///
+	covid_vacc_date == . | ///
+	covid_vacc_second_dose_date == . | ///
+	covid_vacc_third_dose_date <= covid_vacc_second_dose_date | ///
+	covid_vacc_third_dose_date <= covid_vacc_date
+
 
 gen covid_admission_primary_date = covid_admission_date ///
 if (covid_admission_primary_diagnosi == "U071"| covid_admission_primary_diagnosi == "U072")
@@ -118,16 +122,16 @@ sum, d f
 
 
 /*Flag earliest date under18s double-vaccinated*/
-gen under18vacc_temp=covid_vacc_second_dose_date if age<18
+gen under18vacc_temp=covid_vacc_second_dose_date if age>=12 & age<=17
 bysort household_id: egen under18vacc=min(under18vacc_temp)
 format under18vacc* %td
 
 
 /*Get date for when all children aged 12-17 double-vaccinated (or missing otherwise)*/
-bysort household_id: egen num_child_eligible = count(age>=12 & age<=17) // count eligible children per household
-bysort household_id: egen num_child_vacc = count(age>=12 & age<=17 & covid_vacc_second_dose_date!=.) // count vaccinated eligible children per household
-gen all_child_vacc = num_child_eligible == num_child_vacc // flag individuals/households in which all eligible children are vaccinated
-bysort household_id: egen all_under18vacc = max(under18vacc_temp) if all_child_vacc == 1 // for these households, get last child vaccine date
+bysort household_id: egen num_child_eligible = total(age>=12 & age<=17) // count eligible children per household
+bysort household_id: egen num_child_vacc = total(age>=12 & age<=17 & covid_vacc_second_dose_date!=.) // count double-vaccinated eligible children per household
+gen all_child_vacc = num_child_eligible !=0 & num_child_eligible == num_child_vacc // flag individuals/households in which all eligible children are double-vaccinated
+bysort household_id: egen all_under18vacc = max(under18vacc_temp) if all_child_vacc == 1 // for these households, get last child 2nd vaccine date
 format all_under18vacc %td
 
 
@@ -891,7 +895,13 @@ label var  stime_covid_test_ever				"Survival time (date); outcome covid test"
 label var   died_date_ons				"Date death ONS"
 label var  has_12_m_follow_up			"Has 12 months follow-up"
 lab var  dereg_date						"Date deregistration from practice"
-lab var under18vacc						"Date first child in hh vaccinated"
+lab var under18vacc						"Date first child in hh double-vaccinated"
+
+*Double vaccinations
+label var num_child_eligible "No. of children aged 12-17 in household"
+label var num_child_vacc "No. of children aged 12-17 who are double-vaccinated in household"
+label var all_child_vacc "Are there children in the household and have all of them been double-vaccinated (Y==1; N==0)?"
+label var all_under18vacc "Date on which the last child in the household had 2nd vaccine"
 
 
 
