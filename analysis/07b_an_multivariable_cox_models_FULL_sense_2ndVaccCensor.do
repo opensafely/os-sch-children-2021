@@ -83,7 +83,7 @@ use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
 *Censor at date of second vacc_7ds
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
-*replace stime_`outcome' 	= second_vacc_plus_7d if stime_`outcome'>second_vacc_plus_7d // remove censoring from analysis
+replace stime_`outcome' 	= second_vacc_plus_7d if stime_`outcome'>second_vacc_plus_7d
 stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)
 	
