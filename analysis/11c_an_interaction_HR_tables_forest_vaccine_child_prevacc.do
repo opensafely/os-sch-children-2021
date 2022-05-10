@@ -32,7 +32,7 @@ foreach x in 0 1 {
 forvalues i=`min'/`max'{
 foreach int_type in vaccine {
 
-foreach int_level in  1 2 3 {
+foreach int_level in  1 2 3 4 {
 
 local endwith "_tab"
 
@@ -42,10 +42,14 @@ local endwith "_tab"
  use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
 
-replace covid_vacc_third_dose_date=. if covid_vacc_second_dose_date == . | covid_vacc_date == . 
-replace covid_vacc_third_dose_date=. if covid_vacc_third_dose_date <= covid_vacc_second_dose_date | covid_vacc_third_dose_date <= covid_vacc_date
-replace covid_vacc_second_dose_date=. if covid_vacc_date==. 
-replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
+replace covid_vacc_second_dose_date = . if ///
+	covid_vacc_date == . | ///
+	covid_vacc_date >= covid_vacc_second_dose_date
+replace covid_vacc_third_dose_date = . if ///
+	covid_vacc_date == . | ///
+	covid_vacc_second_dose_date == . | ///
+	covid_vacc_third_dose_date <= covid_vacc_second_dose_date | ///
+	covid_vacc_third_dose_date <= covid_vacc_date
 drop if covid_vacc_date<d(20dec2020)
 drop if covid_vacc_second_dose_date<d(20dec2020)
 drop if covid_vacc_third_dose_date<=d(20dec2020)
@@ -129,6 +133,12 @@ tab vaccine, miss
 		
 			if `int_level'==3 {
 			cap lincom 3.vaccine+`i'.`variable'+ 3.vaccine#`i'.`variable', eform
+			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
+				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
+				}
+				
+			if `int_level'==4 {
+			cap lincom 4.vaccine+`i'.`variable'+ 4.vaccine#`i'.`variable', eform
 			if _rc==0 file write tablecontents_int %4.2f (r(estimate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
 				else file write tablecontents_int %4.2f ("ERR IN MODEL") `endwith'
 				}

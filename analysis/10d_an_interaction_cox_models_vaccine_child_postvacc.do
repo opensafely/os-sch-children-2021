@@ -17,7 +17,7 @@
 *	Purpose:		This do-file performs multivariable (fully adjusted) 
 *					Cox models, with an interaction by vaccine, with time zero as
 *                   when all children aged 12-17 in the household have had
-*                   a vaccine (and excluding other households)
+*                   a vaccine (and excluding other households with children)
 *					b/l group is unvacc without kids (using arbitrary time zero)
 *  
 ********************************************************************************
@@ -48,7 +48,7 @@ global comordidadjlist  i.htdiag_or_highbp				///
 			i.asplenia 						///
 			i.ra_sle_psoriasis  			///
 			i.other_immuno		
-local outcome `1' 
+local outcome `1'
  
 
 
@@ -90,18 +90,21 @@ local outcome covid_death*/
 
 *create artificial start of follow-up for households in which not all children had been double-vaccinated
 gen all_under18vacc_postvacc_an = all_under18vacc
-replace all_under18vacc_postvacc_an = d(20sept2021) if all_child_vacc == 0 // may edit this date later on
+replace all_under18vacc_postvacc_an = d(01oct2021) if all_under18vacc == . // may edit this date later on
+format all_under18vacc_postvacc_an %td
 
 *remove households with children not all of whom get double-vaccinated
 drop if all_child_vacc == 0 & num_child_eligible != 0
 
 *Tidy vaccination data
-replace covid_vacc_third_dose_date=. if covid_vacc_second_dose_date == . | covid_vacc_date == . 
-replace covid_vacc_third_dose_date=. if covid_vacc_third_dose_date <= covid_vacc_second_dose_date | covid_vacc_third_dose_date <= covid_vacc_date
-*set second vacc to missing if no first vacc
-replace covid_vacc_second_dose_date=. if covid_vacc_date==. 
-*set second vaccination date to missing if on/before first vacc date
-replace covid_vacc_second_dose_date=. if covid_vacc_date>=covid_vacc_second_dose_date
+replace covid_vacc_second_dose_date = . if ///
+	covid_vacc_date == . | ///
+	covid_vacc_date >= covid_vacc_second_dose_date
+replace covid_vacc_third_dose_date = . if ///
+	covid_vacc_date == . | ///
+	covid_vacc_second_dose_date == . | ///
+	covid_vacc_third_dose_date <= covid_vacc_second_dose_date | ///
+	covid_vacc_third_dose_date <= covid_vacc_date
 *drop if vacc date occur prior to study start
 drop if covid_vacc_date<=d(20dec2020)
 drop if covid_vacc_second_dose_date<=d(20dec2020)
@@ -143,6 +146,7 @@ bysort patient_id (_t): gen vaccine=_n
 strate kids_cat4 if vaccine==1, per(100000)
 strate kids_cat4 if vaccine==2, per(100000)
 strate kids_cat4 if vaccine==3, per(100000)
+strate kids_cat4 if vaccine==4, per(100000)
 
 
 /*1st month dates
@@ -227,23 +231,27 @@ di _n "kids_cat4=0 " _n "****************"
 lincom 1.vaccine+0.kids_cat4+ 1.vaccine#0.kids_cat4, eform
 lincom 2.vaccine+0.kids_cat4+ 2.vaccine#0.kids_cat4, eform
 lincom 3.vaccine+0.kids_cat4+ 3.vaccine#0.kids_cat4, eform
+cap noisily lincom 4.vaccine+0.kids_cat4+ 4.vaccine#0.kids_cat4, eform
 
 
 di _n "kids_cat4=1 " _n "****************"
 lincom 1.vaccine+1.kids_cat4+ 1.vaccine#1.kids_cat4, eform
 lincom 2.vaccine+1.kids_cat4+ 2.vaccine#1.kids_cat4, eform
 lincom 3.vaccine+1.kids_cat4+ 3.vaccine#1.kids_cat4, eform
+cap noisily lincom 4.vaccine+1.kids_cat4+ 4.vaccine#1.kids_cat4, eform
 
 
 di _n "kids_cat4=2 " _n "****************"
 lincom 1.vaccine+2.kids_cat4+ 1.vaccine#2.kids_cat4, eform
 lincom 2.vaccine+2.kids_cat4+ 2.vaccine#2.kids_cat4, eform
 lincom 3.vaccine+2.kids_cat4+ 3.vaccine#2.kids_cat4, eform
+cap noisily lincom 4.vaccine+2.kids_cat4+ 4.vaccine#2.kids_cat4, eform
 
 di _n "kids_cat4=3 " _n "****************"
 lincom 1.vaccine+3.kids_cat4+ 1.vaccine#3.kids_cat4, eform
 lincom 2.vaccine+3.kids_cat4+ 2.vaccine#3.kids_cat4, eform
 lincom 3.vaccine+3.kids_cat4+ 3.vaccine#3.kids_cat4, eform
+cap noisily lincom 4.vaccine+3.kids_cat4+ 4.vaccine#3.kids_cat4, eform
 
 *effect of vaccination among kids_cat4=3 
 
@@ -251,21 +259,25 @@ di _n "kids_cat4=0 " _n "****************"
 lincom 1.vaccine +1.vaccine#0.kids_cat4, eform
 lincom 2.vaccine +2.vaccine#0.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#0.kids_cat4, eform
+cap noisily lincom 4.vaccine +4.vaccine#0.kids_cat4, eform
 
 di _n "kids_cat4=1 " _n "****************"
 lincom 1.vaccine +1.vaccine#1.kids_cat4, eform
 lincom 2.vaccine +2.vaccine#1.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#1.kids_cat4, eform
+cap noisily lincom 4.vaccine +4.vaccine#1.kids_cat4, eform
 
 di _n "kids_cat4=2 " _n "****************"
 lincom 1.vaccine +1.vaccine#2.kids_cat4, eform
 lincom 2.vaccine +2.vaccine#2.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#2.kids_cat4, eform
+cap noisily lincom 4.vaccine +4.vaccine#2.kids_cat4, eform
 
 di _n "kids_cat4=3 " _n "****************"
 lincom 1.vaccine +1.vaccine#3.kids_cat4, eform
 lincom 2.vaccine +2.vaccine#3.kids_cat4, eform
 lincom 3.vaccine +3.vaccine#3.kids_cat4, eform
+cap noisily lincom 4.vaccine +4.vaccine#3.kids_cat4, eform
 }
 estimates save ./output/an_interaction_cox_models_`outcome'_kids_cat4_vaccine_`x'_child_postvacc, replace
 
