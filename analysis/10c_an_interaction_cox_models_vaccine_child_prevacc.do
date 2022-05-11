@@ -17,7 +17,7 @@
 *	Purpose:		This do-file performs multivariable (fully adjusted) 
 *					Cox models, with an interaction by vaccine and censoring
 *                   when all children aged 12-17 in the household have had
-*                   a vaccine (if they all have done)
+*                   a 2nd vaccine dose (if they all have done)
 *					b/l group is unvacc without kids.
 *  
 ********************************************************************************
