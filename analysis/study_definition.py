@@ -162,7 +162,7 @@ study = StudyDefinition(
         return_expectations={
             "date": {
                 "earliest": "2020-12-08",  # first vaccine administered on the 8/12
-                "latest": "2022-04-01",
+                "latest": "2021-07-01",    # artificial to improve dose sequencing
             },
             "incidence": 0.99,
         },
@@ -176,8 +176,8 @@ study = StudyDefinition(
         date_format="YYYY-MM-DD",
         return_expectations={
             "date": {
-                "earliest": "2020-12-08",  # first vaccine administered on the 8/12
-                "latest": "2022-04-01",
+                "earliest": "2021-06-01",  # artificial dates to improve dose sequencing
+                "latest": "2021-10-01",
             },
             "incidence": 0.98,
         },
