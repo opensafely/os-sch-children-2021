@@ -89,7 +89,7 @@ study = StudyDefinition(
         on_or_after="index_date",
         find_first_match_in_period=True,  
         date_format="YYYY-MM-DD",  
-        return_expectations={"date": {"earliest": "2020-11-20"}, "incidence" : 0.5},
+        return_expectations={"date": {"earliest": "2020-11-20"}, "incidence" : 0.75}, # high to help project run on dummy data
    ),
 	covid_admission_primary_diagnosis=patients.admitted_to_hospital(
         returning="primary_diagnosis",
@@ -97,7 +97,7 @@ study = StudyDefinition(
         on_or_after="index_date",
         find_first_match_in_period=True,  
         date_format="YYYY-MM-DD", 
-        return_expectations={"date": {"earliest": "2020-11-20"},"incidence" : 0.5,
+        return_expectations={"date": {"earliest": "2020-11-20"},"incidence" : 0.75, # high to help project run on dummy data
             "category": {"ratios": {"U071":0.5, "U072":0.5}},
         },
     ),
