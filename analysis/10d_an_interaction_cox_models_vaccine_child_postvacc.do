@@ -17,7 +17,7 @@
 *	Purpose:		This do-file performs multivariable (fully adjusted) 
 *					Cox models, with an interaction by vaccine, with time zero as
 *                   when all children aged 12-17 in the household have had
-*                   a vaccine (and excluding other households with children)
+*                   two vaccine doses (and excluding other households with children)
 *					b/l group is unvacc without kids (using arbitrary time zero)
 *  
 ********************************************************************************
@@ -140,8 +140,11 @@ recode `outcome' .=0
 tab `outcome'
 
 stset
-bysort patient_id (_t): gen vaccine=_n
-
+*bysort patient_id (_t): gen vaccine=_n
+*The code line above only counts vaccine after the time when all eligible children were double vaccinated
+*Use code line below instead
+egen vaccine = rownonmiss(covid_vacc*date)
+replace vaccine = vaccine + 1 // add 1 as code is written so vaccine==1 is no vaccine
 
 strate kids_cat4 if vaccine==1, per(100000)
 strate kids_cat4 if vaccine==2, per(100000)

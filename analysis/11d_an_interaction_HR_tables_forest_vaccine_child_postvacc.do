@@ -87,7 +87,8 @@ stsplit split2, after(second_vacc_plus_7d) at(0)
 recode `outcome' .=0 
 stsplit split3, after(third_vacc_plus_7d) at(0)
 recode `outcome' .=0 
-bysort patient_id: gen vaccine=_n
+egen vaccine = rownonmiss(covid_vacc*date)
+replace vaccine = vaccine + 1 // add 1 as code is written so vaccine==1 is no vaccine
 tab vaccine, miss
 	
 	
