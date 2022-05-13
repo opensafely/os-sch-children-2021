@@ -108,6 +108,15 @@ replace covid_vacc_third_dose_date = . if ///
 	covid_vacc_third_dose_date <= covid_vacc_second_dose_date | ///
 	covid_vacc_third_dose_date <= covid_vacc_date
 
+*Check child vaccination dates
+summ covid_vacc*date if age>=12 & age<=17, d format
+summ covid_vacc*date if age<12, d format
+
+*See how many households have children aged <12 vaccinated
+codebook household_id if age<12
+codebook household_id if covid_vacc_date!=. & age<12
+codebook household_id if covid_vacc_second_dose_date!=. & age<12
+
 
 gen covid_admission_primary_date = covid_admission_date ///
 if (covid_admission_primary_diagnosi == "U071"| covid_admission_primary_diagnosi == "U072")
