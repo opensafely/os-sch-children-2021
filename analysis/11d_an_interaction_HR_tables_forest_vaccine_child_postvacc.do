@@ -5,9 +5,9 @@
 *
 *Requires: final analysis dataset (analysis_dataset.dta)
 *
-*Coding: HFORBES, based on file from Krishnan Bhaskaran
+*Coding: TCowling, based on file from Harriet
 *
-*Date drafted: 30th June 2020
+*Date drafted: 25th April 2022
 *************************************************************************
 global outdir  	  "output"
 global logdir     "logs"
@@ -17,7 +17,7 @@ local outcome `1'
 
 * Open a log file
 capture log close
-log using "$logdir/11_an_interaction_HR_tables_forest_`outcome'_vaccine_main.log", text replace
+log using "$logdir/11d_an_interaction_HR_tables_forest_`outcome'_vaccine_child_postvacc.log", text replace
 
 ***********************************************************************************************************************
 *Generic code to ouput the HRs across outcomes for all levels of a particular variables, in the right shape for table
@@ -41,7 +41,14 @@ local endwith "_tab"
  
  use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 
+*create artificial start of follow-up for households in which not all children had been double-vaccinated
+gen all_under18vacc_postvacc_an = all_under18vacc
+replace all_under18vacc_postvacc_an = d(20sept2021) if all_child_vacc == 0 // may edit this date later on
 
+*remove households with children not all of whom get double-vaccinated
+drop if all_child_vacc == 0 & num_child_eligible != 0
+
+*Tidy vaccination data
 replace covid_vacc_second_dose_date = . if ///
 	covid_vacc_date == . | ///
 	covid_vacc_date >= covid_vacc_second_dose_date
@@ -54,26 +61,25 @@ drop if covid_vacc_date<d(20dec2020)
 drop if covid_vacc_second_dose_date<d(20dec2020)
 drop if covid_vacc_third_dose_date<=d(20dec2020)
 
-/*Censor at date of first child being vaccinated in hh - removed from analysis
-replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
-replace `outcome'=0 if stime_`outcome'<date_`outcome'*/
-
-stset stime_`outcome', fail(`outcome') 		///
-	id(patient_id) enter(enter_date) origin(enter_date)
-
-*Drop those without any eligible follow-up
-drop if enter_date>=stime_`outcome'
-	
-*Generate first and second vacc dates
+*Generate first and second vacc dates	
 gen first_vacc_plus_7d=covid_vacc_date+7
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
 gen third_vacc_plus_7d = covid_vacc_third_dose_date+7
 format first_vacc_plus_7d second_vacc_plus_7d third_vacc_plus_7d %td
 
+*Drop individuals who died before date by which all children aged 12-17 were vaccinated
+drop if died_date_ons <= all_under18vacc_postvacc_an
+
+*Drop those without any eligible follow-up
+drop if stime_`outcome' <= all_under18vacc_postvacc_an
+
 *Replace vacc date with missing if occur after end follow-up
 replace first_vacc_plus_7d=. if first_vacc_plus_7d> stime_`outcome'
 replace second_vacc_plus_7d=. if second_vacc_plus_7d> stime_`outcome'
 replace third_vacc_plus_7d=. if third_vacc_plus_7d>=stime_`outcome'
+
+stset stime_`outcome', fail(`outcome') 		///
+	id(patient_id) enter(all_under18vacc_postvacc_an) origin(all_under18vacc_postvacc_an)
 
 stsplit split1, after(first_vacc_plus_7d) at(0)
 recode `outcome' .=0 
@@ -81,7 +87,8 @@ stsplit split2, after(second_vacc_plus_7d) at(0)
 recode `outcome' .=0 
 stsplit split3, after(third_vacc_plus_7d) at(0)
 recode `outcome' .=0 
-bysort patient_id: gen vaccine=_n
+egen vaccine = rownonmiss(covid_vacc*date)
+replace vaccine = vaccine + 1 // add 1 as code is written so vaccine==1 is no vaccine
 tab vaccine, miss
 	
 	
@@ -110,8 +117,8 @@ tab vaccine, miss
 		*1) GET THE RIGHT ESTIMATES INTO MEMORY
 
 		if "`modeltype'"=="fulladj" {
-				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_`int_type'_`x'
-				if _rc!=0 local noestimatesflag 1
+				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_`int_type'_`x'_child_postvacc
+                if _rc!=0 local noestimatesflag 1
 				}
 		***********************
 		*2) WRITE THE HRs TO THE OUTPUT FILE
@@ -170,7 +177,7 @@ end
 
 *MAIN CODE TO PRODUCE TABLE CONTENTS
 cap file close tablecontents_int
-file open tablecontents_int using ./output/11_an_int_tab_contents_HRtable_`outcome'_vaccine_main.txt, t w replace
+file open tablecontents_int using ./output/11d_an_int_tab_contents_HRtable_`outcome'_vaccine_child_postvacc.txt, t w replace
 di "****"
 
 

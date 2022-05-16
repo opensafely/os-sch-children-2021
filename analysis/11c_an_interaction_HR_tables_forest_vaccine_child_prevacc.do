@@ -5,9 +5,9 @@
 *
 *Requires: final analysis dataset (analysis_dataset.dta)
 *
-*Coding: HFORBES, based on file from Krishnan Bhaskaran
+*Coding: TCowling, based on file from Harriet
 *
-*Date drafted: 30th June 2020
+*Date drafted: 25th April 2022
 *************************************************************************
 global outdir  	  "output"
 global logdir     "logs"
@@ -17,7 +17,7 @@ local outcome `1'
 
 * Open a log file
 capture log close
-log using "$logdir/11_an_interaction_HR_tables_forest_`outcome'_vaccine_main.log", text replace
+log using "$logdir/11c_an_interaction_HR_tables_forest_`outcome'_vaccine_child_prevacc.log", text replace
 
 ***********************************************************************************************************************
 *Generic code to ouput the HRs across outcomes for all levels of a particular variables, in the right shape for table
@@ -54,9 +54,10 @@ drop if covid_vacc_date<d(20dec2020)
 drop if covid_vacc_second_dose_date<d(20dec2020)
 drop if covid_vacc_third_dose_date<=d(20dec2020)
 
-/*Censor at date of first child being vaccinated in hh - removed from analysis
-replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
-replace `outcome'=0 if stime_`outcome'<date_`outcome'*/
+*Censor at date of all children aged 12-17 being vaccinated in hh
+replace stime_`outcome' 	= all_under18vacc if stime_`outcome'>all_under18vacc
+replace `outcome'=0 if stime_`outcome'<date_`outcome'
+replace date_`outcome' = . if (date_`outcome' > stime_`outcome' )
 
 stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)
@@ -64,7 +65,7 @@ stset stime_`outcome', fail(`outcome') 		///
 *Drop those without any eligible follow-up
 drop if enter_date>=stime_`outcome'
 	
-*Generate first and second vacc dates
+*Generate first and second vacc dates	
 gen first_vacc_plus_7d=covid_vacc_date+7
 gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
 gen third_vacc_plus_7d = covid_vacc_third_dose_date+7
@@ -81,6 +82,7 @@ stsplit split2, after(second_vacc_plus_7d) at(0)
 recode `outcome' .=0 
 stsplit split3, after(third_vacc_plus_7d) at(0)
 recode `outcome' .=0 
+
 bysort patient_id: gen vaccine=_n
 tab vaccine, miss
 	
@@ -110,7 +112,7 @@ tab vaccine, miss
 		*1) GET THE RIGHT ESTIMATES INTO MEMORY
 
 		if "`modeltype'"=="fulladj" {
-				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_`int_type'_`x'
+				cap estimates use ./output/an_interaction_cox_models_`outcome'_kids_cat4_`int_type'_`x'_child_prevacc
 				if _rc!=0 local noestimatesflag 1
 				}
 		***********************
@@ -170,7 +172,7 @@ end
 
 *MAIN CODE TO PRODUCE TABLE CONTENTS
 cap file close tablecontents_int
-file open tablecontents_int using ./output/11_an_int_tab_contents_HRtable_`outcome'_vaccine_main.txt, t w replace
+file open tablecontents_int using ./output/11c_an_int_tab_contents_HRtable_`outcome'_vaccine_child_prevacc.txt, t w replace
 di "****"
 
 

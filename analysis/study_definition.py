@@ -89,7 +89,7 @@ study = StudyDefinition(
         on_or_after="index_date",
         find_first_match_in_period=True,  
         date_format="YYYY-MM-DD",  
-        return_expectations={"date": {"earliest": "2020-11-20"}, "incidence" : 0.5},
+        return_expectations={"date": {"earliest": "2020-11-20"}, "incidence" : 0.75}, # high to help project run on dummy data
    ),
 	covid_admission_primary_diagnosis=patients.admitted_to_hospital(
         returning="primary_diagnosis",
@@ -97,7 +97,7 @@ study = StudyDefinition(
         on_or_after="index_date",
         find_first_match_in_period=True,  
         date_format="YYYY-MM-DD", 
-        return_expectations={"date": {"earliest": "2020-11-20"},"incidence" : 0.5,
+        return_expectations={"date": {"earliest": "2020-11-20"},"incidence" : 0.75, # high to help project run on dummy data
             "category": {"ratios": {"U071":0.5, "U072":0.5}},
         },
     ),
@@ -162,9 +162,9 @@ study = StudyDefinition(
         return_expectations={
             "date": {
                 "earliest": "2020-12-08",  # first vaccine administered on the 8/12
-                "latest": "2021-07-16",
+                "latest": "2021-07-01",    # artificial to improve dose sequencing
             },
-            "incidence": 0.5,
+            "incidence": 0.95,
         },
     ),
     # SECOND DOSE COVID VACCINATION
@@ -176,9 +176,25 @@ study = StudyDefinition(
         date_format="YYYY-MM-DD",
         return_expectations={
             "date": {
-                "earliest": "2020-12-08",  # first vaccine administered on the 8/12
-                "latest": "2021-03-01",
-            }
+                "earliest": "2021-06-01",  # artificial dates to improve dose sequencing
+                "latest": "2021-10-01",
+            },
+            "incidence": 0.90,
+        },
+    ),
+    # THIRD DOSE COVID VACCINATION
+    covid_vacc_third_dose_date=patients.with_tpp_vaccination_record(
+        target_disease_matches="SARS-2 CORONAVIRUS",
+        on_or_after="covid_vacc_second_dose_date + 21 days",  
+        find_first_match_in_period=True,
+        returning="date",
+        date_format="YYYY-MM-DD",
+        return_expectations={
+            "date": {
+                "earliest": "2021-09-01",  # date JCVI recommended 3rd dose for immunosuppressed
+                "latest": "2022-04-01",
+            },
+            "incidence": 0.85,  # too high but useful for dummy data
         },
     ),
     ## DEMOGRAPHIC COVARIATES

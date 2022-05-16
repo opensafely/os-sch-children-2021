@@ -1,6 +1,6 @@
 version: "3.0"
 expectations:
-  population_size: 30000
+  population_size: 200000
 
 actions:
   generate_cohort:
@@ -306,6 +306,54 @@ actions:
         log: logs/10_an_interaction_cox_models_vaccine_covid_death_stratified.log
         data: "output/an_interaction_cox_models_covid_death_kids_cat4_vaccine_*_stratified.ster"
 
+  10c_an_interaction_cox_models_vaccine_child_prevacc_covid_tpp_prob:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10c_an_interaction_cox_models_vaccine_child_prevacc.do covid_tpp_prob
+    outputs:
+      moderately_sensitive:
+        log: logs/10c_an_interaction_cox_models_vaccine_covid_tpp_prob_child_prevacc.log
+        data: "output/an_interaction_cox_models_covid_tpp_prob_kids_cat4_vaccine_*_child_prevacc.ster"
+
+  10c_an_interaction_cox_models_vaccine_child_prevacc_covidadmission:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10c_an_interaction_cox_models_vaccine_child_prevacc.do covidadmission
+    outputs:
+      moderately_sensitive:
+        log: logs/10c_an_interaction_cox_models_vaccine_covidadmission_child_prevacc.log
+        data: "output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine_*_child_prevacc.ster"
+
+  10c_an_interaction_cox_models_vaccine_child_prevacc_covid_death:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10c_an_interaction_cox_models_vaccine_child_prevacc.do covid_death
+    outputs:
+      moderately_sensitive:
+        log: logs/10c_an_interaction_cox_models_vaccine_covid_death_child_prevacc.log
+        data: "output/an_interaction_cox_models_covid_death_kids_cat4_vaccine_*_child_prevacc.ster"
+
+  10d_an_interaction_cox_models_vaccine_child_postvacc_covid_tpp_prob:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10d_an_interaction_cox_models_vaccine_child_postvacc.do covid_tpp_prob
+    outputs:
+      moderately_sensitive:
+        log: logs/10d_an_interaction_cox_models_vaccine_covid_tpp_prob_child_postvacc.log
+        data: "output/an_interaction_cox_models_covid_tpp_prob_kids_cat4_vaccine_*_child_postvacc.ster"
+
+  10d_an_interaction_cox_models_vaccine_child_postvacc_covidadmission:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10d_an_interaction_cox_models_vaccine_child_postvacc.do covidadmission
+    outputs:
+      moderately_sensitive:
+        log: logs/10d_an_interaction_cox_models_vaccine_covidadmission_child_postvacc.log
+        data: "output/an_interaction_cox_models_covidadmission_kids_cat4_vaccine_*_child_postvacc.ster"
+
+  10d_an_interaction_cox_models_vaccine_child_postvacc_covid_death:
+    needs: [01_cr_analysis_dataset]
+    run: stata-mp:latest analysis/10d_an_interaction_cox_models_vaccine_child_postvacc.do covid_death
+    outputs:
+      moderately_sensitive:
+        log: logs/10d_an_interaction_cox_models_vaccine_covid_death_child_postvacc.log
+        data: "output/an_interaction_cox_models_covid_death_kids_cat4_vaccine_*_child_postvacc.ster"
+
   11_an_interaction_HR_tables_forest_covid_tpp_prob:
     needs:
       - 10_an_interaction_cox_models_sex_covid_tpp_prob
@@ -416,20 +464,66 @@ actions:
       moderately_sensitive:
         log: logs/11_an_interaction_HR_tables_forest_covid_death_vaccine_stratified.log
         data: "output/11_an_int_tab_contents_HRtable_covid_death_vaccine_stratified.txt"
-
-  15_anHRfigure_data_all_outcomes_2021_SENSE:
-    needs:  
-      - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob_2ndVaccCensor
-      - 07b_an_multivariable_cox_models_FULL_covidadmission_2ndVaccCensor
-      - 07b_an_multivariable_cox_models_FULL_covid_death_2ndVaccCensor
-      - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob_1stVaccCensor
-      - 07b_an_multivariable_cox_models_FULL_covidadmission_1stVaccCensor
-      - 07b_an_multivariable_cox_models_FULL_covid_death_1stVaccCensor
-    run: stata-mp:latest analysis/15_anHRfigure_all_outcomes_2021_SENSE.do
+  
+  11c_an_interaction_HR_tables_forest_vaccine_child_prevacc_covid_tpp_prob:
+    needs:
+      - 10c_an_interaction_cox_models_vaccine_child_prevacc_covid_tpp_prob
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11c_an_interaction_HR_tables_forest_vaccine_child_prevacc.do covid_tpp_prob
     outputs:
       moderately_sensitive:
-        log: logs/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_SENSE.log
-        data: "output/15_an_tablecontents_HRtable_all_outcomes_ANALYSES_SENSE.txt"
+        log: logs/11c_an_interaction_HR_tables_forest_covid_tpp_prob_vaccine_child_prevacc.log
+        data: "output/11c_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_child_prevacc.txt"
+
+  11c_an_interaction_HR_tables_forest_vaccine_child_prevacc_covidadmission:
+    needs:
+      - 10c_an_interaction_cox_models_vaccine_child_prevacc_covidadmission
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11c_an_interaction_HR_tables_forest_vaccine_child_prevacc.do covidadmission
+    outputs:
+      moderately_sensitive:
+        log: logs/11c_an_interaction_HR_tables_forest_covidadmission_vaccine_child_prevacc.log
+        data: "output/11c_an_int_tab_contents_HRtable_covidadmission_vaccine_child_prevacc.txt"
+  
+  11c_an_interaction_HR_tables_forest_vaccine_child_prevacc_covid_death:
+    needs:
+      - 10c_an_interaction_cox_models_vaccine_child_prevacc_covid_death
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11c_an_interaction_HR_tables_forest_vaccine_child_prevacc.do covid_death
+    outputs:
+      moderately_sensitive:
+        log: logs/11c_an_interaction_HR_tables_forest_covid_death_vaccine_child_prevacc.log
+        data: "output/11c_an_int_tab_contents_HRtable_covid_death_vaccine_child_prevacc.txt"
+
+  11d_an_interaction_HR_tables_forest_vaccine_child_postvacc_covid_tpp_prob:
+    needs:
+      - 10d_an_interaction_cox_models_vaccine_child_postvacc_covid_tpp_prob
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11d_an_interaction_HR_tables_forest_vaccine_child_postvacc.do covid_tpp_prob
+    outputs:
+      moderately_sensitive:
+        log: logs/11d_an_interaction_HR_tables_forest_covid_tpp_prob_vaccine_child_postvacc.log
+        data: "output/11d_an_int_tab_contents_HRtable_covid_tpp_prob_vaccine_child_postvacc.txt"
+
+  11d_an_interaction_HR_tables_forest_vaccine_child_postvacc_covidadmission:
+    needs:
+      - 10d_an_interaction_cox_models_vaccine_child_postvacc_covidadmission
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11d_an_interaction_HR_tables_forest_vaccine_child_postvacc.do covidadmission
+    outputs:
+      moderately_sensitive:
+        log: logs/11d_an_interaction_HR_tables_forest_covidadmission_vaccine_child_postvacc.log
+        data: "output/11d_an_int_tab_contents_HRtable_covidadmission_vaccine_child_postvacc.txt"
+  
+  11d_an_interaction_HR_tables_forest_vaccine_child_postvacc_covid_death:
+    needs:
+      - 10d_an_interaction_cox_models_vaccine_child_postvacc_covid_death
+      - 01_cr_analysis_dataset
+    run: stata-mp:latest analysis/11d_an_interaction_HR_tables_forest_vaccine_child_postvacc.do covid_death
+    outputs:
+      moderately_sensitive:
+        log: logs/11d_an_interaction_HR_tables_forest_covid_death_vaccine_child_postvacc.log
+        data: "output/11d_an_int_tab_contents_HRtable_covid_death_vaccine_child_postvacc.txt"
 
   run_all:
     needs:
@@ -449,7 +543,6 @@ actions:
       - 11_an_interaction_HR_tables_forest_covidadmission
       - 11_an_interaction_HR_tables_forest_covid_death
       - 15_anHRfigure_all_outcomes_2021
-      - 15_anHRfigure_data_all_outcomes_2021_SENSE
     # In order to be valid this action needs to define a run commmand and
     # some output. We don't really care what these are but the below seems to
     # do the trick.

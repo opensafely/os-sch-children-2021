@@ -29,7 +29,7 @@ cap prog drop outputHRsforvar
 prog define outputHRsforvar
 syntax, variable(string) min(real) max(real) outcome(string)
 file write tablecontents ("Exposure") _tab ("exposure_level") _tab ("time_period") _tab ("events") _tab ("person_years") _tab ("rate") _tab ("age_sex_adj_hr") _tab ("demog_adj_hr") _tab ("full_adj_hr") _n
-foreach period in 0 1 2 3 4  {
+foreach period in 0 1 2 3 4 5 {
 forvalues x=0/1 {
 file write tablecontents ("age") ("`x'") _n
 forvalues i=`min'/`max'{
@@ -43,17 +43,18 @@ use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", clear
 *-Schools open delta variant (+7 days): 24th May 2021 
 *Summer holidays +7 days: 24th July 2021
 *Winter term +7 days: 9th September 2021
+*Omicron period +7 days: 27th December 2021
 
 if "`outcome'"=="covid_tpp_prob" {
-stsplit cat_time, at(0,85,154, 216, 263, 400)
-recode cat_time 85=1 154=2 216=3 263=4 
+stsplit cat_time, at(0,85,154, 216, 263, 372, 500)
+recode cat_time 85=1 154=2 216=3 263=4 372=5
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
 }
 if "`outcome'"=="covid_test_ever" {
-stsplit cat_time, at(0,85,154, 216, 263, 400)
-recode cat_time 85=1 154=2 216=3 263=4 
+stsplit cat_time, at(0,85,154, 216, 263, 372, 500)
+recode cat_time 85=1 154=2 216=3 263=4 372=5
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
@@ -64,18 +65,19 @@ tab cat_time `outcome'
 *Schools open delta variant (+14 days): 31st May 2021 
 *Summer holidays +14 days: 30th July 2021
 *Winter term +14 days: 16th September 2021
+*Omicron period +14 days: 3rd January 2022
 
 if "`outcome'"=="covidadmission" {
-stsplit cat_time, at(0,92,161,222,270, 400)
-recode cat_time 92=1 161=2 222=3 270=4
+stsplit cat_time, at(0,92,161,222,270, 379, 500)
+recode cat_time 92=1 161=2 222=3 270=4 379=5
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
 }
 
 if  "`outcome'"=="covid_death" {
-stsplit cat_time, at(0,92,161,222,270, 400)
-recode cat_time 92=1 161=2 222=3 270=4
+stsplit cat_time, at(0,92,161,222,270, 379, 500)
+recode cat_time 92=1 161=2 222=3 270=4 379=5
 recode `outcome' .=0 
 tab cat_time
 tab cat_time `outcome'
