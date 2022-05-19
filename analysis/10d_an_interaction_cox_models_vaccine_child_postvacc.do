@@ -142,7 +142,10 @@ tab `outcome'
 stset
 *bysort patient_id (_t): gen vaccine=_n
 *The code line above only counts vaccine after the time when all eligible children were double vaccinated
-*Use code line below instead
+*Use code below instead
+foreach var of varlist covid_vacc*date {
+	replace `var' = . if `var' >= (stime_`outcome' - 7)
+}
 egen vaccine = rownonmiss(covid_vacc*date)
 replace vaccine = vaccine + 1 // add 1 as code is written so vaccine==1 is no vaccine
 

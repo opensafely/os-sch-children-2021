@@ -55,8 +55,8 @@ drop if covid_vacc_second_dose_date<d(20dec2020)
 drop if covid_vacc_third_dose_date<=d(20dec2020)
 
 /*Censor at date of first child being vaccinated in hh - removed from analysis
-replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
-replace `outcome'=0 if stime_`outcome'<date_`outcome'*/
+replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc*/
+replace `outcome'=0 if stime_`outcome'<date_`outcome'
 
 stset stime_`outcome', fail(`outcome') 		///
 	id(patient_id) enter(enter_date) origin(enter_date)

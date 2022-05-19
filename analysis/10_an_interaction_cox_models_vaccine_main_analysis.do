@@ -107,9 +107,9 @@ gen third_vacc_plus_7d = covid_vacc_third_dose_date+7
 format first_vacc_plus_7d second_vacc_plus_7d third_vacc_plus_7d %td
 
 /*Censor at date of first child being vaccinated in hh - removed from analysis
-replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc
+replace stime_`outcome' 	= under18vacc if stime_`outcome'>under18vacc*/
 replace `outcome'=0 if stime_`outcome'<date_`outcome'
-replace date_`outcome' = . if (date_`outcome' > stime_`outcome' )*/
+replace date_`outcome' = . if (date_`outcome' > stime_`outcome' )
 
 *Drop those without any eligible follow-up
 drop if enter_date>=stime_`outcome'

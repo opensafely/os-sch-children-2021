@@ -43,7 +43,7 @@ local endwith "_tab"
 
 *create artificial start of follow-up for households in which not all children had been double-vaccinated
 gen all_under18vacc_postvacc_an = all_under18vacc
-replace all_under18vacc_postvacc_an = d(20sept2021) if all_child_vacc == 0 // may edit this date later on
+replace all_under18vacc_postvacc_an = d(01oct2021) if all_child_vacc == 0 // may edit this date later on
 
 *remove households with children not all of whom get double-vaccinated
 drop if all_child_vacc == 0 & num_child_eligible != 0
@@ -87,6 +87,9 @@ stsplit split2, after(second_vacc_plus_7d) at(0)
 recode `outcome' .=0 
 stsplit split3, after(third_vacc_plus_7d) at(0)
 recode `outcome' .=0 
+foreach var of varlist covid_vacc*date {
+	replace `var' = . if `var' >= (stime_`outcome' - 7)
+}
 egen vaccine = rownonmiss(covid_vacc*date)
 replace vaccine = vaccine + 1 // add 1 as code is written so vaccine==1 is no vaccine
 tab vaccine, miss
