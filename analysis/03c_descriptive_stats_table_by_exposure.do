@@ -15,14 +15,18 @@ rename var6 "Only children aged 12-18  years"
 rename var7 "Children aged 0-11 and 12-18 years" */
 
 gen variable=""
-replace variable="18-<30" if varcat=="agegroup==1"
-replace variable="30-<40" if varcat=="agegroup==2"
-replace variable="40-<50" if varcat=="agegroup==3"
-replace variable="50-<60" if varcat=="agegroup==4"
-replace variable="60-<66" if varcat=="agegroup==5"
-replace variable="66-70" if varcat=="agegroup==6"
-replace variable="70-80" if varcat=="agegroup==7"
-replace variable="80+" if varcat=="agegroup==8"
+replace variable="18-29" if varcat=="agegroup==1"
+replace variable="30-39" if varcat=="agegroup==2"
+replace variable="40-49" if varcat=="agegroup==3"
+replace variable="50-59" if varcat=="agegroup==4"
+if `age' == 0 {
+	replace variable="60-65" if varcat=="agegroup==5"
+}
+if `age' == 1 {
+	replace variable="66-69" if varcat=="agegroup==5"
+}
+replace variable="70-79" if varcat=="agegroup==6"
+replace variable="80+" if varcat=="agegroup==7"
 
 
 replace variable="Female" if varcat=="male==0"
@@ -65,15 +69,12 @@ di "*****1"
 if `age'==0 {
 drop if varcat=="agegroup==6"
 drop if varcat=="agegroup==7"
-drop if varcat=="agegroup==8"
-
 }
 if `age'==1 {
 drop if varcat=="agegroup==1"
 drop if varcat=="agegroup==2"
 drop if varcat=="agegroup==3"
 drop if varcat=="agegroup==4"
-drop if varcat=="agegroup==5"
 }
 di "*****2"
 gen littlen=_n
@@ -113,8 +114,8 @@ drop if v1=="Smoking" | v1=="BMI"
 graph hbar v4 v6 v8 v10 v12, nofill ///
 over(variable, label(labsize(tiny)) sort(littlen))  ///
 over(v1, label(labsize(vsmall)) gap(400))  ///
-ysize(15) xsize(10) ///
-legend( label(1 "Total cohort, n (%)") label(2 "No children")  label(3 "Only children 0-11 years")  label(4 "Only children 12-18 years") label(5 "Children 0-11 and 12-18 years")) legend(size(tiny) rows(2) symysize(2) symxsize(2) ) saving(output/Descriptive_figure_age`age', replace)
+ysize(15) xsize(10) ytitle (Percentage of cohort (%), size(vsmall)) ylabel(#6, labsize(tiny)) ///
+legend( label(1 "Total cohort") label(2 "No children")  label(3 "Only children 0-11 years")  label(4 "Only children 12-17 years") label(5 "Children 0-11 and 12-17 years")) legend(size(tiny) rows(2) symysize(2) symxsize(2) ) saving(output/Descriptive_figure_age`age', replace)
 graph export "output/Descriptive_figure_age`age'.svg", as(svg) replace 
 }
 
