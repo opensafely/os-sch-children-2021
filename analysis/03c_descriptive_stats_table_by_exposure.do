@@ -59,7 +59,7 @@ replace variable="5 (most deprived)" if varcat=="imd==5"
 
 replace variable="1" if varcat=="tot_adults_hh==1"
 replace variable="2" if varcat=="tot_adults_hh==2"
-replace variable="3" if varcat=="tot_adults_hh==3"
+replace variable="3+" if varcat=="tot_adults_hh==3"
 
 replace variable="Any comorbidity" if varcat=="anycomorb==1"
 
@@ -114,8 +114,8 @@ drop if v1=="Smoking" | v1=="BMI"
 graph hbar v4 v6 v8 v10 v12, nofill ///
 over(variable, label(labsize(tiny)) sort(littlen))  ///
 over(v1, label(labsize(vsmall)) gap(400))  ///
-ysize(15) xsize(10) ytitle (Percentage of cohort (%), size(vsmall)) ylabel(#6, labsize(tiny)) ///
-legend( label(1 "Total cohort") label(2 "No children")  label(3 "Only children 0-11 years")  label(4 "Only children 12-17 years") label(5 "Children 0-11 and 12-17 years")) legend(size(tiny) rows(2) symysize(2) symxsize(2) ) saving(output/Descriptive_figure_age`age', replace)
+ysize(15) xsize(10) ytitle (Percentage of group (%), size(vsmall)) ylabel(#6, labsize(tiny)) ///
+legend( label(1 "Total cohort") label(2 "No children")  label(3 "Only children 0-11 years")  label(4 "Only children 12-17 years") label(5 "Children 0-11 and 12-17 years")) legend(size(tiny) rows(3) symysize(2) symxsize(2) ) saving(output/Descriptive_figure_age`age', replace)
 graph export "output/Descriptive_figure_age`age'.svg", as(svg) replace 
 }
 
