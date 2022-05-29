@@ -389,6 +389,7 @@ actions:
       - 07b_an_multivariable_cox_models_FULL_covid_tpp_prob
       - 07b_an_multivariable_cox_models_FULL_covidadmission
       - 07b_an_multivariable_cox_models_FULL_covid_death
+      - 07b_an_multivariable_cox_models_FULL_covid_test_ever
     run: stata-mp:latest analysis/15_anHRfigure_all_outcomes_2021.do
     outputs:
       moderately_sensitive:
@@ -524,6 +525,56 @@ actions:
       moderately_sensitive:
         log: logs/11d_an_interaction_HR_tables_forest_covid_death_vaccine_child_postvacc.log
         data: "output/11d_an_int_tab_contents_HRtable_covid_death_vaccine_child_postvacc.txt"
+
+  forest_main_results:
+    needs: [15_anHRfigure_all_outcomes_2021]
+    run: stata-mp:latest analysis/FOREST_main_results.do
+    outputs:
+      moderately_sensitive:
+        figure: "output/forest_main_results_age*.svg"
+
+  forest_covid_test:
+    needs: [15_anHRfigure_all_outcomes_2021]
+    run: stata-mp:latest analysis/FOREST_covid_test.do
+    outputs:
+      moderately_sensitive:
+        figure: "output/forest_covid_test_age*.svg"
+
+  forest_interactions_vaccine_all:
+    needs:
+      - 11_an_interaction_HR_tables_forest_vaccine_main_analysis_covid_tpp_prob
+      - 11_an_interaction_HR_tables_forest_vaccine_main_analysis_covidadmission
+      - 11_an_interaction_HR_tables_forest_vaccine_main_analysis_covid_death
+    run: stata-mp:latest analysis/FOREST_interactions_vaccine_all.do
+    outputs:
+      moderately_sensitive:
+        figure1: "output/an_vaccine_main_covid_tpp_prob_age*.svg"
+        figure2: "output/an_vaccine_main_covidadmission_age*.svg"
+        figure3: "output/an_vaccine_main_covid_death_age*.svg"
+
+  forest_interactions_vaccine_prevacc:
+    needs:
+      - 11c_an_interaction_HR_tables_forest_vaccine_child_prevacc_covid_tpp_prob
+      - 11c_an_interaction_HR_tables_forest_vaccine_child_prevacc_covidadmission
+      - 11c_an_interaction_HR_tables_forest_vaccine_child_prevacc_covid_death
+    run: stata-mp:latest analysis/FOREST_interactions_vaccine_prevacc.do
+    outputs:
+      moderately_sensitive:
+        figure1: "output/an_vaccine_prevacc_covid_tpp_prob_age*.svg"
+        figure2: "output/an_vaccine_prevacc_covidadmission_age*.svg"
+        figure3: "output/an_vaccine_prevacc_covid_death_age*.svg"
+
+  forest_interactions_vaccine_postvacc:
+    needs:
+      - 11d_an_interaction_HR_tables_forest_vaccine_child_postvacc_covid_tpp_prob
+      - 11d_an_interaction_HR_tables_forest_vaccine_child_postvacc_covidadmission
+      - 11d_an_interaction_HR_tables_forest_vaccine_child_postvacc_covid_death
+    run: stata-mp:latest analysis/FOREST_interactions_vaccine_postvacc.do
+    outputs:
+      moderately_sensitive:
+        figure1: "output/an_vaccine_postvacc_covid_tpp_prob_age*.svg"
+        figure2: "output/an_vaccine_postvacc_covidadmission_age*.svg"
+        figure3: "output/an_vaccine_postvacc_covid_death_age*.svg"
 
   run_all:
     needs:
