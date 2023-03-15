@@ -14,19 +14,16 @@ X00s3,Double lung transplant as a block,CTV3_Children
 14S3.,H/O: heart recipient,CTV3Map_Code_And_Term
 14S8.,H/O: liver recipient,CTV3Map_Code_And_Term
 14S9.,H/O: lung recipient,CTV3Map_Code_And_Term
-7900,Heart and lung transplant,CTV3Map_Code_And_Term
 SP084,Heart transplant failure and rejection,CTV3Map_Code_And_Term
 TB000,"Heart transplant with complication, without blame",CTV3Map_Code_And_Term
 SP085,Heart-lung transplant failure and rejection,CTV3Map_Code_And_Term
 79013,Heterotopic allotransplant of heart,CTV3Map_Code_And_Term
 78001,Heterotopic liver transplant,CTV3Map_Code_And_Term
-7800,Liver transplant,CTV3Map_Code_And_Term
 X307x,Liver transplant disorder,CTV3_Children
 X307z,Liver transplant failure,CTV3_Children
 SP086,Liver transplant failure and rejection,CTV3Map_Code_And_Term
 X307y,Liver transplant rejection,CTV3_Children
 TB002,"Liver transplant with complication, without blame",CTV3Map_Code_And_Term
-7450,Lung transplant,CTV3Map_Code_And_Term
 XaDya,Lung transplant disorder,CTV3_Children
 XaDyb,Lung transplant rejection,CTV3_Children
 78000,Orthotopic liver transplant,CTV3Map_Code_And_Term
@@ -37,9 +34,7 @@ XaLdf,Orthotopic transplantation of whole liver,CTV3Map_Code_And_Term
 7800y,Other specified transplantation of liver,CTV3Map_Code_And_Term
 7450y,Other specified transplantation of lung,CTV3Map_Code_And_Term
 7830y,Other specified transplantation of pancreas,CTV3_Children
-7901,Other transplantation of heart,CTV3Map_Code_And_Term
 7901z,Other transplantation of heart NOS,CTV3Map_Code_And_Term
-7830,Pancreatic transplant,CTV3Map_Code_And_Term
 Xa0Pz,Part organ pancreatic transplant,CTV3_Children
 78002,Replacement of previous liver transplant,CTV3Map_Code_And_Term
 79001,Revision of transplantation of heart and lung,CTV3_Children

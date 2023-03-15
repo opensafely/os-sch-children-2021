@@ -9,6 +9,12 @@ actions:
       highly_sensitive:
         cohort: output/input.csv
 
+  generate_comorbidities:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_comorbidity
+    outputs:
+      highly_sensitive:
+        cohort: output/input_comorbidity.csv
+
   01_cr_analysis_dataset:
     needs: [generate_cohort]
     run: stata-mp:latest analysis/01_cr_analysis_dataset.do
@@ -576,24 +582,16 @@ actions:
         figure2: "output/an_vaccine_postvacc_covidadmission_age*.svg"
         figure3: "output/an_vaccine_postvacc_covid_death_age*.svg"
 
+  comorbidity:
+    needs: [generate_comorbidities]
+    run: stata-mp:latest analysis/comorbidity.do
+    outputs:
+      moderately_sensitive:
+        log: logs/comorbidity.log
+
   run_all:
     needs:
-      - 02_an_data_checks
-      - 03a_an_descriptive_tables
-      - 03b_an_descriptive_table_1
-      - 04a_an_descriptive_tables
-      - 04b_an_descriptive_table_2
-      - 06_univariate_analysis
-      - 07a_an_multivariable_cox_models_demogADJ
-      - 08_an_tablecontent_HRtable_covidadmission
-      - 08_an_tablecontent_HRtable_covid_death
-      - 08_an_tablecontent_HRtable_covid_tpp_prob
-      - 11_an_interaction_HR_tables_forest_vaccine_strat_analysis_covid_tpp_prob
-      - 11_an_interaction_HR_tables_forest_vaccine_main_analysis_covid_tpp_prob
-      - 11_an_interaction_HR_tables_forest_covid_tpp_prob
-      - 11_an_interaction_HR_tables_forest_covidadmission
-      - 11_an_interaction_HR_tables_forest_covid_death
-      - 15_anHRfigure_all_outcomes_2021
+      - comorbidity
     # In order to be valid this action needs to define a run commmand and
     # some output. We don't really care what these are but the below seems to
     # do the trick.

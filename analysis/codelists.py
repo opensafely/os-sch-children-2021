@@ -211,3 +211,7 @@ ra_sle_psoriasis_codes = codelist_from_csv(
 
 systolic_blood_pressure_codes = codelist(["2469."], system="ctv3")
 diastolic_blood_pressure_codes = codelist(["246A."], system="ctv3")
+
+epilepsy = codelist_from_csv(
+    "codelists/nhsd-primary-care-domain-refsets-epil_cod.csv", system="snomed", column="code",
+)
