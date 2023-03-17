@@ -589,6 +589,13 @@ actions:
       moderately_sensitive:
         log: logs/comorbidity.log
 
+  comorbidity_table:
+    needs: [generate_comorbidities]
+    run: r:latest analysis/comorbidity.R
+    outputs:
+      moderately_sensitive:
+        data: "output/comorbidity_table.csv"
+
   run_all:
     needs:
       - comorbidity
