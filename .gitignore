@@ -16,6 +16,7 @@ __pycache__
 .idea/
 analysis/*
 !*.do
+!*.R
 !*.ado
 !*.hlp
 !*.py
