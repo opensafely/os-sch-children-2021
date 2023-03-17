@@ -215,3 +215,54 @@ diastolic_blood_pressure_codes = codelist(["246A."], system="ctv3")
 epilepsy = codelist_from_csv(
     "codelists/nhsd-primary-care-domain-refsets-epil_cod.csv", system="snomed", column="code",
 )
+
+obesity = codelist_from_csv(
+    "codelists/nhsd-primary-care-domain-refsets-bmiobese_cod.csv", system="snomed", column="code",
+)
+
+myocardial_infarction = codelist_from_csv(
+    "codelists/opensafely-myocardial-infarction.csv", system="ctv3", column="CTV3ID",
+)
+
+heart_failure = codelist_from_csv(
+    "codelists/opensafely-heart-failure.csv", system="ctv3", column="CTV3ID",
+)
+
+hypothyroidism = codelist_from_csv(
+    "codelists/nhsd-primary-care-domain-refsets-thy_cod.csv", system="snomed", column="code",
+)
+
+depression = codelist_from_csv(
+    "codelists/opensafely-depression.csv", system="ctv3", column="CTV3Code",
+)
+
+# ICD-10 codelists (taken from Simard et al. 2018 Medical Care)
+
+hypertension_sus = codelist(["I10", "I11", "I12", "I13", "I15", "I674"], system = "icd10")
+
+diabetes_sus = codelist(["E10","E11","E13","E14"], system = "icd10")
+
+cancer_sus = codelist(["C0","C1","C2","C3",
+                        "C40","C41","C43","C45","C46","C47","C48","C49",
+                        "C5","C6",
+                        "C70","C71","C72","C73","C74","C75","C76",
+                        "C81","C82","C83","C84","C85","C88",
+                        "C90", "C902","C96"], system = "icd10")
+
+met_cancer_sus = codelist(["C77","C78","C79","C80"], system = "icd10")
+
+hypothyroid_sus = codelist(["E00","E01","E02","E03","E890"], system = "icd10")
+
+mi_sus = codelist(["I21","I22","I252"], system = "icd10")
+
+hf_sus = codelist(["I099","I110","I130","I132","I255","I420","I425","I426","I427","I428","I429",
+                    "I43","I50","P290"], system = "icd10")
+
+obesity_sus = codelist(["E66"], system = "icd10")
+
+dementia_sus = codelist(["F00","F01","F02","F03","F051","G30","G311"], system = "icd10")
+
+stroke_sus = codelist(["G45","G46","I6"], system = "icd10")
+
+depression_sus = codelist(["F204","F313","F314","F315","F32","F33","F341",
+                            "F412","F432"], system = "icd10")

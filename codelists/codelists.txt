@@ -39,4 +39,9 @@ opensafely/type-1-diabetes/2020-06-29
 opensafely/diabetes-unknown-type/2020-06-29
 opensafely/type-2-diabetes/2020-06-29
 opensafely/insulin-medication/2020-04-26
+opensafely/myocardial-infarction/2020-06-25
+opensafely/heart-failure/2020-05-05
+opensafely/depression/2020-07-09
 nhsd-primary-care-domain-refsets/epil_cod/20210127
+nhsd-primary-care-domain-refsets/thy_cod/20210127
+nhsd-primary-care-domain-refsets/bmiobese_cod/20210127

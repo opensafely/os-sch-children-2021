@@ -1,0 +1,2280 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/11c_an_interaction_HR_tables_forest_covid_death_va
+> ccine_child_prevacc.log
+  log type:  text
+ opened on:  15 Mar 2023, 14:53:31
+
+. 
+. *****************************************************************************
+> ******************************************
+. *Generic code to ouput the HRs across outcomes for all levels of a particular
+>  variables, in the right shape for table
+. cap prog drop outputHRsforvar
+
+. prog define outputHRsforvar
+  1. syntax, variable(string) min(real) max(real) outcome(string)
+  2. file write tablecontents_int ("age") _tab ("exposure") _tab ("exposure lev
+> el") ///
+> _tab ("outcome") _tab ("int_type") _tab ("int_level") ///
+> _tab ("events") _tab ("person_years") _tab ("rate") ///
+> _tab ("HR")  _tab ("lci")  _tab ("uci") _tab ("pval") _n
+  3. foreach x in 0 1 {
+  4. forvalues i=`min'/`max'{
+  5. foreach int_type in vaccine {
+  6. 
+. foreach int_level in  1 2 3 4 {
+  7. 
+. local endwith "_tab"
+  8. 
+.         *put the varname and condition to left so that alignment can be check
+> ed vs shell
+.         file write tablecontents_int ("`x'") _tab ("`variable'") _tab ("`i'")
+>  _tab ("`outcome'") _tab ("`int_type'") _tab ("`int_level'") _tab
+  9.  
+.  use "$tempdir/cr_create_analysis_dataset_STSET_`outcome'_ageband_`x'.dta", c
+> lear
+ 10. 
+. 
+. replace covid_vacc_second_dose_date = . if ///
+>         covid_vacc_date == . | ///
+>         covid_vacc_date >= covid_vacc_second_dose_date
+ 11. replace covid_vacc_third_dose_date = . if ///
+>         covid_vacc_date == . | ///
+>         covid_vacc_second_dose_date == . | ///
+>         covid_vacc_third_dose_date <= covid_vacc_second_dose_date | ///
+>         covid_vacc_third_dose_date <= covid_vacc_date
+ 12. drop if covid_vacc_date<d(20dec2020)
+ 13. drop if covid_vacc_second_dose_date<d(20dec2020)
+ 14. drop if covid_vacc_third_dose_date<=d(20dec2020)
+ 15. 
+. *Censor at date of all children aged 12-17 being vaccinated in hh
+. replace stime_`outcome'         = all_under18vacc if stime_`outcome'>all_unde
+> r18vacc
+ 16. replace `outcome'=0 if stime_`outcome'<date_`outcome'
+ 17. replace date_`outcome' = . if (date_`outcome' > stime_`outcome' )
+ 18. 
+. stset stime_`outcome', fail(`outcome')          ///
+>         id(patient_id) enter(enter_date) origin(enter_date)
+ 19. 
+. *Drop those without any eligible follow-up
+. drop if enter_date>=stime_`outcome'
+ 20.         
+. *Generate first and second vacc dates   
+. gen first_vacc_plus_7d=covid_vacc_date+7
+ 21. gen second_vacc_plus_7d=covid_vacc_second_dose_date+7
+ 22. gen third_vacc_plus_7d = covid_vacc_third_dose_date+7
+ 23. format first_vacc_plus_7d second_vacc_plus_7d third_vacc_plus_7d %td
+ 24. 
+. *Replace vacc date with missing if occur after end follow-up
+. replace first_vacc_plus_7d=. if first_vacc_plus_7d> stime_`outcome'
+ 25. replace second_vacc_plus_7d=. if second_vacc_plus_7d> stime_`outcome'
+ 26. replace third_vacc_plus_7d=. if third_vacc_plus_7d>=stime_`outcome'
+ 27. 
+. stsplit split1, after(first_vacc_plus_7d) at(0)
+ 28. recode `outcome' .=0 
+ 29. stsplit split2, after(second_vacc_plus_7d) at(0)
+ 30. recode `outcome' .=0 
+ 31. stsplit split3, after(third_vacc_plus_7d) at(0)
+ 32. recode `outcome' .=0 
+ 33. 
+. bysort patient_id: gen vaccine=_n
+ 34. tab vaccine, miss
+ 35.         
+.         
+.         keep if vaccine==`int_level'
+ 36. *put total N, PYFU and Rate in table
+.         cou if `variable' == `i' & _d == 1 
+ 37.         local event = r(N)
+ 38.         gen fup=_t-_t0
+ 39.     bysort `variable': egen total_follow_up = total(fup)
+ 40.         su total_follow_up if `variable' == `i'
+ 41.         local person_days = r(mean)
+ 42.         local person_years=`person_days'/365.25
+ 43.         local rate = 100000*(`event'/`person_years')
+ 44. 
+.         file write tablecontents_int (`event') _tab %10.0f (`person_years') _
+> tab %3.2f (`rate') _tab
+ 45.         
+.         drop total_follow_up
+ 46.         foreach modeltype of any fulladj {
+ 47. 
+.                 local noestimatesflag 0 /*reset*/
+ 48. 
+. *CHANGE THE OUTCOME BELOW TO LAST IF BRINGING IN MORE COLS
+.                 if "`modeltype'"=="fulladj" local endwith "_n"
+ 49. 
+.                 ***********************
+.                 *1) GET THE RIGHT ESTIMATES INTO MEMORY
+. 
+.                 if "`modeltype'"=="fulladj" {
+ 50.                                 cap estimates use ./output/an_interaction_
+> cox_models_`outcome'_kids_cat4_`int_type'_`x'_child_prevacc
+ 51.                                 if _rc!=0 local noestimatesflag 1
+ 52.                                 }
+ 53.                 ***********************
+.                 *2) WRITE THE HRs TO THE OUTPUT FILE
+. 
+.                 if `noestimatesflag'==0{
+ 54.                         if `int_level'==1 {
+ 55.                         cap lincom 1.vaccine+`i'.`variable'+ 1.vaccine#`i'
+> .`variable', eform                    
+ 56.                         local pval=r(p)
+ 57.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+> timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab %4.2f (`pval') `endwith'
+ 58.                                 else file write tablecontents_int %4.2f ("
+> ERR IN MODEL") `endwith'
+ 59.                                 }
+ 60.                         if `int_level'==2 {
+ 61.                         cap lincom 2.vaccine+`i'.`variable'+ 2.vaccine#`i'
+> .`variable', eform
+ 62.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+> timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
+ 63.                                 else file write tablecontents_int %4.2f ("
+> ERR IN MODEL") `endwith'
+ 64.                                 }
+ 65.                 
+.                         if `int_level'==3 {
+ 66.                         cap lincom 3.vaccine+`i'.`variable'+ 3.vaccine#`i'
+> .`variable', eform
+ 67.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+> timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
+ 68.                                 else file write tablecontents_int %4.2f ("
+> ERR IN MODEL") `endwith'
+ 69.                                 }
+ 70.                                 
+.                         if `int_level'==4 {
+ 71.                         cap lincom 4.vaccine+`i'.`variable'+ 4.vaccine#`i'
+> .`variable', eform
+ 72.                         if _rc==0 file write tablecontents_int %4.2f (r(es
+> timate)) _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab  `endwith'
+ 73.                                 else file write tablecontents_int %4.2f ("
+> ERR IN MODEL") `endwith'
+ 74.                                 }
+ 75.                         }
+ 76.                         
+.                         else file write tablecontents_int %4.2f ("DID NOT FIT
+> ") `endwith'
+ 77. 
+.                 *3) Save the estimates for plotting
+.                 if `noestimatesflag'==0{
+ 78.                         if "`modeltype'"=="fulladj" {
+ 79.                                 local hr = r(estimate)
+ 80.                                 local lb = r(lb)
+ 81.                                 local ub = r(ub)
+ 82.                                 cap gen `variable'=.
+ 83.                                 test 1.`int_type'#2.`variable' 1.`int_type
+> '#1.`variable'
+ 84.                                 local pval=r(p)
+ 85.                                 post HRestimates_int ("`x'") ("`outcome'")
+>  ("`variable'") ("`int_type'") (`i') (`int_level') (`hr') (`lb') (`ub') (`pva
+> l')
+ 86.                                 drop `variable'
+ 87.                                 }
+ 88.                 }
+ 89.                 }
+ 90.                 } /*int_level*/
+ 91.                 } /*full adj*/
+ 92. 
+. } /*variable levels*/
+ 93. di "*****"
+ 94. 
+. }
+ 95. end
+
+. *****************************************************************************
+> ******************************************
+. 
+. *MAIN CODE TO PRODUCE TABLE CONTENTS
+. cap file close tablecontents_int
+
+. file open tablecontents_int using ./output/11c_an_int_tab_contents_HRtable_`o
+> utcome'_vaccine_child_prevacc.txt, t w replace
+(note: file ./output/11c_an_int_tab_contents_HRtable_covid_death_vaccine_child_
+> prevacc.txt not found)
+
+. di "****"
+****
+
+. 
+. 
+. tempfile HRestimates_int
+
+. cap postutil clear
+
+. postfile HRestimates_int str10 x str10 outcome str27 variable str27 int_type 
+> level int_level hr lci uci pval using `HRestimates_int'
+
+. di "*****"
+*****
+
+. 
+. *Primary exposure
+. outputHRsforvar, variable("kids_cat4") min(0) max(3) outcome(`outcome')
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(156,263 observations deleted)
+  38
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        334       32310           0      32310      32310
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(177,422 observations deleted)
+  39
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        267       35485           0      35485      35485
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(205,131 observations deleted)
+  39
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        176       19870           0      19870      19870
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(235,136 observations deleted)
+  12
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         88        6837           0       6837       6837
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(156,263 observations deleted)
+  94
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        875       89522           0      89522      89522
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(177,422 observations deleted)
+  135
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        694       86094           0      86094      86094
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(205,131 observations deleted)
+  104
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        453       53024           0      53024      53024
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(235,136 observations deleted)
+  31
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        209       15617           0      15617      15617
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(156,263 observations deleted)
+  23
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        188       18777           0      18777      18777
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(177,422 observations deleted)
+  29
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        138       14484           0      14484      14484
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(205,131 observations deleted)
+  5
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         58        3540           0       3540       3540
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(235,136 observations deleted)
+  0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          8         445           0        445        445
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(156,263 observations deleted)
+  11,395
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |    100,324    1.03e+07           0   1.03e+07   1.03e+07
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(177,422 observations deleted)
+  13,305
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     79,463    1.01e+07           0   1.01e+07   1.01e+07
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(205,131 observations deleted)
+  10,635
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     52,166     5780122           0    5780122    5780122
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(5,505 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(5,305 real changes made)
+(1,539 real changes made)
+(1,539 real changes made, 1,539 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+    101,733  total observations
+         12  observations end on or before enter()
+------------------------------------------------------------------------------
+    101,721  observations remaining, representing
+    101,721  subjects
+     39,648  failures in single-failure-per-subject data
+   28187276  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(12 observations deleted)
+(5,306 missing values generated)
+(16,602 missing values generated)
+(30,733 missing values generated)
+(15,684 real changes made, 15,684 to missing)
+(32,097 real changes made, 32,097 to missing)
+(48,140 real changes made, 48,140 to missing)
+(80,562 observations (episodes) created)
+(covid_death: 80562 changes made)
+(52,853 observations (episodes) created)
+(covid_death: 52853 changes made)
+(22,848 observations (episodes) created)
+(covid_death: 22848 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |    101,721       39.43       39.43
+          2 |     80,562       31.23       70.66
+          3 |     52,853       20.49       91.14
+          4 |     22,848        8.86      100.00
+------------+-----------------------------------
+      Total |    257,984      100.00
+(235,136 observations deleted)
+  3,764
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     22,543     1652774           0    1652774    1652774
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+*****
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(43,946 observations deleted)
+  9
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         83        8638           0       8638       8638
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(49,934 observations deleted)
+  11
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         66        8974           0       8974       8974
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(57,919 observations deleted)
+  10
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         40        4602           0       4602       4602
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(66,250 observations deleted)
+  3
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         19        1523           0       1523       1523
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(43,946 observations deleted)
+  32
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        254       25581           0      25581      25581
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(49,934 observations deleted)
+  31
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        199       24706           0      24706      24706
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(57,919 observations deleted)
+  24
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        124       14399           0      14399      14399
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(66,250 observations deleted)
+  9
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         54        4367           0       4367       4367
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(43,946 observations deleted)
+  10
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         57        5349           0       5349       5349
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(49,934 observations deleted)
+  9
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         41        4204           0       4204       4204
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(57,919 observations deleted)
+  1
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         18        1381           0       1381       1381
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(66,250 observations deleted)
+  2
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |          4         363           0        363        363
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(43,946 observations deleted)
+  3,262
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     28,343     2903802           0    2903802    2903802
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(49,934 observations deleted)
+  3,876
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     22,443     2854783           0    2854783    2854783
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(57,919 observations deleted)
+  2,886
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     14,582     1618708           0    1618708    1618708
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+(0 real changes made)
+(0 real changes made)
+(1,480 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1,524 real changes made)
+(429 real changes made)
+(429 real changes made, 429 to missing)
+
+                id:  patient_id
+     failure event:  covid_death != 0 & covid_death < .
+obs. time interval:  (stime_covid_death[_n-1], stime_covid_death]
+ enter on or after:  time enter_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time enter_date
+
+------------------------------------------------------------------------------
+     28,741  total observations
+          4  observations end on or before enter()
+------------------------------------------------------------------------------
+     28,737  observations remaining, representing
+     28,737  subjects
+     11,272  failures in single-failure-per-subject data
+  7,947,860  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       428
+(4 observations deleted)
+(1,543 missing values generated)
+(4,762 missing values generated)
+(8,752 missing values generated)
+(4,397 real changes made, 4,397 to missing)
+(9,166 real changes made, 9,166 to missing)
+(13,552 real changes made, 13,552 to missing)
+(22,749 observations (episodes) created)
+(covid_death: 22749 changes made)
+(14,764 observations (episodes) created)
+(covid_death: 14764 changes made)
+(6,433 observations (episodes) created)
+(covid_death: 6433 changes made)
+
+    vaccine |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     28,737       39.54       39.54
+          2 |     22,749       31.30       70.84
+          3 |     14,764       20.31       91.15
+          4 |      6,433        8.85      100.00
+------------+-----------------------------------
+      Total |     72,683      100.00
+(66,250 observations deleted)
+  1,097
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |      6,356      466480           0     466480     466480
+
+ ( 1)  1b.vaccine#2o.kids_cat4 = 0
+ ( 2)  1b.vaccine#1o.kids_cat4 = 0
+       Constraint 1 dropped
+       Constraint 2 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+*****
+
+. file write tablecontents_int _n
+
+. 
+. file close tablecontents_int
+
+. 
+. postclose HRestimates_int
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/11c_an_interaction_HR_tables_forest_covid_death_va
+> ccine_child_prevacc.log
+  log type:  text
+ closed on:  15 Mar 2023, 14:56:28
+-------------------------------------------------------------------------------

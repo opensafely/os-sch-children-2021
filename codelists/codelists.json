@@ -246,11 +246,41 @@
       "downloaded_at": "2021-07-24 22:51:02.360671Z",
       "sha": "9d4c57c0b8738962da04b32ab43b7659cd64d774"
     },
+    "opensafely-myocardial-infarction.csv": {
+      "id": "opensafely/myocardial-infarction/2020-06-25",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/myocardial-infarction/2020-06-25/",
+      "downloaded_at": "2023-03-17 09:13:20.800354Z",
+      "sha": "5974fae45ad5741b19e3637f104d524a5b496579"
+    },
+    "opensafely-heart-failure.csv": {
+      "id": "opensafely/heart-failure/2020-05-05",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/heart-failure/2020-05-05/",
+      "downloaded_at": "2023-03-17 09:13:20.969032Z",
+      "sha": "6139df4911534868bc5ade1ada53395606651064"
+    },
+    "opensafely-depression.csv": {
+      "id": "opensafely/depression/2020-07-09",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/depression/2020-07-09/",
+      "downloaded_at": "2023-03-17 09:13:21.153993Z",
+      "sha": "654835e97c0cee53307db7ebd8becf48d0e3f31b"
+    },
     "nhsd-primary-care-domain-refsets-epil_cod.csv": {
       "id": "nhsd-primary-care-domain-refsets/epil_cod/20210127",
       "url": "https://codelists.opensafely.org/codelist/nhsd-primary-care-domain-refsets/epil_cod/20210127/",
       "downloaded_at": "2023-03-15 11:58:39.865902Z",
       "sha": "569fb7772727ccd3a09d6d8c981af5e663619e98"
+    },
+    "nhsd-primary-care-domain-refsets-thy_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/thy_cod/20210127",
+      "url": "https://codelists.opensafely.org/codelist/nhsd-primary-care-domain-refsets/thy_cod/20210127/",
+      "downloaded_at": "2023-03-17 09:13:21.561460Z",
+      "sha": "4836fa44801f6937d1b1565f0644bdaa21c7238a"
+    },
+    "nhsd-primary-care-domain-refsets-bmiobese_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/bmiobese_cod/20210127",
+      "url": "https://codelists.opensafely.org/codelist/nhsd-primary-care-domain-refsets/bmiobese_cod/20210127/",
+      "downloaded_at": "2023-03-17 09:13:21.723481Z",
+      "sha": "fc469ab3798e62f2944560f854f506843406a954"
     }
   }
 }

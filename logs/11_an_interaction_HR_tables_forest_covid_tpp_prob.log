@@ -3,7 +3,7 @@
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_tpp_prob.
 > log
   log type:  text
- opened on:  28 Oct 2021, 11:50:24
+ opened on:  15 Mar 2023, 14:41:45
 
 . 
 . *****************************************************************************
@@ -133,14 +133,14 @@
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    1.14
-         Prob > chi2 =    0.5644
+           chi2(  2) =    0.02
+         Prob > chi2 =    0.9913
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    1.14
-         Prob > chi2 =    0.5644
+           chi2(  2) =    0.02
+         Prob > chi2 =    0.9913
 
  ( 1)  1o.shield#0b.kids_cat4 = 0
        Constraint 1 dropped
@@ -151,530 +151,116 @@
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    0.82
-         Prob > chi2 =    0.6641
+           chi2(  2) =    3.45
+         Prob > chi2 =    0.1781
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    0.82
-         Prob > chi2 =    0.6641
+           chi2(  2) =    3.45
+         Prob > chi2 =    0.1781
 
  ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    0.05
-         Prob > chi2 =    0.8182
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.14
-         Prob > chi2 =    0.5644
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.14
-         Prob > chi2 =    0.5644
-
- ( 1)  1.shield#1.kids_cat4 = 0
-
-           chi2(  1) =    0.27
-         Prob > chi2 =    0.6058
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.82
-         Prob > chi2 =    0.6641
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.82
-         Prob > chi2 =    0.6641
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    0.58
-         Prob > chi2 =    0.4456
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.14
-         Prob > chi2 =    0.5644
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.14
-         Prob > chi2 =    0.5644
-
- ( 1)  1.shield#2.kids_cat4 = 0
-
-           chi2(  1) =    0.05
-         Prob > chi2 =    0.8232
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.82
-         Prob > chi2 =    0.6641
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.82
-         Prob > chi2 =    0.6641
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    0.38
-         Prob > chi2 =    0.5396
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.14
-         Prob > chi2 =    0.5644
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.14
-         Prob > chi2 =    0.5644
-
- ( 1)  1.shield#3.kids_cat4 = 0
-
-           chi2(  1) =    0.17
-         Prob > chi2 =    0.6801
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.82
-         Prob > chi2 =    0.6641
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.82
-         Prob > chi2 =    0.6641
-
- ( 1)  1o.male#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8653
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8653
-
- ( 1)  1o.shield#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.72
-         Prob > chi2 =    0.4228
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.72
-         Prob > chi2 =    0.4228
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    0.18
-         Prob > chi2 =    0.6750
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8653
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8653
-
- ( 1)  1.shield#1.kids_cat4 = 0
-
-           chi2(  1) =    0.97
-         Prob > chi2 =    0.3256
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.72
-         Prob > chi2 =    0.4228
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.72
-         Prob > chi2 =    0.4228
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    0.27
-         Prob > chi2 =    0.6051
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8653
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8653
-
- ( 1)  1.shield#2.kids_cat4 = 0
-
-           chi2(  1) =    0.05
-         Prob > chi2 =    0.8316
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.72
-         Prob > chi2 =    0.4228
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.72
-         Prob > chi2 =    0.4228
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    0.16
-         Prob > chi2 =    0.6851
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8653
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8653
-
- ( 1)  1.shield#3.kids_cat4 = 0
-
-           chi2(  1) =    2.77
-         Prob > chi2 =    0.0963
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.72
-         Prob > chi2 =    0.4228
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.72
-         Prob > chi2 =    0.4228
-
- ( 1)  1o.male#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.42
-         Prob > chi2 =    0.8091
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.42
-         Prob > chi2 =    0.8091
-
- ( 1)  1o.shield#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    2.28
-         Prob > chi2 =    0.3196
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    2.28
-         Prob > chi2 =    0.3196
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    0.11
-         Prob > chi2 =    0.7368
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.42
-         Prob > chi2 =    0.8091
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.42
-         Prob > chi2 =    0.8091
-
- ( 1)  1.shield#1.kids_cat4 = 0
-
-           chi2(  1) =    0.25
-         Prob > chi2 =    0.6204
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    2.28
-         Prob > chi2 =    0.3196
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    2.28
-         Prob > chi2 =    0.3196
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    0.42
-         Prob > chi2 =    0.5151
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.42
-         Prob > chi2 =    0.8091
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.42
-         Prob > chi2 =    0.8091
-
- ( 1)  1.shield#2.kids_cat4 = 0
-
-           chi2(  1) =    2.17
-         Prob > chi2 =    0.1409
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    2.28
-         Prob > chi2 =    0.3196
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    2.28
-         Prob > chi2 =    0.3196
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    0.01
-         Prob > chi2 =    0.9198
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.42
-         Prob > chi2 =    0.8091
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.42
-         Prob > chi2 =    0.8091
-
- ( 1)  1.shield#3.kids_cat4 = 0
-
-           chi2(  1) =    0.01
-         Prob > chi2 =    0.9201
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    2.28
-         Prob > chi2 =    0.3196
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    2.28
-         Prob > chi2 =    0.3196
-
- ( 1)  1o.male#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.45
-         Prob > chi2 =    0.4844
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.45
-         Prob > chi2 =    0.4844
-
- ( 1)  1o.shield#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    7.51
-         Prob > chi2 =    0.0233
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    7.51
-         Prob > chi2 =    0.0233
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    0.17
-         Prob > chi2 =    0.6842
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.45
-         Prob > chi2 =    0.4844
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.45
-         Prob > chi2 =    0.4844
-
- ( 1)  1.shield#1.kids_cat4 = 0
-
-           chi2(  1) =    6.31
-         Prob > chi2 =    0.0120
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    7.51
-         Prob > chi2 =    0.0233
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    7.51
-         Prob > chi2 =    0.0233
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    1.38
-         Prob > chi2 =    0.2399
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.45
-         Prob > chi2 =    0.4844
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.45
-         Prob > chi2 =    0.4844
-
- ( 1)  1.shield#2.kids_cat4 = 0
-
-           chi2(  1) =    0.09
-         Prob > chi2 =    0.7611
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    7.51
-         Prob > chi2 =    0.0233
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    7.51
-         Prob > chi2 =    0.0233
-
- ( 1)  1.male#3.kids_cat4 = 0
 
            chi2(  1) =    0.02
-         Prob > chi2 =    0.8804
+         Prob > chi2 =    0.8974
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    1.45
-         Prob > chi2 =    0.4844
+           chi2(  2) =    0.02
+         Prob > chi2 =    0.9913
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    1.45
-         Prob > chi2 =    0.4844
+           chi2(  2) =    0.02
+         Prob > chi2 =    0.9913
+
+ ( 1)  1.shield#1.kids_cat4 = 0
+
+           chi2(  1) =    0.99
+         Prob > chi2 =    0.3196
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    3.45
+         Prob > chi2 =    0.1781
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    3.45
+         Prob > chi2 =    0.1781
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    0.00
+         Prob > chi2 =    0.9720
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.02
+         Prob > chi2 =    0.9913
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.02
+         Prob > chi2 =    0.9913
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+
+           chi2(  1) =    3.44
+         Prob > chi2 =    0.0637
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    3.45
+         Prob > chi2 =    0.1781
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    3.45
+         Prob > chi2 =    0.1781
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.00
+         Prob > chi2 =    0.9891
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.02
+         Prob > chi2 =    0.9913
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.02
+         Prob > chi2 =    0.9913
 
  ( 1)  1.shield#3.kids_cat4 = 0
 
-           chi2(  1) =    3.63
-         Prob > chi2 =    0.0568
+           chi2(  1) =    1.22
+         Prob > chi2 =    0.2689
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    7.51
-         Prob > chi2 =    0.0233
+           chi2(  2) =    3.45
+         Prob > chi2 =    0.1781
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    7.51
-         Prob > chi2 =    0.0233
+           chi2(  2) =    3.45
+         Prob > chi2 =    0.1781
 
  ( 1)  1o.male#0b.kids_cat4 = 0
        Constraint 1 dropped
@@ -685,14 +271,14 @@
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.89
-         Prob > chi2 =    0.2360
+           chi2(  2) =    2.23
+         Prob > chi2 =    0.3276
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.89
-         Prob > chi2 =    0.2360
+           chi2(  2) =    2.23
+         Prob > chi2 =    0.3276
 
  ( 1)  1o.shield#0b.kids_cat4 = 0
        Constraint 1 dropped
@@ -703,530 +289,1091 @@
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    0.44
-         Prob > chi2 =    0.8014
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7669
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    0.44
-         Prob > chi2 =    0.8014
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7669
 
  ( 1)  1.male#1.kids_cat4 = 0
 
-           chi2(  1) =    0.07
-         Prob > chi2 =    0.7885
+           chi2(  1) =    0.03
+         Prob > chi2 =    0.8667
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.89
-         Prob > chi2 =    0.2360
+           chi2(  2) =    2.23
+         Prob > chi2 =    0.3276
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.89
-         Prob > chi2 =    0.2360
+           chi2(  2) =    2.23
+         Prob > chi2 =    0.3276
 
  ( 1)  1.shield#1.kids_cat4 = 0
 
+           chi2(  1) =    0.51
+         Prob > chi2 =    0.4746
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7669
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7669
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    1.60
+         Prob > chi2 =    0.2058
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    2.23
+         Prob > chi2 =    0.3276
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    2.23
+         Prob > chi2 =    0.3276
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+
+           chi2(  1) =    0.08
+         Prob > chi2 =    0.7757
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7669
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7669
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.01
+         Prob > chi2 =    0.9239
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    2.23
+         Prob > chi2 =    0.3276
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    2.23
+         Prob > chi2 =    0.3276
+
+ ( 1)  1.shield#3.kids_cat4 = 0
+
+           chi2(  1) =    1.36
+         Prob > chi2 =    0.2439
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7669
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7669
+
+ ( 1)  1o.male#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.50
+         Prob > chi2 =    0.7789
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.50
+         Prob > chi2 =    0.7789
+
+ ( 1)  1o.shield#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    2.85
+         Prob > chi2 =    0.2406
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    2.85
+         Prob > chi2 =    0.2406
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    0.36
+         Prob > chi2 =    0.5511
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.50
+         Prob > chi2 =    0.7789
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.50
+         Prob > chi2 =    0.7789
+
+ ( 1)  1.shield#1.kids_cat4 = 0
+
+           chi2(  1) =    2.39
+         Prob > chi2 =    0.1220
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    2.85
+         Prob > chi2 =    0.2406
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    2.85
+         Prob > chi2 =    0.2406
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
            chi2(  1) =    0.39
-         Prob > chi2 =    0.5332
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.44
-         Prob > chi2 =    0.8014
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.44
-         Prob > chi2 =    0.8014
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    2.09
-         Prob > chi2 =    0.1487
+         Prob > chi2 =    0.5302
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.89
-         Prob > chi2 =    0.2360
+           chi2(  2) =    0.50
+         Prob > chi2 =    0.7789
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.89
-         Prob > chi2 =    0.2360
+           chi2(  2) =    0.50
+         Prob > chi2 =    0.7789
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+
+           chi2(  1) =    0.02
+         Prob > chi2 =    0.8796
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    2.85
+         Prob > chi2 =    0.2406
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    2.85
+         Prob > chi2 =    0.2406
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.84
+         Prob > chi2 =    0.3594
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.50
+         Prob > chi2 =    0.7789
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.50
+         Prob > chi2 =    0.7789
+
+ ( 1)  1.shield#3.kids_cat4 = 0
+
+           chi2(  1) =    1.31
+         Prob > chi2 =    0.2524
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    2.85
+         Prob > chi2 =    0.2406
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    2.85
+         Prob > chi2 =    0.2406
+
+ ( 1)  1o.male#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.33
+         Prob > chi2 =    0.5130
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.33
+         Prob > chi2 =    0.5130
+
+ ( 1)  1o.shield#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.14
+         Prob > chi2 =    0.9335
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.14
+         Prob > chi2 =    0.9335
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    0.16
+         Prob > chi2 =    0.6932
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.33
+         Prob > chi2 =    0.5130
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.33
+         Prob > chi2 =    0.5130
+
+ ( 1)  1.shield#1.kids_cat4 = 0
+
+           chi2(  1) =    0.01
+         Prob > chi2 =    0.9346
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.14
+         Prob > chi2 =    0.9335
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.14
+         Prob > chi2 =    0.9335
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    1.26
+         Prob > chi2 =    0.2619
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.33
+         Prob > chi2 =    0.5130
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.33
+         Prob > chi2 =    0.5130
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+
+           chi2(  1) =    0.04
+         Prob > chi2 =    0.8390
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.14
+         Prob > chi2 =    0.9335
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.14
+         Prob > chi2 =    0.9335
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.48
+         Prob > chi2 =    0.4867
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.33
+         Prob > chi2 =    0.5130
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.33
+         Prob > chi2 =    0.5130
+
+ ( 1)  1.shield#3.kids_cat4 = 0
+
+           chi2(  1) =    0.04
+         Prob > chi2 =    0.8424
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.14
+         Prob > chi2 =    0.9335
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.14
+         Prob > chi2 =    0.9335
+
+ ( 1)  1o.male#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.26
+         Prob > chi2 =    0.5320
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.26
+         Prob > chi2 =    0.5320
+
+ ( 1)  1o.shield#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    7.80
+         Prob > chi2 =    0.0202
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    7.80
+         Prob > chi2 =    0.0202
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    0.60
+         Prob > chi2 =    0.4369
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.26
+         Prob > chi2 =    0.5320
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.26
+         Prob > chi2 =    0.5320
+
+ ( 1)  1.shield#1.kids_cat4 = 0
+
+           chi2(  1) =    6.79
+         Prob > chi2 =    0.0091
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    7.80
+         Prob > chi2 =    0.0202
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    7.80
+         Prob > chi2 =    0.0202
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    1.21
+         Prob > chi2 =    0.2710
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.26
+         Prob > chi2 =    0.5320
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.26
+         Prob > chi2 =    0.5320
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+
+           chi2(  1) =    3.26
+         Prob > chi2 =    0.0711
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    7.80
+         Prob > chi2 =    0.0202
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    7.80
+         Prob > chi2 =    0.0202
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    1.03
+         Prob > chi2 =    0.3112
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.26
+         Prob > chi2 =    0.5320
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    1.26
+         Prob > chi2 =    0.5320
+
+ ( 1)  1.shield#3.kids_cat4 = 0
+
+           chi2(  1) =   13.02
+         Prob > chi2 =    0.0003
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    7.80
+         Prob > chi2 =    0.0202
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    7.80
+         Prob > chi2 =    0.0202
+
+ ( 1)  1o.male#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    4.08
+         Prob > chi2 =    0.1303
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    4.08
+         Prob > chi2 =    0.1303
+
+ ( 1)  1o.shield#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.77
+         Prob > chi2 =    0.4137
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.77
+         Prob > chi2 =    0.4137
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    2.05
+         Prob > chi2 =    0.1524
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    4.08
+         Prob > chi2 =    0.1303
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    4.08
+         Prob > chi2 =    0.1303
+
+ ( 1)  1.shield#1.kids_cat4 = 0
+
+           chi2(  1) =    0.04
+         Prob > chi2 =    0.8342
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.77
+         Prob > chi2 =    0.4137
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.77
+         Prob > chi2 =    0.4137
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    0.52
+         Prob > chi2 =    0.4692
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    4.08
+         Prob > chi2 =    0.1303
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    4.08
+         Prob > chi2 =    0.1303
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+
+           chi2(  1) =    1.64
+         Prob > chi2 =    0.1998
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.77
+         Prob > chi2 =    0.4137
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.77
+         Prob > chi2 =    0.4137
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    3.12
+         Prob > chi2 =    0.0772
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    4.08
+         Prob > chi2 =    0.1303
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    4.08
+         Prob > chi2 =    0.1303
+
+ ( 1)  1.shield#3.kids_cat4 = 0
+
+           chi2(  1) =    4.12
+         Prob > chi2 =    0.0423
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.77
+         Prob > chi2 =    0.4137
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.77
+         Prob > chi2 =    0.4137
+
+ ( 1)  1o.male#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.49
+         Prob > chi2 =    0.7823
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.49
+         Prob > chi2 =    0.7823
+
+ ( 1)  1o.shield#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.70
+         Prob > chi2 =    0.7032
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.70
+         Prob > chi2 =    0.7032
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    0.34
+         Prob > chi2 =    0.5581
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.49
+         Prob > chi2 =    0.7823
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.49
+         Prob > chi2 =    0.7823
+
+ ( 1)  1.shield#1.kids_cat4 = 0
+
+           chi2(  1) =    0.70
+         Prob > chi2 =    0.4022
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.70
+         Prob > chi2 =    0.7032
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.70
+         Prob > chi2 =    0.7032
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    0.01
+         Prob > chi2 =    0.9160
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.49
+         Prob > chi2 =    0.7823
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.49
+         Prob > chi2 =    0.7823
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+
+           chi2(  1) =    0.22
+         Prob > chi2 =    0.6356
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.70
+         Prob > chi2 =    0.7032
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.70
+         Prob > chi2 =    0.7032
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.03
+         Prob > chi2 =    0.8612
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.49
+         Prob > chi2 =    0.7823
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.49
+         Prob > chi2 =    0.7823
+
+ ( 1)  1.shield#3.kids_cat4 = 0
+
+           chi2(  1) =    0.33
+         Prob > chi2 =    0.5650
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.70
+         Prob > chi2 =    0.7032
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    0.70
+         Prob > chi2 =    0.7032
+
+ ( 1)  1o.male#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.33
+         Prob > chi2 =    0.8464
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.33
+         Prob > chi2 =    0.8464
+
+ ( 1)  1o.shield#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    0.28
+         Prob > chi2 =    0.5937
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.33
+         Prob > chi2 =    0.8464
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.33
+         Prob > chi2 =    0.8464
+
+ ( 1)  1.shield#1.kids_cat4 = 0
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    0.00
+         Prob > chi2 =    0.9759
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.33
+         Prob > chi2 =    0.8464
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.33
+         Prob > chi2 =    0.8464
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.male#3.kids_cat4 = 0
+
+           chi2(  1) =    0.03
+         Prob > chi2 =    0.8729
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.33
+         Prob > chi2 =    0.8464
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.33
+         Prob > chi2 =    0.8464
+
+ ( 1)  1.shield#3.kids_cat4 = 0
+
+           chi2(  1) =  287.78
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  1) = 2142.61
+         Prob > chi2 =    0.0000
+
+ ( 1)  1o.male#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.64
+         Prob > chi2 =    0.7261
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.64
+         Prob > chi2 =    0.7261
+
+ ( 1)  1o.shield#0b.kids_cat4 = 0
+       Constraint 1 dropped
+
+           chi2(  0) =       .
+         Prob > chi2 =         .
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.19
+         Prob > chi2 =    0.5527
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.19
+         Prob > chi2 =    0.5527
+
+ ( 1)  1.male#1.kids_cat4 = 0
+
+           chi2(  1) =    0.61
+         Prob > chi2 =    0.4341
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.64
+         Prob > chi2 =    0.7261
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.64
+         Prob > chi2 =    0.7261
+
+ ( 1)  1.shield#1.kids_cat4 = 0
+
+           chi2(  1) =    0.73
+         Prob > chi2 =    0.3914
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.19
+         Prob > chi2 =    0.5527
+
+ ( 1)  1.shield#2.kids_cat4 = 0
+ ( 2)  1.shield#1.kids_cat4 = 0
+
+           chi2(  2) =    1.19
+         Prob > chi2 =    0.5527
+
+ ( 1)  1.male#2.kids_cat4 = 0
+
+           chi2(  1) =    0.29
+         Prob > chi2 =    0.5880
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.64
+         Prob > chi2 =    0.7261
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    0.64
+         Prob > chi2 =    0.7261
 
  ( 1)  1.shield#2.kids_cat4 = 0
 
            chi2(  1) =    0.03
-         Prob > chi2 =    0.8606
+         Prob > chi2 =    0.8654
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    0.44
-         Prob > chi2 =    0.8014
+           chi2(  2) =    1.19
+         Prob > chi2 =    0.5527
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    0.44
-         Prob > chi2 =    0.8014
+           chi2(  2) =    1.19
+         Prob > chi2 =    0.5527
 
  ( 1)  1.male#3.kids_cat4 = 0
 
-           chi2(  1) =    0.52
-         Prob > chi2 =    0.4702
+           chi2(  1) =    0.55
+         Prob > chi2 =    0.4588
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.89
-         Prob > chi2 =    0.2360
+           chi2(  2) =    0.64
+         Prob > chi2 =    0.7261
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    2.89
-         Prob > chi2 =    0.2360
-
- ( 1)  1.shield#3.kids_cat4 = 0
-
-           chi2(  1) =    0.96
-         Prob > chi2 =    0.3281
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.44
-         Prob > chi2 =    0.8014
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    0.44
-         Prob > chi2 =    0.8014
-
- ( 1)  1o.male#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    7.38
-         Prob > chi2 =    0.0250
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    7.38
-         Prob > chi2 =    0.0250
-
- ( 1)  1o.shield#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    4.69
-         Prob > chi2 =    0.0959
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    4.69
-         Prob > chi2 =    0.0959
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    6.37
-         Prob > chi2 =    0.0116
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    7.38
-         Prob > chi2 =    0.0250
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    7.38
-         Prob > chi2 =    0.0250
-
- ( 1)  1.shield#1.kids_cat4 = 0
-
-           chi2(  1) =    0.40
-         Prob > chi2 =    0.5287
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    4.69
-         Prob > chi2 =    0.0959
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    4.69
-         Prob > chi2 =    0.0959
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    5.82
-         Prob > chi2 =    0.0158
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    7.38
-         Prob > chi2 =    0.0250
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    7.38
-         Prob > chi2 =    0.0250
-
- ( 1)  1.shield#2.kids_cat4 = 0
-
-           chi2(  1) =    3.82
-         Prob > chi2 =    0.0508
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    4.69
-         Prob > chi2 =    0.0959
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    4.69
-         Prob > chi2 =    0.0959
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    5.32
-         Prob > chi2 =    0.0211
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    7.38
-         Prob > chi2 =    0.0250
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    7.38
-         Prob > chi2 =    0.0250
-
- ( 1)  1.shield#3.kids_cat4 = 0
-
-           chi2(  1) =    0.02
-         Prob > chi2 =    0.8973
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    4.69
-         Prob > chi2 =    0.0959
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    4.69
-         Prob > chi2 =    0.0959
-
- ( 1)  1o.male#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.01
-         Prob > chi2 =    0.9941
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.01
-         Prob > chi2 =    0.9941
-
- ( 1)  1o.shield#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.79
-         Prob > chi2 =    0.4083
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.79
-         Prob > chi2 =    0.4083
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    0.00
-         Prob > chi2 =    0.9760
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.01
-         Prob > chi2 =    0.9941
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.01
-         Prob > chi2 =    0.9941
-
- ( 1)  1.shield#1.kids_cat4 = 0
-
-           chi2(  1) =    1.76
-         Prob > chi2 =    0.1841
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.79
-         Prob > chi2 =    0.4083
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.79
-         Prob > chi2 =    0.4083
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    0.00
-         Prob > chi2 =    0.9441
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.01
-         Prob > chi2 =    0.9941
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.01
-         Prob > chi2 =    0.9941
-
- ( 1)  1.shield#2.kids_cat4 = 0
-
-           chi2(  1) =    0.40
-         Prob > chi2 =    0.5261
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.79
-         Prob > chi2 =    0.4083
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.79
-         Prob > chi2 =    0.4083
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    0.01
-         Prob > chi2 =    0.9222
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.01
-         Prob > chi2 =    0.9941
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.01
-         Prob > chi2 =    0.9941
-
- ( 1)  1.shield#3.kids_cat4 = 0
-
-           chi2(  1) =    1.86
-         Prob > chi2 =    0.1732
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.79
-         Prob > chi2 =    0.4083
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    1.79
-         Prob > chi2 =    0.4083
-
- ( 1)  1o.male#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.68
-         Prob > chi2 =    0.4322
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.68
-         Prob > chi2 =    0.4322
-
- ( 1)  1o.shield#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    3.98
-         Prob > chi2 =    0.1367
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    3.98
-         Prob > chi2 =    0.1367
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =    1.35
-         Prob > chi2 =    0.2451
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.68
-         Prob > chi2 =    0.4322
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.68
-         Prob > chi2 =    0.4322
-
- ( 1)  1.shield#1.kids_cat4 = 0
-
-           chi2(  1) =    0.95
-         Prob > chi2 =    0.3285
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    3.98
-         Prob > chi2 =    0.1367
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    3.98
-         Prob > chi2 =    0.1367
-
- ( 1)  1.male#2.kids_cat4 = 0
-
-           chi2(  1) =    0.01
-         Prob > chi2 =    0.9316
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.68
-         Prob > chi2 =    0.4322
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.68
-         Prob > chi2 =    0.4322
-
- ( 1)  1.shield#2.kids_cat4 = 0
-
-           chi2(  1) =    0.89
-         Prob > chi2 =    0.3462
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    3.98
-         Prob > chi2 =    0.1367
-
- ( 1)  1.shield#2.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-
-           chi2(  2) =    3.98
-         Prob > chi2 =    0.1367
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =    3.23
-         Prob > chi2 =    0.0723
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.68
-         Prob > chi2 =    0.4322
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    1.68
-         Prob > chi2 =    0.4322
+           chi2(  2) =    0.64
+         Prob > chi2 =    0.7261
 
  ( 1)  1.shield#3.kids_cat4 = 0
 
            chi2(  1) =    1.02
-         Prob > chi2 =    0.3130
+         Prob > chi2 =    0.3122
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    3.98
-         Prob > chi2 =    0.1367
+           chi2(  2) =    1.19
+         Prob > chi2 =    0.5527
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    3.98
-         Prob > chi2 =    0.1367
+           chi2(  2) =    1.19
+         Prob > chi2 =    0.5527
 
  ( 1)  1o.male#0b.kids_cat4 = 0
        Constraint 1 dropped
@@ -1237,14 +1384,14 @@
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8659
+           chi2(  2) =    3.36
+         Prob > chi2 =    0.1867
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8659
+           chi2(  2) =    3.36
+         Prob > chi2 =    0.1867
 
  ( 1)  1o.shield#0b.kids_cat4 = 0
        Constraint 1 dropped
@@ -1255,281 +1402,116 @@
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    2.22
-         Prob > chi2 =    0.3293
+           chi2(  2) =    1.00
+         Prob > chi2 =    0.6076
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    2.22
-         Prob > chi2 =    0.3293
+           chi2(  2) =    1.00
+         Prob > chi2 =    0.6076
 
  ( 1)  1.male#1.kids_cat4 = 0
 
-           chi2(  1) =    0.20
-         Prob > chi2 =    0.6576
+           chi2(  1) =    0.54
+         Prob > chi2 =    0.4609
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8659
+           chi2(  2) =    3.36
+         Prob > chi2 =    0.1867
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8659
+           chi2(  2) =    3.36
+         Prob > chi2 =    0.1867
 
  ( 1)  1.shield#1.kids_cat4 = 0
 
-           chi2(  1) =    1.76
-         Prob > chi2 =    0.1851
+           chi2(  1) =    0.55
+         Prob > chi2 =    0.4589
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    2.22
-         Prob > chi2 =    0.3293
+           chi2(  2) =    1.00
+         Prob > chi2 =    0.6076
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    2.22
-         Prob > chi2 =    0.3293
+           chi2(  2) =    1.00
+         Prob > chi2 =    0.6076
 
  ( 1)  1.male#2.kids_cat4 = 0
 
-           chi2(  1) =    0.03
-         Prob > chi2 =    0.8650
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8659
+           chi2(  1) =    1.78
+         Prob > chi2 =    0.1817
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8659
+           chi2(  2) =    3.36
+         Prob > chi2 =    0.1867
+
+ ( 1)  1.male#2.kids_cat4 = 0
+ ( 2)  1.male#1.kids_cat4 = 0
+
+           chi2(  2) =    3.36
+         Prob > chi2 =    0.1867
 
  ( 1)  1.shield#2.kids_cat4 = 0
 
-           chi2(  1) =    1.75
-         Prob > chi2 =    0.1855
+           chi2(  1) =    0.00
+         Prob > chi2 =    0.9834
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    2.22
-         Prob > chi2 =    0.3293
+           chi2(  2) =    1.00
+         Prob > chi2 =    0.6076
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    2.22
-         Prob > chi2 =    0.3293
+           chi2(  2) =    1.00
+         Prob > chi2 =    0.6076
 
  ( 1)  1.male#3.kids_cat4 = 0
 
-           chi2(  1) =    0.70
-         Prob > chi2 =    0.4016
+           chi2(  1) =    0.05
+         Prob > chi2 =    0.8224
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8659
+           chi2(  2) =    3.36
+         Prob > chi2 =    0.1867
 
  ( 1)  1.male#2.kids_cat4 = 0
  ( 2)  1.male#1.kids_cat4 = 0
 
-           chi2(  2) =    0.29
-         Prob > chi2 =    0.8659
+           chi2(  2) =    3.36
+         Prob > chi2 =    0.1867
 
  ( 1)  1.shield#3.kids_cat4 = 0
 
-           chi2(  1) =    0.85
-         Prob > chi2 =    0.3575
+           chi2(  1) =    0.84
+         Prob > chi2 =    0.3605
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    2.22
-         Prob > chi2 =    0.3293
+           chi2(  2) =    1.00
+         Prob > chi2 =    0.6076
 
  ( 1)  1.shield#2.kids_cat4 = 0
  ( 2)  1.shield#1.kids_cat4 = 0
 
-           chi2(  2) =    2.22
-         Prob > chi2 =    0.3293
-
- ( 1)  1o.male#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1o.shield#0b.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#1.kids_cat4 = 0
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1.male#3.kids_cat4 = 0
-
-           chi2(  1) =  325.17
-         Prob > chi2 =    0.0000
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1.male#2.kids_cat4 = 0
- ( 2)  1.male#1.kids_cat4 = 0
-       Constraint 1 dropped
-
-           chi2(  1) =  244.52
-         Prob > chi2 =    0.0000
-
- ( 1)  1.shield#3.kids_cat4 = 0
-
-           chi2(  1) =  393.81
-         Prob > chi2 =    0.0000
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
-
- ( 1)  1o.shield#2o.kids_cat4 = 0
- ( 2)  1.shield#1.kids_cat4 = 0
-       Constraint 1 dropped
-       Constraint 2 dropped
-
-           chi2(  0) =       .
-         Prob > chi2 =         .
+           chi2(  2) =    1.00
+         Prob > chi2 =    0.6076
 
 . file write tablecontents_int _n
 
@@ -1545,5 +1527,5 @@
        log:  /workspace/logs/11_an_interaction_HR_tables_forest_covid_tpp_prob.
 > log
   log type:  text
- closed on:  28 Oct 2021, 11:50:28
+ closed on:  15 Mar 2023, 14:41:47
 -------------------------------------------------------------------------------

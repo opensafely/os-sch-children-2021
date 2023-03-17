@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /workspace/logs/08_an_tablecontent_HRtable_covidadmission.log
   log type:  text
- opened on:  28 Oct 2021, 11:39:09
+ opened on:  15 Mar 2023, 14:10:43
 
 . 
 . 
@@ -17,7 +17,7 @@
   2. file write tablecontents ("Exposure") _tab ("exposure_level") _tab ("time_
 > period") _tab ("events") _tab ("person_years") _tab ("rate") _tab ("age_sex_a
 > dj_hr") _tab ("demog_adj_hr") _tab ("full_adj_hr") _n
-  3. foreach period in 0 1 2 3 4  {
+  3. foreach period in 0 1 2 3 4 5 {
   4. forvalues x=0/1 {
   5. file write tablecontents ("age") ("`x'") _n
   6. forvalues i=`min'/`max'{
@@ -33,118 +33,127 @@
 . *-Schools open delta variant (+7 days): 24th May 2021 
 . *Summer holidays +7 days: 24th July 2021
 . *Winter term +7 days: 9th September 2021
+. *Omicron period +7 days: 27th December 2021
 . 
 . if "`outcome'"=="covid_tpp_prob" {
- 10. stsplit cat_time, at(0,85,154, 216, 263, 400)
- 11. recode cat_time 85=1 154=2 216=3 263=4 
+ 10. stsplit cat_time, at(0,85,154, 216, 263, 372, 500)
+ 11. recode cat_time 85=1 154=2 216=3 263=4 372=5
  12. recode `outcome' .=0 
  13. tab cat_time
  14. tab cat_time `outcome'
  15. }
- 16. 
+ 16. if "`outcome'"=="covid_test_ever" {
+ 17. stsplit cat_time, at(0,85,154, 216, 263, 372, 500)
+ 18. recode cat_time 85=1 154=2 216=3 263=4 372=5
+ 19. recode `outcome' .=0 
+ 20. tab cat_time
+ 21. tab cat_time `outcome'
+ 22. }
+ 23. 
 . *-School closure: 20th December 2020 (previous analysis up to 19th December 2
 > 020) 
 . *School opening +14 days (alpha variant): 22nd March 2021 
 . *Schools open delta variant (+14 days): 31st May 2021 
 . *Summer holidays +14 days: 30th July 2021
 . *Winter term +14 days: 16th September 2021
+. *Omicron period +14 days: 3rd January 2022
 . 
 . if "`outcome'"=="covidadmission" {
- 17. stsplit cat_time, at(0,92,161,222,270, 400)
- 18. recode cat_time 92=1 161=2 222=3 270=4
- 19. recode `outcome' .=0 
- 20. tab cat_time
- 21. tab cat_time `outcome'
- 22. }
- 23. 
-. if  "`outcome'"=="covid_death" {
- 24. stsplit cat_time, at(0,92,161,222,270, 400)
- 25. recode cat_time 92=1 161=2 222=3 270=4
+ 24. stsplit cat_time, at(0,92,161,222,270, 379, 500)
+ 25. recode cat_time 92=1 161=2 222=3 270=4 379=5
  26. recode `outcome' .=0 
  27. tab cat_time
  28. tab cat_time `outcome'
  29. }
  30. 
+. if  "`outcome'"=="covid_death" {
+ 31. stsplit cat_time, at(0,92,161,222,270, 379, 500)
+ 32. recode cat_time 92=1 161=2 222=3 270=4 379=5
+ 33. recode `outcome' .=0 
+ 34. tab cat_time
+ 35. tab cat_time `outcome'
+ 36. }
+ 37. 
 . keep if cat_time==`period'
- 31. 
+ 38. 
 .         *put the varname and condition to left so that alignment can be check
 > ed vs shell
 .         file write tablecontents ("`variable'") _tab ("`i'") _tab ("`period'"
 > ) _tab 
- 32.         
+ 39.         
 .         *put total N, PYFU and Rate in table
 .         cou if `variable' == `i' & _d == 1 
- 33.         local event = r(N)
- 34.     bysort `variable': egen total_follow_up = total(_t)
- 35.         su total_follow_up if `variable' == `i'
- 36.         local person_days = r(mean)
- 37.         local person_years=`person_days'/365.25
- 38.         local rate = 100000*(`event'/`person_years')
- 39.         
+ 40.         local event = r(N)
+ 41.     bysort `variable': egen total_follow_up = total(_t)
+ 42.         su total_follow_up if `variable' == `i'
+ 43.         local person_days = r(mean)
+ 44.         local person_years=`person_days'/365.25
+ 45.         local rate = 100000*(`event'/`person_years')
+ 46.         
 .         file write tablecontents (`event') _tab %10.0f (`person_years') _tab 
 > %3.2f (`rate') _tab
- 40.         drop total_follow_up
- 41.         
+ 47.         drop total_follow_up
+ 48.         
 .         
 .         *models
 .         foreach modeltype of any minadj demogadj fulladj  {
- 42.         
+ 49.         
 .                 local noestimatesflag 0 /*reset*/
- 43. 
+ 50. 
 . *CHANGE THE OUTCOME BELOW TO LAST IF BRINGING IN MORE COLS
 .                 if "`modeltype'"=="fulladj" local endwith "_n"
- 44. 
+ 51. 
 .                 ***********************
 .                 *1) GET THE RIGHT ESTIMATES INTO MEMORY
 .                 
 .                 if "`modeltype'"=="minadj" {
- 45.                         cap estimates use ./output/an_univariable_cox_mode
+ 52.                         cap estimates use ./output/an_univariable_cox_mode
 > ls_`variable'_`outcome'_AGESEX_ageband_`x'_timeperiod`period'
- 46.                         if _rc!=0 local noestimatesflag 1
- 47.                         }
- 48.                 if "`modeltype'"=="demogadj" {
- 49.                         cap estimates use ./output/an_multivariate_cox_mod
+ 53.                         if _rc!=0 local noestimatesflag 1
+ 54.                         }
+ 55.                 if "`modeltype'"=="demogadj" {
+ 56.                         cap estimates use ./output/an_multivariate_cox_mod
 > els_`outcome'_`variable'_DEMOGADJ_ageband_`x'_timeperiod`period'
- 50.                         if _rc!=0 local noestimatesflag 1
- 51.                         }
- 52.                 if "`modeltype'"=="fulladj" {
- 53.                         cap estimates use ./output/an_multivariate_cox_mod
+ 57.                         if _rc!=0 local noestimatesflag 1
+ 58.                         }
+ 59.                 if "`modeltype'"=="fulladj" {
+ 60.                         cap estimates use ./output/an_multivariate_cox_mod
 > els_`outcome'_`variable'_FULLYADJMODEL_ageband_`x'_timeperiod`period' 
- 54.                         if _rc!=0 local noestimatesflag 1
- 55.                         }
- 56.                 
+ 61.                         if _rc!=0 local noestimatesflag 1
+ 62.                         }
+ 63.                 
 .                 ***********************
 .                 *2) WRITE THE HRs TO THE OUTPUT FILE
 .                 
 .                 if `noestimatesflag'==0{
- 57.                         cap lincom `i'.`variable', eform
- 58.                         if _rc==0 file write tablecontents %4.2f (r(estima
+ 64.                         cap lincom `i'.`variable', eform
+ 65.                         if _rc==0 file write tablecontents %4.2f (r(estima
 > te)) (" (") %4.2f (r(lb)) ("-") %4.2f (r(ub)) (")") `endwith'
- 59.                                 else file write tablecontents %4.2f ("ERR 
+ 66.                                 else file write tablecontents %4.2f ("ERR 
 > IN MODEL") `endwith'
- 60.                         }
- 61.                         else file write tablecontents %4.2f ("DID NOT FIT"
+ 67.                         }
+ 68.                         else file write tablecontents %4.2f ("DID NOT FIT"
 > ) `endwith' 
- 62.                         
+ 69.                         
 .                 *3) Save the estimates for plotting
 .                 if `noestimatesflag'==0{
- 63.                         if "`modeltype'"=="fulladj" {
- 64.                                 local hr = r(estimate)
- 65.                                 local lb = r(lb)
- 66.                                 local ub = r(ub)
- 67.                                 cap gen `variable'=.
- 68.                                 testparm i.`variable'
- 69.                                 *drop `variable'
+ 70.                         if "`modeltype'"=="fulladj" {
+ 71.                                 local hr = r(estimate)
+ 72.                                 local lb = r(lb)
+ 73.                                 local ub = r(ub)
+ 74.                                 cap gen `variable'=.
+ 75.                                 testparm i.`variable'
+ 76.                                 *drop `variable'
 .                                 }
- 70.                 }       
- 71.                 } /*min adj, full adj*/
- 72.                 
+ 77.                 }       
+ 78.                 } /*min adj, full adj*/
+ 79.                 
 . } /*variable levels*/
- 73. 
+ 80. 
 . } /*agebands*/
- 74. 
+ 81. 
 . } /*Waves*/
- 75. end
+ 82. end
 
 . *****************************************************************************
 > ******************************************
@@ -167,20 +176,21 @@
 . 
 . *Primary exposure
 . outputHRsforvar, variable("kids_cat4") min(0) max(3) outcome(`outcome')
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    379,855      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -188,40 +198,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(29,590 observations deleted)
-  25
+     Total |   347,934     31,921 |   379,855 
+(272,891 observations deleted)
+  31
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        440       34847           0      34847      34847
+total_foll~p |        345       27961           0      27961      27961
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    1.30
-         Prob > chi2 =    0.7293
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    2.01
+         Prob > chi2 =    0.5695
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    379,855      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -229,40 +241,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(29,590 observations deleted)
+     Total |   347,934     31,921 |   379,855 
+(272,891 observations deleted)
   93
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |      1,648      130801           0     130801     130801
+total_foll~p |        928       75101           0      75101      75101
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    1.30
-         Prob > chi2 =    0.7293
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    2.01
+         Prob > chi2 =    0.5695
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    379,855      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -270,696 +284,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(29,590 observations deleted)
-  16
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        259       20101           0      20101      20101
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    1.30
-         Prob > chi2 =    0.7293
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(29,590 observations deleted)
-  830
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |     13,718     1078132           0    1078132    1078132
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    1.30
-         Prob > chi2 =    0.7293
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(8,322 observations deleted)
-  8
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        132       10300           0      10300      10300
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    0.56
-         Prob > chi2 =    0.9066
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(8,322 observations deleted)
-  30
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        474       37094           0      37094      37094
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    0.56
-         Prob > chi2 =    0.9066
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(8,322 observations deleted)
-  5
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         93        7552           0       7552       7552
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    0.56
-         Prob > chi2 =    0.9066
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(8,322 observations deleted)
-  218
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |      3,847      298910           0     298910     298910
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    0.56
-         Prob > chi2 =    0.9066
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(34,216 observations deleted)
-  14
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        319       48616           0      48616      48616
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    1.35
-         Prob > chi2 =    0.7178
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(34,216 observations deleted)
-  54
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |      1,177      178801           0     178801     178801
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    1.35
-         Prob > chi2 =    0.7178
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(34,216 observations deleted)
-  10
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        179       27354           0      27354      27354
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    1.35
-         Prob > chi2 =    0.7178
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(34,216 observations deleted)
-  451
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |      9,764     1482291           0    1482291    1482291
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    1.35
-         Prob > chi2 =    0.7178
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(9,673 observations deleted)
-  3
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         92       14051           0      14051      14051
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    2.60
-         Prob > chi2 =    0.4581
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(9,673 observations deleted)
-  12
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        336       51643           0      51643      51643
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    2.60
-         Prob > chi2 =    0.4581
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(9,673 observations deleted)
-  2
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         66        9846           0       9846       9846
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    2.60
-         Prob > chi2 =    0.4581
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(9,673 observations deleted)
-  125
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |      2,701      409338           0     409338     409338
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    2.60
-         Prob > chi2 =    0.4581
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(37,253 observations deleted)
-  8
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        246       52605           0      52605      52605
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =   12.81
-         Prob > chi2 =    0.0051
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(37,253 observations deleted)
-  37
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        858      182142           0     182142     182142
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =   12.81
-         Prob > chi2 =    0.0051
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(37,253 observations deleted)
+     Total |   347,934     31,921 |   379,855 
+(272,891 observations deleted)
   13
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        136       28735           0      28735      28735
+total_foll~p |        196       15927           0      15927      15927
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =   12.81
-         Prob > chi2 =    0.0051
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    2.01
+         Prob > chi2 =    0.5695
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    379,855      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -967,40 +327,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(37,253 observations deleted)
-  305
+     Total |   347,934     31,921 |   379,855 
+(272,891 observations deleted)
+  9,594
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |      7,162     1524217           0    1524217    1524217
+total_foll~p |    105,632     8605455           0    8605455    8605455
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =   12.81
-         Prob > chi2 =    0.0051
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
+           chi2(  3) =    2.01
+         Prob > chi2 =    0.5695
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     12,863      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1008,40 +370,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(10,502 observations deleted)
-  1
+     Total |    98,783      8,843 |   107,626 
+(77,461 observations deleted)
+  6
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         70       14901           0      14901      14901
+total_foll~p |         88        7104           0       7104       7104
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    2.42
-         Prob > chi2 =    0.4904
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
+           chi2(  3) =    6.78
+         Prob > chi2 =    0.0791
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     12,863      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1049,40 +413,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(10,502 observations deleted)
-  15
+     Total |    98,783      8,843 |   107,626 
+(77,461 observations deleted)
+  35
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        264       56209           0      56209      56209
+total_foll~p |        266       21125           0      21125      21125
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    2.42
-         Prob > chi2 =    0.4904
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
+           chi2(  3) =    6.78
+         Prob > chi2 =    0.0791
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     12,863      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1090,40 +456,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(10,502 observations deleted)
+     Total |    98,783      8,843 |   107,626 
+(77,461 observations deleted)
   4
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         45        9636           0       9636       9636
+total_foll~p |         60        4699           0       4699       4699
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    2.42
-         Prob > chi2 =    0.4904
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
+           chi2(  3) =    6.78
+         Prob > chi2 =    0.0791
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     12,863      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1131,40 +499,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(10,502 observations deleted)
-  95
+     Total |    98,783      8,843 |   107,626 
+(77,461 observations deleted)
+  2,566
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |      1,987      422467           0     422467     422467
+total_foll~p |     29,779     2435298           0    2435298    2435298
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    2.42
-         Prob > chi2 =    0.4904
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    6.78
+         Prob > chi2 =    0.0791
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    379,855      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1172,40 +542,214 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(39,865 observations deleted)
+     Total |   347,934     31,921 |   379,855 
+(297,350 observations deleted)
+  21
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        267       41279           0      41279      41279
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    6.14
+         Prob > chi2 =    0.1049
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(297,350 observations deleted)
+  46
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        721      111494           0     111494     111494
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    6.14
+         Prob > chi2 =    0.1049
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(297,350 observations deleted)
+  17
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        152       23026           0      23026      23026
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    6.14
+         Prob > chi2 =    0.1049
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(297,350 observations deleted)
+  6,063
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     81,502    1.26e+07           0   1.26e+07   1.26e+07
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    6.14
+         Prob > chi2 =    0.1049
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(84,207 observations deleted)
   8
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        177       46363           0      46363      46363
+total_foll~p |         69       10681           0      10681      10681
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    2.41
-         Prob > chi2 =    0.4925
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    2.36
+         Prob > chi2 =    0.5008
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1213,40 +757,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(39,865 observations deleted)
-  28
+     Total |    98,783      8,843 |   107,626 
+(84,207 observations deleted)
+  14
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        583      152571           0     152571     152571
+total_foll~p |        189       28913           0      28913      28913
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    2.41
-         Prob > chi2 =    0.4925
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    2.36
+         Prob > chi2 =    0.5008
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1254,207 +800,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(39,865 observations deleted)
-  4
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         87       22566           0      22566      22566
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    2.41
-         Prob > chi2 =    0.4925
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
-------------+-----------------------------------
-      Total |     45,638      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
------------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(39,865 observations deleted)
-  164
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |      4,943     1297716           0    1297716    1297716
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-
-           chi2(  3) =    2.41
-         Prob > chi2 =    0.4925
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(11,220 observations deleted)
-  0
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         47       12484           0      12484      12484
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-       Constraint 2 dropped
-
-           chi2(  2) =  941.69
-         Prob > chi2 =    0.0000
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(11,220 observations deleted)
-  9
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        188       49201           0      49201      49201
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-       Constraint 2 dropped
-
-           chi2(  2) =  941.69
-         Prob > chi2 =    0.0000
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(11,220 observations deleted)
+     Total |    98,783      8,843 |   107,626 
+(84,207 observations deleted)
   3
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         33        8627           0       8627       8627
+total_foll~p |         41        6322           0       6322       6322
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
-       Constraint 2 dropped
 
-           chi2(  2) =  941.69
-         Prob > chi2 =    0.0000
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
+           chi2(  3) =    2.36
+         Prob > chi2 =    0.5008
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     12,863      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1462,41 +843,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(11,220 observations deleted)
-  59
+     Total |    98,783      8,843 |   107,626 
+(84,207 observations deleted)
+  1,645
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |      1,380      361958           0     361958     361958
+total_foll~p |     23,148     3572115           0    3572115    3572115
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
-       Constraint 2 dropped
 
-           chi2(  2) =  941.69
-         Prob > chi2 =    0.0000
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    2.36
+         Prob > chi2 =    0.5008
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    379,855      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1504,40 +886,128 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(41,713 observations deleted)
+     Total |   347,934     31,921 |   379,855 
+(313,559 observations deleted)
+  13
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        218       47383           0      47383      47383
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.70
+         Prob > chi2 =    0.4406
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(313,559 observations deleted)
+  39
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        582      125650           0     125650     125650
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.70
+         Prob > chi2 =    0.4406
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(313,559 observations deleted)
   4
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        119       35823           0      35823      35823
+total_foll~p |        109       23678           0      23678      23678
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    0.28
-         Prob > chi2 =    0.9646
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    2.70
+         Prob > chi2 =    0.4406
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    379,855      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1545,40 +1015,1160 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(41,713 observations deleted)
+     Total |   347,934     31,921 |   379,855 
+(313,559 observations deleted)
+  4,682
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     65,524    1.42e+07           0   1.42e+07   1.42e+07
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.70
+         Prob > chi2 =    0.4406
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(88,760 observations deleted)
+  3
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         56       12145           0      12145      12145
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    1.93
+         Prob > chi2 =    0.5861
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(88,760 observations deleted)
+  10
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        148       31747           0      31747      31747
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    1.93
+         Prob > chi2 =    0.5861
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(88,760 observations deleted)
+  4
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         35        7392           0       7392       7392
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    1.93
+         Prob > chi2 =    0.5861
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(88,760 observations deleted)
+  1,317
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     18,655     4029082           0    4029082    4029082
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    1.93
+         Prob > chi2 =    0.5861
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(326,499 observations deleted)
+  16
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        177       47020           0      47020      47020
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.40
+         Prob > chi2 =    0.4931
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(326,499 observations deleted)
+  31
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        466      123423           0     123423     123423
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.40
+         Prob > chi2 =    0.4931
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(326,499 observations deleted)
+  6
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         89       23729           0      23729      23729
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.40
+         Prob > chi2 =    0.4931
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(326,499 observations deleted)
+  3,189
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     52,761    1.40e+07           0   1.40e+07   1.40e+07
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.40
+         Prob > chi2 =    0.4931
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(92,486 observations deleted)
+  2
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         46       12188           0      12188      12188
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.99
+         Prob > chi2 =    0.8034
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(92,486 observations deleted)
+  5
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        116       30980           0      30980      30980
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.99
+         Prob > chi2 =    0.8034
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(92,486 observations deleted)
+  1
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         24        6372           0       6372       6372
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.99
+         Prob > chi2 =    0.8034
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(92,486 observations deleted)
+  914
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     14,982     3982787           0    3982787    3982787
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.99
+         Prob > chi2 =    0.8034
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(335,854 observations deleted)
+  15
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        142       50596           0      50596      50596
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.47
+         Prob > chi2 =    0.4813
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(335,854 observations deleted)
+  47
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        377      134585           0     134585     134585
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.47
+         Prob > chi2 =    0.4813
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(335,854 observations deleted)
+  12
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         75       26944           0      26944      26944
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.47
+         Prob > chi2 =    0.4813
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(335,854 observations deleted)
+  5,894
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     43,544    1.55e+07           0   1.55e+07   1.55e+07
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    2.47
+         Prob > chi2 =    0.4813
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(95,149 observations deleted)
+  5
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         36       12726           0      12726      12726
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.82
+         Prob > chi2 =    0.8456
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(95,149 observations deleted)
+  11
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         98       34982           0      34982      34982
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.82
+         Prob > chi2 =    0.8456
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(95,149 observations deleted)
+  2
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         20        7218           0       7218       7218
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.82
+         Prob > chi2 =    0.8456
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(95,149 observations deleted)
+  1,681
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     12,351     4397844           0    4397844    4397844
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.82
+         Prob > chi2 =    0.8456
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(353,944 observations deleted)
+  5
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         83       35169           0      35169      35169
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.77
+         Prob > chi2 =    0.8578
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(353,944 observations deleted)
+  19
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |        230       97247           0      97247      97247
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.77
+         Prob > chi2 =    0.8578
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(353,944 observations deleted)
+  5
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         45       18957           0      18957      18957
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.77
+         Prob > chi2 =    0.8578
+(272,754 observations (episodes) created)
+(cat_time: 272754 changes made)
+(covidadmission: 272754 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    107,101       28.20       28.20
+          1 |     82,642       21.76       49.95
+          2 |     66,433       17.49       67.44
+          3 |     53,493       14.08       81.52
+          4 |     44,138       11.62       93.14
+          5 |     26,048        6.86      100.00
+------------+-----------------------------------
+      Total |    379,855      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    97,370      9,731 |   107,101 
+         1 |    76,495      6,147 |    82,642 
+         2 |    61,695      4,738 |    66,433 
+         3 |    50,251      3,242 |    53,493 
+         4 |    38,170      5,968 |    44,138 
+         5 |    23,953      2,095 |    26,048 
+-----------+----------------------+----------
+     Total |   347,934     31,921 |   379,855 
+(353,944 observations deleted)
+  2,066
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |     25,690    1.08e+07           0   1.08e+07   1.08e+07
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    0.77
+         Prob > chi2 =    0.8578
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(100,235 observations deleted)
+  3
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+total_foll~p |         21        8877           0       8877       8877
+
+ ( 1)  1.kids_cat4 = 0
+ ( 2)  2.kids_cat4 = 0
+ ( 3)  3.kids_cat4 = 0
+
+           chi2(  3) =    5.72
+         Prob > chi2 =    0.1261
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
+
+observation |
+   interval |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
+------------+-----------------------------------
+      Total |    107,626      100.00
+
+           |   Failure/censoring
+           |     indicator for
+           |  outcome: covid SUS
+observatio |       admission
+n interval |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
+-----------+----------------------+----------
+     Total |    98,783      8,843 |   107,626 
+(100,235 observations deleted)
   9
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |        387      116189           0     116189     116189
+total_foll~p |         61       25716           0      25716      25716
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    0.28
-         Prob > chi2 =    0.9646
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    5.72
+         Prob > chi2 =    0.1261
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1586,40 +2176,42 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(41,713 observations deleted)
-  1
+     Total |    98,783      8,843 |   107,626 
+(100,235 observations deleted)
+  3
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |         49       14738           0      14738      14738
+total_foll~p |         13        5400           0       5400       5400
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    0.28
-         Prob > chi2 =    0.9646
-(29,573 observations (episodes) created)
-(cat_time: 29573 changes made)
-(covidadmission: 29573 changes made)
+           chi2(  3) =    5.72
+         Prob > chi2 =    0.1261
+(77,433 observations (episodes) created)
+(cat_time: 77433 changes made)
+(covidadmission: 77433 changes made)
 
 observation |
    interval |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     16,065       35.20       35.20
-          1 |     11,439       25.06       60.27
-          2 |      8,402       18.41       78.68
-          3 |      5,790       12.69       91.36
-          4 |      3,942        8.64      100.00
+          0 |     30,193       28.05       28.05
+          1 |     23,447       21.79       49.84
+          2 |     18,894       17.56       67.39
+          3 |     15,168       14.09       81.49
+          4 |     12,505       11.62       93.11
+          5 |      7,419        6.89      100.00
 ------------+-----------------------------------
-      Total |     45,638      100.00
+      Total |    107,626      100.00
 
            |   Failure/censoring
            |     indicator for
@@ -1627,194 +2219,27 @@ observation |
 observatio |       admission
 n interval |         0          1 |     Total
 -----------+----------------------+----------
-         0 |    15,101        964 |    16,065 
-         1 |    10,910        529 |    11,439 
-         2 |     8,039        363 |     8,402 
-         3 |     5,586        204 |     5,790 
-         4 |     3,836        106 |     3,942 
+         0 |    27,582      2,611 |    30,193 
+         1 |    21,777      1,670 |    23,447 
+         2 |    17,560      1,334 |    18,894 
+         3 |    14,246        922 |    15,168 
+         4 |    10,806      1,699 |    12,505 
+         5 |     6,812        607 |     7,419 
 -----------+----------------------+----------
-     Total |    43,472      2,166 |    45,638 
-(41,713 observations deleted)
-  92
+     Total |    98,783      8,843 |   107,626 
+(100,235 observations deleted)
+  592
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-total_foll~p |      3,387     1017296           0    1017296    1017296
+total_foll~p |      7,324     3086608           0    3086608    3086608
 
  ( 1)  1.kids_cat4 = 0
  ( 2)  2.kids_cat4 = 0
  ( 3)  3.kids_cat4 = 0
 
-           chi2(  3) =    0.28
-         Prob > chi2 =    0.9646
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(11,760 observations deleted)
-  1
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         34       10058           0      10058      10058
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-       Constraint 2 dropped
-
-           chi2(  2) =    0.99
-         Prob > chi2 =    0.6101
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(11,760 observations deleted)
-  4
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        124       37223           0      37223      37223
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-       Constraint 2 dropped
-
-           chi2(  2) =    0.99
-         Prob > chi2 =    0.6101
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(11,760 observations deleted)
-  0
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |         21        6356           0       6356       6356
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-       Constraint 2 dropped
-
-           chi2(  2) =    0.99
-         Prob > chi2 =    0.6101
-(8,317 observations (episodes) created)
-(cat_time: 8317 changes made)
-(covidadmission: 8317 changes made)
-
-observation |
-   interval |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      4,546       35.34       35.34
-          1 |      3,195       24.84       60.18
-          2 |      2,366       18.39       78.57
-          3 |      1,648       12.81       91.39
-          4 |      1,108        8.61      100.00
-------------+-----------------------------------
-      Total |     12,863      100.00
-
-           |   Failure/censoring
-           |     indicator for
-           |  outcome: covid SUS
-observatio |       admission
-n interval |         0          1 |     Total
------------+----------------------+----------
-         0 |     4,285        261 |     4,546 
-         1 |     3,053        142 |     3,195 
-         2 |     2,251        115 |     2,366 
-         3 |     1,577         71 |     1,648 
-         4 |     1,079         29 |     1,108 
------------+----------------------+----------
-     Total |    12,245        618 |    12,863 
-(11,760 observations deleted)
-  24
-
-    Variable |        Obs        Mean    Std. Dev.       Min        Max
--------------+---------------------------------------------------------
-total_foll~p |        929      278728           0     278728     278728
-
- ( 1)  1.kids_cat4 = 0
- ( 2)  2.kids_cat4 = 0
- ( 3)  3.kids_cat4 = 0
-       Constraint 2 dropped
-
-           chi2(  2) =    0.99
-         Prob > chi2 =    0.6101
+           chi2(  3) =    5.72
+         Prob > chi2 =    0.1261
 
 . file write tablecontents _n
 
@@ -1827,5 +2252,5 @@ total_foll~p |        929      278728           0     278728     278728
       name:  <unnamed>
        log:  /workspace/logs/08_an_tablecontent_HRtable_covidadmission.log
   log type:  text
- closed on:  28 Oct 2021, 11:39:33
+ closed on:  15 Mar 2023, 14:12:52
 -------------------------------------------------------------------------------
