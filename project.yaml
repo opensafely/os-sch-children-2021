@@ -15,6 +15,12 @@ actions:
       highly_sensitive:
         cohort: output/input_comorbidity.csv
 
+  generate_comorbidities_5y:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_comorbidity_5y
+    outputs:
+      highly_sensitive:
+        cohort: output/input_comorbidity_5y.csv
+
   01_cr_analysis_dataset:
     needs: [generate_cohort]
     run: stata-mp:latest analysis/01_cr_analysis_dataset.do
@@ -583,18 +589,23 @@ actions:
         figure3: "output/an_vaccine_postvacc_covid_death_age*.svg"
 
   comorbidity:
-    needs: [generate_comorbidities]
+    needs:
+      - generate_comorbidities
+      - generate_comorbidities_5y
     run: stata-mp:latest analysis/comorbidity.do
     outputs:
       moderately_sensitive:
         log: logs/comorbidity.log
 
   comorbidity_table:
-    needs: [generate_comorbidities]
+    needs:
+      - generate_comorbidities
+      - generate_comorbidities_5y
     run: r:latest analysis/comorbidity.R
     outputs:
       moderately_sensitive:
-        data: "output/comorbidity_table.csv"
+        table1: "output/comorbidity_table.csv"
+        table2: "output/comorbidity_table_5y.csv"
 
   run_all:
     needs:
