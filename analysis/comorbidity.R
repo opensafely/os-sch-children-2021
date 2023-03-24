@@ -26,14 +26,14 @@ colnames(results) <- c("Number of patients with record in TPP or SUS",
                        "Number of patients with record in SUS only",
                        "% of patients with record in SUS only")
 
-# add values to results table
+# add values to results table (rounded to nearest 10)
 for (i in 1 : nrow(results)) {
-  results[i, 1] <- sum(df[, i] == 1 | df[, i + nrow(results)] == 1)
-  results[i, 2] <- sum(df[, i] == 1 & df[, i + nrow(results)] == 0)
+  results[i, 1] <- round(sum(df[, i] == 1 | df[, i + nrow(results)] == 1), -1)
+  results[i, 2] <- round(sum(df[, i] == 1 & df[, i + nrow(results)] == 0), -1)
   results[i, 3] <- sum(df[, i] == 1 & df[, i + nrow(results)] == 0) / results[i, 1]
-  results[i, 4] <- sum(df[, i] == 1 & df[, i + nrow(results)] == 1)
+  results[i, 4] <- round(sum(df[, i] == 1 & df[, i + nrow(results)] == 1), -1)
   results[i, 5] <- sum(df[, i] == 1 & df[, i + nrow(results)] == 1) / results[i, 1]
-  results[i, 6] <- sum(df[, i] == 0 & df[, i + nrow(results)] == 1)
+  results[i, 6] <- round(sum(df[, i] == 0 & df[, i + nrow(results)] == 1), -1)
   results[i, 7] <- sum(df[, i] == 0 & df[, i + nrow(results)] == 1) / results[i, 1]
 }
 
@@ -71,14 +71,14 @@ colnames(results) <- c("Number of patients with record in TPP or SUS",
                        "Number of patients with record in SUS only",
                        "% of patients with record in SUS only")
 
-# add values to results table
+# add values to results table (rounded to nearest 10)
 for (i in 1 : nrow(results)) {
-  results[i, 1] <- sum(df[, i] == 1 | df[, i + nrow(results)] == 1)
-  results[i, 2] <- sum(df[, i] == 1 & df[, i + nrow(results)] == 0)
+  results[i, 1] <- round(sum(df[, i] == 1 | df[, i + nrow(results)] == 1), -1)
+  results[i, 2] <- round(sum(df[, i] == 1 & df[, i + nrow(results)] == 0), -1)
   results[i, 3] <- sum(df[, i] == 1 & df[, i + nrow(results)] == 0) / results[i, 1]
-  results[i, 4] <- sum(df[, i] == 1 & df[, i + nrow(results)] == 1)
+  results[i, 4] <- round(sum(df[, i] == 1 & df[, i + nrow(results)] == 1), -1)
   results[i, 5] <- sum(df[, i] == 1 & df[, i + nrow(results)] == 1) / results[i, 1]
-  results[i, 6] <- sum(df[, i] == 0 & df[, i + nrow(results)] == 1)
+  results[i, 6] <- round(sum(df[, i] == 0 & df[, i + nrow(results)] == 1), -1)
   results[i, 7] <- sum(df[, i] == 0 & df[, i + nrow(results)] == 1) / results[i, 1]
 }
 
